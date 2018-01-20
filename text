@@ -1,0 +1,10 @@
+Money doesn't grow on trees... or does it?
+
+1. Create the buy and sell functionality
+2. Make the trees grow. You have to give them watter regulary for optimum growth
+3. The fruits give you real ether which is taken from the treasury. You get a random chance. The rarer the fruit, the more ether
+4. When you buy a tree a 10% of the profit goes to the treasury
+5. When you sell a tree 10% goes to the treasury
+6. The bigger the tree, the more ether it generates
+7. You have to claim your ether when you get fruits
+8. Trees are being generated every hour at a fixed price of 1 ether which goes 50% developers and 50% treasury
