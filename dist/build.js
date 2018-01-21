@@ -68,7 +68,7 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(2);
-var core = __webpack_require__(25);
+var core = __webpack_require__(26);
 var hide = __webpack_require__(15);
 var redefine = __webpack_require__(16);
 var ctx = __webpack_require__(21);
@@ -955,7 +955,7 @@ module.exports = !__webpack_require__(4)(function () {
 
 var anObject = __webpack_require__(1);
 var IE8_DOM_DEFINE = __webpack_require__(120);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 var dP = Object.defineProperty;
 
 exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProperty(O, P, Attributes) {
@@ -976,7 +976,7 @@ exports.f = __webpack_require__(7) ? Object.defineProperty : function defineProp
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.15 ToLength
-var toInteger = __webpack_require__(28);
+var toInteger = __webpack_require__(29);
 var min = Math.min;
 module.exports = function (it) {
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
@@ -988,7 +988,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
-var defined = __webpack_require__(27);
+var defined = __webpack_require__(28);
 module.exports = function (it) {
   return Object(defined(it));
 };
@@ -1034,8 +1034,8 @@ module.exports = function (it) {
  */
 
 
-var BigNumber = __webpack_require__(63);
-var sha3 = __webpack_require__(64);
+var BigNumber = __webpack_require__(64);
+var sha3 = __webpack_require__(65);
 var utf8 = __webpack_require__(409);
 
 var unitMap = {
@@ -2554,7 +2554,7 @@ var TO_STRING = 'toString';
 var $toString = Function[TO_STRING];
 var TPL = ('' + $toString).split(TO_STRING);
 
-__webpack_require__(25).inspectSource = function (it) {
+__webpack_require__(26).inspectSource = function (it) {
   return $toString.call(it);
 };
 
@@ -2585,7 +2585,7 @@ __webpack_require__(25).inspectSource = function (it) {
 
 var $export = __webpack_require__(0);
 var fails = __webpack_require__(4);
-var defined = __webpack_require__(27);
+var defined = __webpack_require__(28);
 var quot = /"/g;
 // B.2.3.2.1 CreateHTML(string, tag, attribute, value)
 var createHTML = function (string, tag, attribute, value) {
@@ -2609,8 +2609,8 @@ module.exports = function (NAME, exec) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
-var IObject = __webpack_require__(60);
-var defined = __webpack_require__(27);
+var IObject = __webpack_require__(61);
+var defined = __webpack_require__(28);
 module.exports = function (it) {
   return IObject(defined(it));
 };
@@ -2620,10 +2620,10 @@ module.exports = function (it) {
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var pIE = __webpack_require__(61);
+var pIE = __webpack_require__(62);
 var createDesc = __webpack_require__(38);
 var toIObject = __webpack_require__(18);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 var has = __webpack_require__(14);
 var IE8_DOM_DEFINE = __webpack_require__(120);
 var gOPD = Object.getOwnPropertyDescriptor;
@@ -2712,6 +2712,196 @@ module.exports = function (method, arg) {
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -2736,7 +2926,7 @@ module.exports = function (method, arg) {
  * @date 2015
  */
 
-var BigNumber = __webpack_require__(63);
+var BigNumber = __webpack_require__(64);
 var utils = __webpack_require__(11);
 var c = __webpack_require__(83);
 var SolidityParam = __webpack_require__(165);
@@ -2969,7 +3159,7 @@ module.exports = {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports) {
 
 var core = module.exports = { version: '2.5.3' };
@@ -2977,7 +3167,7 @@ if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.1 ToPrimitive(input [, PreferredType])
@@ -2995,7 +3185,7 @@ module.exports = function (it, S) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 // 7.2.1 RequireObjectCoercible(argument)
@@ -3006,7 +3196,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 // 7.1.4 ToInteger
@@ -3018,12 +3208,12 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // most Object methods by ES6 should accept primitives
 var $export = __webpack_require__(0);
-var core = __webpack_require__(25);
+var core = __webpack_require__(26);
 var fails = __webpack_require__(4);
 module.exports = function (KEY, exec) {
   var fn = (core.Object || {})[KEY] || Object[KEY];
@@ -3034,7 +3224,7 @@ module.exports = function (KEY, exec) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 0 -> Array#forEach
@@ -3045,7 +3235,7 @@ module.exports = function (KEY, exec) {
 // 5 -> Array#find
 // 6 -> Array#findIndex
 var ctx = __webpack_require__(21);
-var IObject = __webpack_require__(60);
+var IObject = __webpack_require__(61);
 var toObject = __webpack_require__(10);
 var toLength = __webpack_require__(9);
 var asc = __webpack_require__(106);
@@ -3084,7 +3274,7 @@ module.exports = function (TYPE, $create) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3101,13 +3291,13 @@ if (__webpack_require__(7)) {
   var propertyDesc = __webpack_require__(38);
   var hide = __webpack_require__(15);
   var redefineAll = __webpack_require__(48);
-  var toInteger = __webpack_require__(28);
+  var toInteger = __webpack_require__(29);
   var toLength = __webpack_require__(9);
   var toIndex = __webpack_require__(146);
   var toAbsoluteIndex = __webpack_require__(42);
-  var toPrimitive = __webpack_require__(26);
+  var toPrimitive = __webpack_require__(27);
   var has = __webpack_require__(14);
-  var classof = __webpack_require__(62);
+  var classof = __webpack_require__(63);
   var isObject = __webpack_require__(5);
   var toObject = __webpack_require__(10);
   var isArrayIter = __webpack_require__(103);
@@ -3117,11 +3307,11 @@ if (__webpack_require__(7)) {
   var getIterFn = __webpack_require__(105);
   var uid = __webpack_require__(39);
   var wks = __webpack_require__(6);
-  var createArrayMethod = __webpack_require__(30);
+  var createArrayMethod = __webpack_require__(31);
   var createArrayIncludes = __webpack_require__(67);
   var speciesConstructor = __webpack_require__(74);
   var ArrayIterators = __webpack_require__(108);
-  var Iterators = __webpack_require__(52);
+  var Iterators = __webpack_require__(53);
   var $iterDetect = __webpack_require__(71);
   var setSpecies = __webpack_require__(45);
   var arrayFill = __webpack_require__(107);
@@ -3571,7 +3761,7 @@ if (__webpack_require__(7)) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Map = __webpack_require__(141);
@@ -3628,200 +3818,10 @@ module.exports = {
 
 
 /***/ }),
-/* 33 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
 /* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityParam = __webpack_require__(165);
 
 /**
@@ -4515,7 +4515,7 @@ module.exports = Object.keys || function keys(O) {
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(28);
+var toInteger = __webpack_require__(29);
 var max = Math.max;
 var min = Math.min;
 module.exports = function (index, length) {
@@ -4684,7 +4684,7 @@ module.exports = function (target, src, safe) {
  */
 
 var utils = __webpack_require__(11);
-var errors = __webpack_require__(58);
+var errors = __webpack_require__(59);
 
 var Method = function (options) {
     this.name = options.name;
@@ -4829,6 +4829,33 @@ module.exports = Method;
 
 /***/ }),
 /* 50 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var def = __webpack_require__(8).f;
@@ -4841,11 +4868,11 @@ module.exports = function (it, tag, stat) {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $export = __webpack_require__(0);
-var defined = __webpack_require__(27);
+var defined = __webpack_require__(28);
 var fails = __webpack_require__(4);
 var spaces = __webpack_require__(93);
 var space = '[' + spaces + ']';
@@ -4877,14 +4904,14 @@ module.exports = exporter;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports) {
 
 module.exports = {};
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(5);
@@ -4895,7 +4922,7 @@ module.exports = function (it, TYPE) {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4937,7 +4964,7 @@ emptyFunction.thatReturnsArgument = function (arg) {
 module.exports = emptyFunction;
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
@@ -5077,7 +5104,7 @@ module.exports = emptyFunction;
 }));
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory) {
@@ -5350,7 +5377,7 @@ module.exports = emptyFunction;
 }));
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 ;(function (root, factory, undef) {
@@ -5487,7 +5514,7 @@ module.exports = emptyFunction;
 }));
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports) {
 
 /*
@@ -5536,7 +5563,7 @@ module.exports = {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -5686,7 +5713,7 @@ module.exports = Property;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
@@ -5698,14 +5725,14 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 exports.f = {}.propertyIsEnumerable;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // getting tag from 19.1.3.6 Object.prototype.toString()
@@ -5734,7 +5761,7 @@ module.exports = function (it) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*! bignumber.js v2.0.7 https://github.com/MikeMcl/bignumber.js/LICENCE */
@@ -8424,7 +8451,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*! bignumber.js v2.0.7 https://github.com/Mik
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -8465,33 +8492,6 @@ module.exports = function (value, options) {
     }).toString();
 };
 
-
-
-/***/ }),
-/* 65 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
 
 
 /***/ }),
@@ -8624,7 +8624,7 @@ module.exports = function () {
 var hide = __webpack_require__(15);
 var redefine = __webpack_require__(16);
 var fails = __webpack_require__(4);
-var defined = __webpack_require__(27);
+var defined = __webpack_require__(28);
 var wks = __webpack_require__(6);
 
 module.exports = function (KEY, length, exec) {
@@ -8681,7 +8681,7 @@ var anInstance = __webpack_require__(46);
 var isObject = __webpack_require__(5);
 var fails = __webpack_require__(4);
 var $iterDetect = __webpack_require__(71);
-var setToStringTag = __webpack_require__(50);
+var setToStringTag = __webpack_require__(51);
 var inheritIfRequired = __webpack_require__(94);
 
 module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
@@ -8980,7 +8980,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = emptyObject;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 82 */
@@ -9332,7 +9332,7 @@ module.exports = emptyObject;
 
 
 /// required to define ETH_BIGNUMBER_ROUNDING_MODE
-var BigNumber = __webpack_require__(63);
+var BigNumber = __webpack_require__(64);
 
 var ETH_UNITS = [
     'wei',
@@ -9402,7 +9402,7 @@ module.exports = {
  * @date 2015
  */
 
-var BigNumber = __webpack_require__(63);
+var BigNumber = __webpack_require__(64);
 
 var padLeft = function (string, bytes) {
     var result = string;
@@ -9991,7 +9991,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var global = __webpack_require__(2);
-var core = __webpack_require__(25);
+var core = __webpack_require__(26);
 var LIBRARY = __webpack_require__(40);
 var wksExt = __webpack_require__(121);
 var defineProperty = __webpack_require__(8).f;
@@ -10090,8 +10090,8 @@ module.exports = function (that, target, C) {
 
 "use strict";
 
-var toInteger = __webpack_require__(28);
-var defined = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
+var defined = __webpack_require__(28);
 
 module.exports = function repeat(count) {
   var str = String(defined(this));
@@ -10134,8 +10134,8 @@ module.exports = (!$expm1
 /* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var toInteger = __webpack_require__(28);
-var defined = __webpack_require__(27);
+var toInteger = __webpack_require__(29);
+var defined = __webpack_require__(28);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function (TO_STRING) {
@@ -10164,9 +10164,9 @@ var $export = __webpack_require__(0);
 var redefine = __webpack_require__(16);
 var hide = __webpack_require__(15);
 var has = __webpack_require__(14);
-var Iterators = __webpack_require__(52);
+var Iterators = __webpack_require__(53);
 var $iterCreate = __webpack_require__(100);
-var setToStringTag = __webpack_require__(50);
+var setToStringTag = __webpack_require__(51);
 var getPrototypeOf = __webpack_require__(20);
 var ITERATOR = __webpack_require__(6)('iterator');
 var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
@@ -10238,7 +10238,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
 
 var create = __webpack_require__(43);
 var descriptor = __webpack_require__(38);
-var setToStringTag = __webpack_require__(50);
+var setToStringTag = __webpack_require__(51);
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
@@ -10256,7 +10256,7 @@ module.exports = function (Constructor, NAME, next) {
 
 // helper for String#{startsWith, endsWith, includes}
 var isRegExp = __webpack_require__(70);
-var defined = __webpack_require__(27);
+var defined = __webpack_require__(28);
 
 module.exports = function (that, searchString, NAME) {
   if (isRegExp(searchString)) throw TypeError('String#' + NAME + " doesn't accept regex!");
@@ -10287,7 +10287,7 @@ module.exports = function (KEY) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // check on default Array iterator
-var Iterators = __webpack_require__(52);
+var Iterators = __webpack_require__(53);
 var ITERATOR = __webpack_require__(6)('iterator');
 var ArrayProto = Array.prototype;
 
@@ -10315,10 +10315,10 @@ module.exports = function (object, index, value) {
 /* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var classof = __webpack_require__(62);
+var classof = __webpack_require__(63);
 var ITERATOR = __webpack_require__(6)('iterator');
-var Iterators = __webpack_require__(52);
-module.exports = __webpack_require__(25).getIteratorMethod = function (it) {
+var Iterators = __webpack_require__(53);
+module.exports = __webpack_require__(26).getIteratorMethod = function (it) {
   if (it != undefined) return it[ITERATOR]
     || it['@@iterator']
     || Iterators[classof(it)];
@@ -10367,7 +10367,7 @@ module.exports = function fill(value /* , start = 0, end = @length */) {
 
 var addToUnscopables = __webpack_require__(36);
 var step = __webpack_require__(137);
-var Iterators = __webpack_require__(52);
+var Iterators = __webpack_require__(53);
 var toIObject = __webpack_require__(18);
 
 // 22.1.3.4 Array.prototype.entries()
@@ -10603,13 +10603,13 @@ var hide = __webpack_require__(15);
 var redefineAll = __webpack_require__(48);
 var fails = __webpack_require__(4);
 var anInstance = __webpack_require__(46);
-var toInteger = __webpack_require__(28);
+var toInteger = __webpack_require__(29);
 var toLength = __webpack_require__(9);
 var toIndex = __webpack_require__(146);
 var gOPN = __webpack_require__(44).f;
 var dP = __webpack_require__(8).f;
 var arrayFill = __webpack_require__(107);
-var setToStringTag = __webpack_require__(50);
+var setToStringTag = __webpack_require__(51);
 var ARRAY_BUFFER = 'ArrayBuffer';
 var DATA_VIEW = 'DataView';
 var PROTOTYPE = 'prototype';
@@ -10895,7 +10895,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = __webpack_require__(372);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 115 */
@@ -10955,7 +10955,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 116 */
@@ -10972,7 +10972,7 @@ module.exports = invariant;
 
 
 
-var emptyFunction = __webpack_require__(54);
+var emptyFunction = __webpack_require__(55);
 
 /**
  * Similar to invariant but only logs a warning if the condition is not met.
@@ -11024,7 +11024,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = warning;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 117 */
@@ -11355,7 +11355,7 @@ module.exports = warning;
  * @date 2015
  */
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 
 var SolidityTypeAddress = __webpack_require__(413);
 var SolidityTypeBool = __webpack_require__(414);
@@ -11674,9 +11674,9 @@ module.exports.f = function getOwnPropertyNames(it) {
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys = __webpack_require__(41);
 var gOPS = __webpack_require__(68);
-var pIE = __webpack_require__(61);
+var pIE = __webpack_require__(62);
 var toObject = __webpack_require__(10);
-var IObject = __webpack_require__(60);
+var IObject = __webpack_require__(61);
 var $assign = Object.assign;
 
 // should work with symbols and should have deterministic property order (V8 bug)
@@ -11765,7 +11765,7 @@ module.exports = function (fn, args, that) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var $parseInt = __webpack_require__(2).parseInt;
-var $trim = __webpack_require__(51).trim;
+var $trim = __webpack_require__(52).trim;
 var ws = __webpack_require__(93);
 var hex = /^[-+]?0[xX]/;
 
@@ -11780,7 +11780,7 @@ module.exports = $parseInt(ws + '08') !== 8 || $parseInt(ws + '0x16') !== 22 ? f
 /***/ (function(module, exports, __webpack_require__) {
 
 var $parseFloat = __webpack_require__(2).parseFloat;
-var $trim = __webpack_require__(51).trim;
+var $trim = __webpack_require__(52).trim;
 
 module.exports = 1 / $parseFloat(__webpack_require__(93) + '-0') !== -Infinity ? function parseFloat(str) {
   var string = $trim(String(str), 3);
@@ -11875,7 +11875,7 @@ module.exports = function (iterator, fn, value, entries) {
 
 var aFunction = __webpack_require__(13);
 var toObject = __webpack_require__(10);
-var IObject = __webpack_require__(60);
+var IObject = __webpack_require__(61);
 var toLength = __webpack_require__(9);
 
 module.exports = function (that, callbackfn, aLen, memo, isRight) {
@@ -11994,7 +11994,7 @@ module.exports = function (C, x) {
 "use strict";
 
 var strong = __webpack_require__(142);
-var validate = __webpack_require__(53);
+var validate = __webpack_require__(54);
 var MAP = 'Map';
 
 // 23.1 Map Objects
@@ -12030,7 +12030,7 @@ var step = __webpack_require__(137);
 var setSpecies = __webpack_require__(45);
 var DESCRIPTORS = __webpack_require__(7);
 var fastKey = __webpack_require__(35).fastKey;
-var validate = __webpack_require__(53);
+var validate = __webpack_require__(54);
 var SIZE = DESCRIPTORS ? '_s' : 'size';
 
 var getEntry = function (that, key) {
@@ -12171,7 +12171,7 @@ module.exports = {
 "use strict";
 
 var strong = __webpack_require__(142);
-var validate = __webpack_require__(53);
+var validate = __webpack_require__(54);
 var SET = 'Set';
 
 // 23.2 Set Objects
@@ -12191,14 +12191,14 @@ module.exports = __webpack_require__(75)(SET, function (get) {
 
 "use strict";
 
-var each = __webpack_require__(30)(0);
+var each = __webpack_require__(31)(0);
 var redefine = __webpack_require__(16);
 var meta = __webpack_require__(35);
 var assign = __webpack_require__(125);
 var weak = __webpack_require__(145);
 var isObject = __webpack_require__(5);
 var fails = __webpack_require__(4);
-var validate = __webpack_require__(53);
+var validate = __webpack_require__(54);
 var WEAK_MAP = 'WeakMap';
 var getWeak = meta.getWeak;
 var isExtensible = Object.isExtensible;
@@ -12263,9 +12263,9 @@ var anObject = __webpack_require__(1);
 var isObject = __webpack_require__(5);
 var anInstance = __webpack_require__(46);
 var forOf = __webpack_require__(47);
-var createArrayMethod = __webpack_require__(30);
+var createArrayMethod = __webpack_require__(31);
 var $has = __webpack_require__(14);
-var validate = __webpack_require__(53);
+var validate = __webpack_require__(54);
 var arrayFind = createArrayMethod(5);
 var arrayFindIndex = createArrayMethod(6);
 var id = 0;
@@ -12348,7 +12348,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://tc39.github.io/ecma262/#sec-toindex
-var toInteger = __webpack_require__(28);
+var toInteger = __webpack_require__(29);
 var toLength = __webpack_require__(9);
 module.exports = function (it) {
   if (it === undefined) return 0;
@@ -12428,7 +12428,7 @@ module.exports = flattenIntoArray;
 // https://github.com/tc39/proposal-string-pad-start-end
 var toLength = __webpack_require__(9);
 var repeat = __webpack_require__(95);
-var defined = __webpack_require__(27);
+var defined = __webpack_require__(28);
 
 module.exports = function (that, maxLength, fillString, left) {
   var S = String(defined(that));
@@ -12449,7 +12449,7 @@ module.exports = function (that, maxLength, fillString, left) {
 
 var getKeys = __webpack_require__(41);
 var toIObject = __webpack_require__(18);
-var isEnum = __webpack_require__(61).f;
+var isEnum = __webpack_require__(62).f;
 module.exports = function (isEntries) {
   return function (it) {
     var O = toIObject(it);
@@ -12470,7 +12470,7 @@ module.exports = function (isEntries) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
-var classof = __webpack_require__(62);
+var classof = __webpack_require__(63);
 var from = __webpack_require__(152);
 module.exports = function (NAME) {
   return function toJSON() {
@@ -12582,7 +12582,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
 module.exports = checkPropTypes;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 155 */
@@ -12639,7 +12639,7 @@ module.exports = ExecutionEnvironment;
  * @typechecks
  */
 
-var emptyFunction = __webpack_require__(54);
+var emptyFunction = __webpack_require__(55);
 
 /**
  * Upstream version of event listener. Does not take into account specific
@@ -12702,7 +12702,7 @@ var EventListener = {
 };
 
 module.exports = EventListener;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 157 */
@@ -14028,7 +14028,7 @@ module.exports = SolidityParam;
 var utils = __webpack_require__(11);
 var coder = __webpack_require__(119);
 var formatters = __webpack_require__(37);
-var sha3 = __webpack_require__(64);
+var sha3 = __webpack_require__(65);
 var Filter = __webpack_require__(85);
 var watches = __webpack_require__(86);
 
@@ -14254,7 +14254,7 @@ define(String.prototype, "padRight", "".padEnd);
 "pop,reverse,shift,keys,values,entries,indexOf,every,some,forEach,map,filter,find,findIndex,includes,join,slice,concat,push,splice,unshift,sort,lastIndexOf,reduce,reduceRight,copyWithin,fill".split(",").forEach(function (key) {
   [][key] && define(Array, key, Function.call.bind([][key]));
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(65)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
 
 /***/ }),
 /* 169 */
@@ -14456,7 +14456,7 @@ __webpack_require__(362);
 __webpack_require__(363);
 __webpack_require__(364);
 __webpack_require__(365);
-module.exports = __webpack_require__(25);
+module.exports = __webpack_require__(26);
 
 
 /***/ }),
@@ -14474,7 +14474,7 @@ var redefine = __webpack_require__(16);
 var META = __webpack_require__(35).KEY;
 var $fails = __webpack_require__(4);
 var shared = __webpack_require__(66);
-var setToStringTag = __webpack_require__(50);
+var setToStringTag = __webpack_require__(51);
 var uid = __webpack_require__(39);
 var wks = __webpack_require__(6);
 var wksExt = __webpack_require__(121);
@@ -14484,7 +14484,7 @@ var isArray = __webpack_require__(69);
 var anObject = __webpack_require__(1);
 var isObject = __webpack_require__(5);
 var toIObject = __webpack_require__(18);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 var createDesc = __webpack_require__(38);
 var _create = __webpack_require__(43);
 var gOPNExt = __webpack_require__(124);
@@ -14614,7 +14614,7 @@ if (!USE_NATIVE) {
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f = $defineProperty;
   __webpack_require__(44).f = gOPNExt.f = $getOwnPropertyNames;
-  __webpack_require__(61).f = $propertyIsEnumerable;
+  __webpack_require__(62).f = $propertyIsEnumerable;
   __webpack_require__(68).f = $getOwnPropertySymbols;
 
   if (DESCRIPTORS && !__webpack_require__(40)) {
@@ -14707,7 +14707,7 @@ setToStringTag(global.JSON, 'JSON', true);
 // all enumerable object keys, includes symbols
 var getKeys = __webpack_require__(41);
 var gOPS = __webpack_require__(68);
-var pIE = __webpack_require__(61);
+var pIE = __webpack_require__(62);
 module.exports = function (it) {
   var result = getKeys(it);
   var getSymbols = gOPS.f;
@@ -14756,7 +14756,7 @@ $export($export.S + $export.F * !__webpack_require__(7), 'Object', { definePrope
 var toIObject = __webpack_require__(18);
 var $getOwnPropertyDescriptor = __webpack_require__(19).f;
 
-__webpack_require__(29)('getOwnPropertyDescriptor', function () {
+__webpack_require__(30)('getOwnPropertyDescriptor', function () {
   return function getOwnPropertyDescriptor(it, key) {
     return $getOwnPropertyDescriptor(toIObject(it), key);
   };
@@ -14771,7 +14771,7 @@ __webpack_require__(29)('getOwnPropertyDescriptor', function () {
 var toObject = __webpack_require__(10);
 var $getPrototypeOf = __webpack_require__(20);
 
-__webpack_require__(29)('getPrototypeOf', function () {
+__webpack_require__(30)('getPrototypeOf', function () {
   return function getPrototypeOf(it) {
     return $getPrototypeOf(toObject(it));
   };
@@ -14786,7 +14786,7 @@ __webpack_require__(29)('getPrototypeOf', function () {
 var toObject = __webpack_require__(10);
 var $keys = __webpack_require__(41);
 
-__webpack_require__(29)('keys', function () {
+__webpack_require__(30)('keys', function () {
   return function keys(it) {
     return $keys(toObject(it));
   };
@@ -14798,7 +14798,7 @@ __webpack_require__(29)('keys', function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.7 Object.getOwnPropertyNames(O)
-__webpack_require__(29)('getOwnPropertyNames', function () {
+__webpack_require__(30)('getOwnPropertyNames', function () {
   return __webpack_require__(124).f;
 });
 
@@ -14811,7 +14811,7 @@ __webpack_require__(29)('getOwnPropertyNames', function () {
 var isObject = __webpack_require__(5);
 var meta = __webpack_require__(35).onFreeze;
 
-__webpack_require__(29)('freeze', function ($freeze) {
+__webpack_require__(30)('freeze', function ($freeze) {
   return function freeze(it) {
     return $freeze && isObject(it) ? $freeze(meta(it)) : it;
   };
@@ -14826,7 +14826,7 @@ __webpack_require__(29)('freeze', function ($freeze) {
 var isObject = __webpack_require__(5);
 var meta = __webpack_require__(35).onFreeze;
 
-__webpack_require__(29)('seal', function ($seal) {
+__webpack_require__(30)('seal', function ($seal) {
   return function seal(it) {
     return $seal && isObject(it) ? $seal(meta(it)) : it;
   };
@@ -14841,7 +14841,7 @@ __webpack_require__(29)('seal', function ($seal) {
 var isObject = __webpack_require__(5);
 var meta = __webpack_require__(35).onFreeze;
 
-__webpack_require__(29)('preventExtensions', function ($preventExtensions) {
+__webpack_require__(30)('preventExtensions', function ($preventExtensions) {
   return function preventExtensions(it) {
     return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
   };
@@ -14855,7 +14855,7 @@ __webpack_require__(29)('preventExtensions', function ($preventExtensions) {
 // 19.1.2.12 Object.isFrozen(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(29)('isFrozen', function ($isFrozen) {
+__webpack_require__(30)('isFrozen', function ($isFrozen) {
   return function isFrozen(it) {
     return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
   };
@@ -14869,7 +14869,7 @@ __webpack_require__(29)('isFrozen', function ($isFrozen) {
 // 19.1.2.13 Object.isSealed(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(29)('isSealed', function ($isSealed) {
+__webpack_require__(30)('isSealed', function ($isSealed) {
   return function isSealed(it) {
     return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
   };
@@ -14883,7 +14883,7 @@ __webpack_require__(29)('isSealed', function ($isSealed) {
 // 19.1.2.11 Object.isExtensible(O)
 var isObject = __webpack_require__(5);
 
-__webpack_require__(29)('isExtensible', function ($isExtensible) {
+__webpack_require__(30)('isExtensible', function ($isExtensible) {
   return function isExtensible(it) {
     return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
   };
@@ -14936,7 +14936,7 @@ $export($export.S, 'Object', { setPrototypeOf: __webpack_require__(92).set });
 "use strict";
 
 // 19.1.3.6 Object.prototype.toString()
-var classof = __webpack_require__(62);
+var classof = __webpack_require__(63);
 var test = {};
 test[__webpack_require__(6)('toStringTag')] = 'z';
 if (test + '' != '[object z]') {
@@ -15028,12 +15028,12 @@ var global = __webpack_require__(2);
 var has = __webpack_require__(14);
 var cof = __webpack_require__(22);
 var inheritIfRequired = __webpack_require__(94);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 var fails = __webpack_require__(4);
 var gOPN = __webpack_require__(44).f;
 var gOPD = __webpack_require__(19).f;
 var dP = __webpack_require__(8).f;
-var $trim = __webpack_require__(51).trim;
+var $trim = __webpack_require__(52).trim;
 var NUMBER = 'Number';
 var $Number = global[NUMBER];
 var Base = $Number;
@@ -15101,7 +15101,7 @@ if (!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')) {
 "use strict";
 
 var $export = __webpack_require__(0);
-var toInteger = __webpack_require__(28);
+var toInteger = __webpack_require__(29);
 var aNumberValue = __webpack_require__(130);
 var repeat = __webpack_require__(95);
 var $toFixed = 1.0.toFixed;
@@ -15682,7 +15682,7 @@ $export($export.S, 'String', {
 "use strict";
 
 // 21.1.3.25 String.prototype.trim()
-__webpack_require__(51)('trim', function ($trim) {
+__webpack_require__(52)('trim', function ($trim) {
   return function trim() {
     return $trim(this, 3);
   };
@@ -16012,7 +16012,7 @@ $export($export.S, 'Date', { now: function () { return new Date().getTime(); } }
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 
 $export($export.P + $export.F * __webpack_require__(4)(function () {
   return new Date(NaN).toJSON() !== null
@@ -16109,7 +16109,7 @@ if (!(TO_PRIMITIVE in proto)) __webpack_require__(15)(proto, TO_PRIMITIVE, __web
 "use strict";
 
 var anObject = __webpack_require__(1);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 var NUMBER = 'number';
 
 module.exports = function (hint) {
@@ -16210,7 +16210,7 @@ var toIObject = __webpack_require__(18);
 var arrayJoin = [].join;
 
 // fallback for not array-like strings
-$export($export.P + $export.F * (__webpack_require__(60) != Object || !__webpack_require__(23)(arrayJoin)), 'Array', {
+$export($export.P + $export.F * (__webpack_require__(61) != Object || !__webpack_require__(23)(arrayJoin)), 'Array', {
   join: function join(separator) {
     return arrayJoin.call(toIObject(this), separator === undefined ? ',' : separator);
   }
@@ -16289,7 +16289,7 @@ $export($export.P + $export.F * (fails(function () {
 "use strict";
 
 var $export = __webpack_require__(0);
-var $forEach = __webpack_require__(30)(0);
+var $forEach = __webpack_require__(31)(0);
 var STRICT = __webpack_require__(23)([].forEach, true);
 
 $export($export.P + $export.F * !STRICT, 'Array', {
@@ -16329,7 +16329,7 @@ module.exports = function (original) {
 "use strict";
 
 var $export = __webpack_require__(0);
-var $map = __webpack_require__(30)(1);
+var $map = __webpack_require__(31)(1);
 
 $export($export.P + $export.F * !__webpack_require__(23)([].map, true), 'Array', {
   // 22.1.3.15 / 15.4.4.19 Array.prototype.map(callbackfn [, thisArg])
@@ -16346,7 +16346,7 @@ $export($export.P + $export.F * !__webpack_require__(23)([].map, true), 'Array',
 "use strict";
 
 var $export = __webpack_require__(0);
-var $filter = __webpack_require__(30)(2);
+var $filter = __webpack_require__(31)(2);
 
 $export($export.P + $export.F * !__webpack_require__(23)([].filter, true), 'Array', {
   // 22.1.3.7 / 15.4.4.20 Array.prototype.filter(callbackfn [, thisArg])
@@ -16363,7 +16363,7 @@ $export($export.P + $export.F * !__webpack_require__(23)([].filter, true), 'Arra
 "use strict";
 
 var $export = __webpack_require__(0);
-var $some = __webpack_require__(30)(3);
+var $some = __webpack_require__(31)(3);
 
 $export($export.P + $export.F * !__webpack_require__(23)([].some, true), 'Array', {
   // 22.1.3.23 / 15.4.4.17 Array.prototype.some(callbackfn [, thisArg])
@@ -16380,7 +16380,7 @@ $export($export.P + $export.F * !__webpack_require__(23)([].some, true), 'Array'
 "use strict";
 
 var $export = __webpack_require__(0);
-var $every = __webpack_require__(30)(4);
+var $every = __webpack_require__(31)(4);
 
 $export($export.P + $export.F * !__webpack_require__(23)([].every, true), 'Array', {
   // 22.1.3.5 / 15.4.4.16 Array.prototype.every(callbackfn [, thisArg])
@@ -16454,7 +16454,7 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !__webpack_require__(23)($nati
 
 var $export = __webpack_require__(0);
 var toIObject = __webpack_require__(18);
-var toInteger = __webpack_require__(28);
+var toInteger = __webpack_require__(29);
 var toLength = __webpack_require__(9);
 var $native = [].lastIndexOf;
 var NEGATIVE_ZERO = !!$native && 1 / [1].lastIndexOf(1, -0) < 0;
@@ -16507,7 +16507,7 @@ __webpack_require__(36)('fill');
 
 // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
 var $export = __webpack_require__(0);
-var $find = __webpack_require__(30)(5);
+var $find = __webpack_require__(31)(5);
 var KEY = 'find';
 var forced = true;
 // Shouldn't skip holes
@@ -16528,7 +16528,7 @@ __webpack_require__(36)(KEY);
 
 // 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
 var $export = __webpack_require__(0);
-var $find = __webpack_require__(30)(6);
+var $find = __webpack_require__(31)(6);
 var KEY = 'findIndex';
 var forced = true;
 // Shouldn't skip holes
@@ -16765,7 +16765,7 @@ __webpack_require__(73)('split', 2, function (defined, SPLIT, $split) {
 var LIBRARY = __webpack_require__(40);
 var global = __webpack_require__(2);
 var ctx = __webpack_require__(21);
-var classof = __webpack_require__(62);
+var classof = __webpack_require__(63);
 var $export = __webpack_require__(0);
 var isObject = __webpack_require__(5);
 var aFunction = __webpack_require__(13);
@@ -16970,9 +16970,9 @@ if (!USE_NATIVE) {
 }
 
 $export($export.G + $export.W + $export.F * !USE_NATIVE, { Promise: $Promise });
-__webpack_require__(50)($Promise, PROMISE);
+__webpack_require__(51)($Promise, PROMISE);
 __webpack_require__(45)(PROMISE);
-Wrapper = __webpack_require__(25)[PROMISE];
+Wrapper = __webpack_require__(26)[PROMISE];
 
 // statics
 $export($export.S + $export.F * !USE_NATIVE, PROMISE, {
@@ -17043,7 +17043,7 @@ $export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(71)(function
 "use strict";
 
 var weak = __webpack_require__(145);
-var validate = __webpack_require__(53);
+var validate = __webpack_require__(54);
 var WEAK_SET = 'WeakSet';
 
 // 23.4 WeakSet Objects
@@ -17124,7 +17124,7 @@ $export($export.G + $export.W + $export.F * !__webpack_require__(76).ABV, {
 /* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Int8', 1, function (init) {
+__webpack_require__(32)('Int8', 1, function (init) {
   return function Int8Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17135,7 +17135,7 @@ __webpack_require__(31)('Int8', 1, function (init) {
 /* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Uint8', 1, function (init) {
+__webpack_require__(32)('Uint8', 1, function (init) {
   return function Uint8Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17146,7 +17146,7 @@ __webpack_require__(31)('Uint8', 1, function (init) {
 /* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Uint8', 1, function (init) {
+__webpack_require__(32)('Uint8', 1, function (init) {
   return function Uint8ClampedArray(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17157,7 +17157,7 @@ __webpack_require__(31)('Uint8', 1, function (init) {
 /* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Int16', 2, function (init) {
+__webpack_require__(32)('Int16', 2, function (init) {
   return function Int16Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17168,7 +17168,7 @@ __webpack_require__(31)('Int16', 2, function (init) {
 /* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Uint16', 2, function (init) {
+__webpack_require__(32)('Uint16', 2, function (init) {
   return function Uint16Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17179,7 +17179,7 @@ __webpack_require__(31)('Uint16', 2, function (init) {
 /* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Int32', 4, function (init) {
+__webpack_require__(32)('Int32', 4, function (init) {
   return function Int32Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17190,7 +17190,7 @@ __webpack_require__(31)('Int32', 4, function (init) {
 /* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Uint32', 4, function (init) {
+__webpack_require__(32)('Uint32', 4, function (init) {
   return function Uint32Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17201,7 +17201,7 @@ __webpack_require__(31)('Uint32', 4, function (init) {
 /* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Float32', 4, function (init) {
+__webpack_require__(32)('Float32', 4, function (init) {
   return function Float32Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17212,7 +17212,7 @@ __webpack_require__(31)('Float32', 4, function (init) {
 /* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(31)('Float64', 8, function (init) {
+__webpack_require__(32)('Float64', 8, function (init) {
   return function Float64Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
@@ -17302,7 +17302,7 @@ $export($export.S + $export.F * (NEW_TARGET_BUG || ARGS_BUG), 'Reflect', {
 var dP = __webpack_require__(8);
 var $export = __webpack_require__(0);
 var anObject = __webpack_require__(1);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 
 // MS Edge has broken Reflect.defineProperty - throwing instead of returning false
 $export($export.S + $export.F * __webpack_require__(4)(function () {
@@ -17612,7 +17612,7 @@ var $export = __webpack_require__(0);
 var flattenIntoArray = __webpack_require__(148);
 var toObject = __webpack_require__(10);
 var toLength = __webpack_require__(9);
-var toInteger = __webpack_require__(28);
+var toInteger = __webpack_require__(29);
 var arraySpeciesCreate = __webpack_require__(106);
 
 $export($export.P, 'Array', {
@@ -17691,7 +17691,7 @@ $export($export.P + $export.F * /Version\/10\.\d+(\.\d+)? Safari\//.test(userAge
 "use strict";
 
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-__webpack_require__(51)('trimLeft', function ($trim) {
+__webpack_require__(52)('trimLeft', function ($trim) {
   return function trimLeft() {
     return $trim(this, 1);
   };
@@ -17705,7 +17705,7 @@ __webpack_require__(51)('trimLeft', function ($trim) {
 "use strict";
 
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
-__webpack_require__(51)('trimRight', function ($trim) {
+__webpack_require__(52)('trimRight', function ($trim) {
   return function trimRight() {
     return $trim(this, 2);
   };
@@ -17720,7 +17720,7 @@ __webpack_require__(51)('trimRight', function ($trim) {
 
 // https://tc39.github.io/String.prototype.matchAll/
 var $export = __webpack_require__(0);
-var defined = __webpack_require__(27);
+var defined = __webpack_require__(28);
 var toLength = __webpack_require__(9);
 var isRegExp = __webpack_require__(70);
 var getFlags = __webpack_require__(72);
@@ -17867,7 +17867,7 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(77), 'Object',
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 var getPrototypeOf = __webpack_require__(20);
 var getOwnPropertyDescriptor = __webpack_require__(19).f;
 
@@ -17892,7 +17892,7 @@ __webpack_require__(7) && $export($export.P + __webpack_require__(77), 'Object',
 
 var $export = __webpack_require__(0);
 var toObject = __webpack_require__(10);
-var toPrimitive = __webpack_require__(26);
+var toPrimitive = __webpack_require__(27);
 var getPrototypeOf = __webpack_require__(20);
 var getOwnPropertyDescriptor = __webpack_require__(19).f;
 
@@ -18217,7 +18217,7 @@ $export($export.S, 'Math', { signbit: function signbit(x) {
 // https://github.com/tc39/proposal-promise-finally
 
 var $export = __webpack_require__(0);
-var core = __webpack_require__(25);
+var core = __webpack_require__(26);
 var global = __webpack_require__(2);
 var speciesConstructor = __webpack_require__(74);
 var promiseResolve = __webpack_require__(140);
@@ -18259,7 +18259,7 @@ $export($export.S, 'Promise', { 'try': function (callbackfn) {
 /* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var toMetaKey = metadata.key;
 var ordinaryDefineOwnMetadata = metadata.set;
@@ -18273,7 +18273,7 @@ metadata.exp({ defineMetadata: function defineMetadata(metadataKey, metadataValu
 /* 353 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var toMetaKey = metadata.key;
 var getOrCreateMetadataMap = metadata.map;
@@ -18294,7 +18294,7 @@ metadata.exp({ deleteMetadata: function deleteMetadata(metadataKey, target /* , 
 /* 354 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var getPrototypeOf = __webpack_require__(20);
 var ordinaryHasOwnMetadata = metadata.has;
@@ -18319,7 +18319,7 @@ metadata.exp({ getMetadata: function getMetadata(metadataKey, target /* , target
 
 var Set = __webpack_require__(143);
 var from = __webpack_require__(152);
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var getPrototypeOf = __webpack_require__(20);
 var ordinaryOwnMetadataKeys = metadata.keys;
@@ -18342,7 +18342,7 @@ metadata.exp({ getMetadataKeys: function getMetadataKeys(target /* , targetKey *
 /* 356 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var ordinaryGetOwnMetadata = metadata.get;
 var toMetaKey = metadata.key;
@@ -18357,7 +18357,7 @@ metadata.exp({ getOwnMetadata: function getOwnMetadata(metadataKey, target /* , 
 /* 357 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var ordinaryOwnMetadataKeys = metadata.keys;
 var toMetaKey = metadata.key;
@@ -18371,7 +18371,7 @@ metadata.exp({ getOwnMetadataKeys: function getOwnMetadataKeys(target /* , targe
 /* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var getPrototypeOf = __webpack_require__(20);
 var ordinaryHasOwnMetadata = metadata.has;
@@ -18393,7 +18393,7 @@ metadata.exp({ hasMetadata: function hasMetadata(metadataKey, target /* , target
 /* 359 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var metadata = __webpack_require__(32);
+var metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var ordinaryHasOwnMetadata = metadata.has;
 var toMetaKey = metadata.key;
@@ -18408,7 +18408,7 @@ metadata.exp({ hasOwnMetadata: function hasOwnMetadata(metadataKey, target /* , 
 /* 360 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var $metadata = __webpack_require__(32);
+var $metadata = __webpack_require__(33);
 var anObject = __webpack_require__(1);
 var aFunction = __webpack_require__(13);
 var toMetaKey = $metadata.key;
@@ -18452,7 +18452,7 @@ $export($export.G, {
 // https://github.com/zenparsing/es-observable
 var $export = __webpack_require__(0);
 var global = __webpack_require__(2);
-var core = __webpack_require__(25);
+var core = __webpack_require__(26);
 var microtask = __webpack_require__(110)();
 var OBSERVABLE = __webpack_require__(6)('observable');
 var aFunction = __webpack_require__(13);
@@ -18696,7 +18696,7 @@ var getKeys = __webpack_require__(41);
 var redefine = __webpack_require__(16);
 var global = __webpack_require__(2);
 var hide = __webpack_require__(15);
-var Iterators = __webpack_require__(52);
+var Iterators = __webpack_require__(53);
 var wks = __webpack_require__(6);
 var ITERATOR = wks('iterator');
 var TO_STRING_TAG = wks('toStringTag');
@@ -19492,14 +19492,14 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
   typeof self === "object" ? self : this
 );
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(65)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
 
 /***/ }),
 /* 367 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(368);
-module.exports = __webpack_require__(25).RegExp.escape;
+module.exports = __webpack_require__(26).RegExp.escape;
 
 
 /***/ }),
@@ -19536,6 +19536,8 @@ module.exports = function (regExp, replace) {
 
 var _jsx = function () { var REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol.for && Symbol.for("react.element") || 0xeac7; return function createRawReactElement(type, props, key, children) { var defaultProps = type && type.defaultProps; var childrenLength = arguments.length - 3; if (!props && childrenLength !== 0) { props = {}; } if (props && defaultProps) { for (var propName in defaultProps) { if (props[propName] === void 0) { props[propName] = defaultProps[propName]; } } } else if (!props) { props = defaultProps || {}; } if (childrenLength === 1) { props.children = children; } else if (childrenLength > 1) { var childArray = Array(childrenLength); for (var i = 0; i < childrenLength; i++) { childArray[i] = arguments[i + 3]; } props.children = childArray; } return { $$typeof: REACT_ELEMENT_TYPE, type: type, key: key === undefined ? null : '' + key, ref: null, props: props, _owner: null }; }; }();
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__(114);
@@ -19550,9 +19552,13 @@ var _web = __webpack_require__(383);
 
 var _web2 = _interopRequireDefault(_web);
 
-var _Trees = __webpack_require__(447);
+var _bluebird = __webpack_require__(447);
+
+var _Trees = __webpack_require__(450);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -19560,17 +19566,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var contractAddress = '0xb4f10530e531c32490c68062662eb5684057afb4';
-
-var _ref = _jsx('button', {}, void 0, 'getTreeById');
-
-var _ref2 = _jsx('button', {}, void 0, 'getTreesByAddress');
-
-var _ref3 = _jsx('button', {}, void 0, 'getTreeIDs');
-
-var _ref4 = _jsx('button', {}, void 0, 'putTreeOnSale');
-
-var _ref5 = _jsx('button', {}, void 0, 'buyTree');
+var contractAddress = '0xdf663707454e0d069ecdfd7251d27a032de6221f';
+var originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1';
 
 var App = function (_React$Component) {
 	_inherits(App, _React$Component);
@@ -19584,27 +19581,210 @@ var App = function (_React$Component) {
 			output: 'This will be the output'
 		};
 
-		window.web3 = new _web2.default(new _web2.default.providers.HttpProvider('https://rinkeby.infura.io/6GO3REaLghR6wPhNJQcc'));
-		window.contract = new web3.eth.contract(_Trees.abi, contractAddress);
+		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://rinkeby.infura.io/6GO3REaLghR6wPhNJQcc'));
+		window.contract = web3.eth.contract(_Trees.abi).at(contractAddress);
+		(0, _bluebird.promisifyAll)(contract);
 		return _this;
 	}
 
-	// function generateTree() {
-	// 	contract.methods.generateTree().sendTransaction({
-	// 		from: web3.eth.accounts[0]
-	// 	})
-	// }
-
 	_createClass(App, [{
+		key: 'generateTree',
+		value: function () {
+			var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+				var result;
+				return regeneratorRuntime.wrap(function _callee$(_context) {
+					while (1) {
+						switch (_context.prev = _context.next) {
+							case 0:
+								_context.next = 2;
+								return contract.generateTreeAsync({
+									from: web3.eth.accounts[0]
+								});
+
+							case 2:
+								result = _context.sent;
+
+								this.show(result);
+
+							case 4:
+							case 'end':
+								return _context.stop();
+						}
+					}
+				}, _callee, this);
+			}));
+
+			function generateTree() {
+				return _ref.apply(this, arguments);
+			}
+
+			return generateTree;
+		}()
+	}, {
+		key: 'getTreeById',
+		value: function () {
+			var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+				var result;
+				return regeneratorRuntime.wrap(function _callee2$(_context2) {
+					while (1) {
+						switch (_context2.prev = _context2.next) {
+							case 0:
+								_context2.next = 2;
+								return contract.treeDetailsAsync(1, {
+									from: web3.eth.accounts[0]
+								});
+
+							case 2:
+								result = _context2.sent;
+
+								this.show(result);
+
+							case 4:
+							case 'end':
+								return _context2.stop();
+						}
+					}
+				}, _callee2, this);
+			}));
+
+			function getTreeById() {
+				return _ref2.apply(this, arguments);
+			}
+
+			return getTreeById;
+		}()
+	}, {
+		key: 'getTreeIds',
+		value: function () {
+			var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+				var result;
+				return regeneratorRuntime.wrap(function _callee3$(_context3) {
+					while (1) {
+						switch (_context3.prev = _context3.next) {
+							case 0:
+								_context3.next = 2;
+								return contract.getTreeIdsAsync(web3.eth.accounts[0], {
+									from: web3.eth.accounts[0]
+								});
+
+							case 2:
+								result = _context3.sent;
+
+								this.show(result);
+
+							case 4:
+							case 'end':
+								return _context3.stop();
+						}
+					}
+				}, _callee3, this);
+			}));
+
+			function getTreeIds() {
+				return _ref3.apply(this, arguments);
+			}
+
+			return getTreeIds;
+		}()
+	}, {
+		key: 'putTreeOnSale',
+		value: function () {
+			var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+				var result;
+				return regeneratorRuntime.wrap(function _callee4$(_context4) {
+					while (1) {
+						switch (_context4.prev = _context4.next) {
+							case 0:
+								_context4.next = 2;
+								return contract.putTreeOnSaleAsync(1, {
+									from: web3.eth.accounts[0]
+								});
+
+							case 2:
+								result = _context4.sent;
+
+								this.show(result);
+
+							case 4:
+							case 'end':
+								return _context4.stop();
+						}
+					}
+				}, _callee4, this);
+			}));
+
+			function putTreeOnSale() {
+				return _ref4.apply(this, arguments);
+			}
+
+			return putTreeOnSale;
+		}()
+	}, {
+		key: 'buyTree',
+		value: function () {
+			var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+				var result;
+				return regeneratorRuntime.wrap(function _callee5$(_context5) {
+					while (1) {
+						switch (_context5.prev = _context5.next) {
+							case 0:
+								_context5.next = 2;
+								return contract.buyTreeAync(1, originalOwner, {
+									from: web3.eth.accounts[0]
+								});
+
+							case 2:
+								result = _context5.sent;
+
+								this.show(result);
+
+							case 4:
+							case 'end':
+								return _context5.stop();
+						}
+					}
+				}, _callee5, this);
+			}));
+
+			function buyTree() {
+				return _ref5.apply(this, arguments);
+			}
+
+			return buyTree;
+		}()
+	}, {
+		key: 'show',
+		value: function show(content) {
+			this.setState({
+				output: (typeof content === 'undefined' ? 'undefined' : _typeof(content)) === 'object' ? content.join(' - ') : content
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
 
-			return _jsx('div', {}, void 0, _ref, _ref2, _ref3, _jsx('button', {
+			return _jsx('div', {}, void 0, _jsx('button', {
+				onClick: function onClick() {
+					return _this2.getTreeById();
+				}
+			}, void 0, 'getTreeById 1'), _jsx('button', {
+				onClick: function onClick() {
+					return _this2.getTreeIds();
+				}
+			}, void 0, 'getTreeIds'), _jsx('button', {
 				onClick: function onClick() {
 					return _this2.generateTree();
 				}
-			}, void 0, 'generateTree'), _ref4, _ref5, _jsx('div', {}, void 0, this.state.output));
+			}, void 0, 'generateTree'), _jsx('button', {
+				onClick: function onClick() {
+					return _this2.putTreeOnSale();
+				}
+			}, void 0, 'putTreeOnSale'), _jsx('button', {
+				onClick: function onClick() {
+					return _this2.buyTree();
+				}
+			}, void 0, 'buyTree'), _jsx('div', {}, void 0, this.state.output));
 		}
 	}]);
 
@@ -19627,7 +19807,7 @@ _reactDom2.default.render(_jsx(App, {}), document.querySelector('#root'));
  * LICENSE file in the root directory of this source tree.
  */
 
-var m=__webpack_require__(80),n=__webpack_require__(81),p=__webpack_require__(54),q="function"===typeof Symbol&&Symbol["for"],r=q?Symbol["for"]("react.element"):60103,t=q?Symbol["for"]("react.call"):60104,u=q?Symbol["for"]("react.return"):60105,v=q?Symbol["for"]("react.portal"):60106,w=q?Symbol["for"]("react.fragment"):60107,x="function"===typeof Symbol&&Symbol.iterator;
+var m=__webpack_require__(80),n=__webpack_require__(81),p=__webpack_require__(55),q="function"===typeof Symbol&&Symbol["for"],r=q?Symbol["for"]("react.element"):60103,t=q?Symbol["for"]("react.call"):60104,u=q?Symbol["for"]("react.return"):60105,v=q?Symbol["for"]("react.portal"):60106,w=q?Symbol["for"]("react.fragment"):60107,x="function"===typeof Symbol&&Symbol.iterator;
 function y(a){for(var b=arguments.length-1,e="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,c=0;c<b;c++)e+="\x26args[]\x3d"+encodeURIComponent(arguments[c+1]);b=Error(e+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}
 var z={isMounted:function(){return!1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}};function A(a,b,e){this.props=a;this.context=b;this.refs=n;this.updater=e||z}A.prototype.isReactComponent={};A.prototype.setState=function(a,b){"object"!==typeof a&&"function"!==typeof a&&null!=a?y("85"):void 0;this.updater.enqueueSetState(this,a,b,"setState")};A.prototype.forceUpdate=function(a){this.updater.enqueueForceUpdate(this,a,"forceUpdate")};
 function B(a,b,e){this.props=a;this.context=b;this.refs=n;this.updater=e||z}function C(){}C.prototype=A.prototype;var D=B.prototype=new C;D.constructor=B;m(D,A.prototype);D.isPureReactComponent=!0;function E(a,b,e){this.props=a;this.context=b;this.refs=n;this.updater=e||z}var F=E.prototype=new C;F.constructor=E;m(F,A.prototype);F.unstable_isAsyncReactComponent=!0;F.render=function(){return this.props.children};var G={current:null},H=Object.prototype.hasOwnProperty,I={key:!0,ref:!0,__self:!0,__source:!0};
@@ -19667,7 +19847,7 @@ var _assign = __webpack_require__(80);
 var emptyObject = __webpack_require__(81);
 var invariant = __webpack_require__(115);
 var warning = __webpack_require__(116);
-var emptyFunction = __webpack_require__(54);
+var emptyFunction = __webpack_require__(55);
 var checkPropTypes = __webpack_require__(154);
 
 // TODO: this is special because it gets imported during build.
@@ -21004,7 +21184,7 @@ module.exports = react;
   })();
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 373 */
@@ -21069,7 +21249,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = __webpack_require__(378);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 375 */
@@ -21088,7 +21268,7 @@ if (process.env.NODE_ENV === 'production') {
 /*
  Modernizr 3.0.0pre (Custom Build) | MIT
 */
-var aa=__webpack_require__(114),l=__webpack_require__(155),B=__webpack_require__(80),C=__webpack_require__(54),ba=__webpack_require__(156),da=__webpack_require__(157),ea=__webpack_require__(158),fa=__webpack_require__(159),ia=__webpack_require__(160),D=__webpack_require__(81);
+var aa=__webpack_require__(114),l=__webpack_require__(155),B=__webpack_require__(80),C=__webpack_require__(55),ba=__webpack_require__(156),da=__webpack_require__(157),ea=__webpack_require__(158),fa=__webpack_require__(159),ia=__webpack_require__(160),D=__webpack_require__(81);
 function E(a){for(var b=arguments.length-1,c="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,d=0;d<b;d++)c+="\x26args[]\x3d"+encodeURIComponent(arguments[d+1]);b=Error(c+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}aa?void 0:E("227");
 var oa={children:!0,dangerouslySetInnerHTML:!0,defaultValue:!0,defaultChecked:!0,innerHTML:!0,suppressContentEditableWarning:!0,suppressHydrationWarning:!0,style:!0};function pa(a,b){return(a&b)===b}
 var ta={MUST_USE_PROPERTY:1,HAS_BOOLEAN_VALUE:4,HAS_NUMERIC_VALUE:8,HAS_POSITIVE_NUMERIC_VALUE:24,HAS_OVERLOADED_BOOLEAN_VALUE:32,HAS_STRING_BOOLEAN_VALUE:64,injectDOMPropertyConfig:function(a){var b=ta,c=a.Properties||{},d=a.DOMAttributeNamespaces||{},e=a.DOMAttributeNames||{};a=a.DOMMutationMethods||{};for(var f in c){ua.hasOwnProperty(f)?E("48",f):void 0;var g=f.toLowerCase(),h=c[f];g={attributeName:g,attributeNamespace:null,propertyName:f,mutationMethod:null,mustUseProperty:pa(h,b.MUST_USE_PROPERTY),
@@ -21390,7 +21570,7 @@ var invariant = __webpack_require__(115);
 var warning = __webpack_require__(116);
 var ExecutionEnvironment = __webpack_require__(155);
 var _assign = __webpack_require__(80);
-var emptyFunction = __webpack_require__(54);
+var emptyFunction = __webpack_require__(55);
 var EventListener = __webpack_require__(156);
 var getActiveElement = __webpack_require__(157);
 var shallowEqual = __webpack_require__(158);
@@ -36763,7 +36943,7 @@ module.exports = reactDom;
   })();
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24)))
 
 /***/ }),
 /* 379 */
@@ -36977,13 +37157,13 @@ var Swarm = __webpack_require__(434);
 var Settings = __webpack_require__(435);
 var version = __webpack_require__(436);
 var utils = __webpack_require__(11);
-var sha3 = __webpack_require__(64);
+var sha3 = __webpack_require__(65);
 var extend = __webpack_require__(437);
 var Batch = __webpack_require__(438);
-var Property = __webpack_require__(59);
+var Property = __webpack_require__(60);
 var HttpProvider = __webpack_require__(439);
 var IpcProvider = __webpack_require__(446);
-var BigNumber = __webpack_require__(63);
+var BigNumber = __webpack_require__(64);
 
 
 
@@ -37126,7 +37306,7 @@ module.exports = Web3;
 var Jsonrpc = __webpack_require__(161);
 var utils = __webpack_require__(11);
 var c = __webpack_require__(83);
-var errors = __webpack_require__(58);
+var errors = __webpack_require__(59);
 
 /**
  * It's responsible for passing messages to providers
@@ -37371,7 +37551,7 @@ module.exports = RequestManager;
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(82), __webpack_require__(387), __webpack_require__(388), __webpack_require__(55), __webpack_require__(56), __webpack_require__(117), __webpack_require__(162), __webpack_require__(389), __webpack_require__(163), __webpack_require__(390), __webpack_require__(164), __webpack_require__(391), __webpack_require__(118), __webpack_require__(392), __webpack_require__(57), __webpack_require__(12), __webpack_require__(393), __webpack_require__(394), __webpack_require__(395), __webpack_require__(396), __webpack_require__(397), __webpack_require__(398), __webpack_require__(399), __webpack_require__(400), __webpack_require__(401), __webpack_require__(402), __webpack_require__(403), __webpack_require__(404), __webpack_require__(405), __webpack_require__(406), __webpack_require__(407), __webpack_require__(408));
+		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(82), __webpack_require__(387), __webpack_require__(388), __webpack_require__(56), __webpack_require__(57), __webpack_require__(117), __webpack_require__(162), __webpack_require__(389), __webpack_require__(163), __webpack_require__(390), __webpack_require__(164), __webpack_require__(391), __webpack_require__(118), __webpack_require__(392), __webpack_require__(58), __webpack_require__(12), __webpack_require__(393), __webpack_require__(394), __webpack_require__(395), __webpack_require__(396), __webpack_require__(397), __webpack_require__(398), __webpack_require__(399), __webpack_require__(400), __webpack_require__(401), __webpack_require__(402), __webpack_require__(403), __webpack_require__(404), __webpack_require__(405), __webpack_require__(406), __webpack_require__(407), __webpack_require__(408));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -38899,7 +39079,7 @@ module.exports = RequestManager;
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(12));
+		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(12));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -39136,7 +39316,7 @@ module.exports = RequestManager;
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(12));
+		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(12));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -39911,7 +40091,7 @@ module.exports = RequestManager;
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(12));
+		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(12));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -40055,7 +40235,7 @@ module.exports = RequestManager;
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(12));
+		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(12));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -40252,7 +40432,7 @@ module.exports = RequestManager;
 ;(function (root, factory, undef) {
 	if (true) {
 		// CommonJS
-		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(12));
+		module.exports = exports = factory(__webpack_require__(3), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(12));
 	}
 	else if (typeof define === "function" && define.amd) {
 		// AMD
@@ -40688,7 +40868,7 @@ module.exports = RequestManager;
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(410)(module), __webpack_require__(65)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(410)(module), __webpack_require__(50)))
 
 /***/ }),
 /* 410 */
@@ -40751,7 +40931,7 @@ module.exports = function(module) {
 var formatters = __webpack_require__(37);
 var utils = __webpack_require__(11);
 var Method = __webpack_require__(49);
-var Property = __webpack_require__(59);
+var Property = __webpack_require__(60);
 var c = __webpack_require__(83);
 var Contract = __webpack_require__(412);
 var watches = __webpack_require__(86);
@@ -41399,7 +41579,7 @@ module.exports = ContractFactory;
 /* 413 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 /**
@@ -41431,7 +41611,7 @@ module.exports = SolidityTypeAddress;
 /* 414 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 /**
@@ -41463,7 +41643,7 @@ module.exports = SolidityTypeBool;
 /* 415 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 /**
@@ -41501,7 +41681,7 @@ module.exports = SolidityTypeInt;
 /* 416 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 /**
@@ -41539,7 +41719,7 @@ module.exports = SolidityTypeUInt;
 /* 417 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 var SolidityTypeDynamicBytes = function () {
@@ -41565,7 +41745,7 @@ module.exports = SolidityTypeDynamicBytes;
 /* 418 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 var SolidityTypeString = function () {
@@ -41591,7 +41771,7 @@ module.exports = SolidityTypeString;
 /* 419 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 /**
@@ -41629,7 +41809,7 @@ module.exports = SolidityTypeReal;
 /* 420 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 /**
@@ -41667,7 +41847,7 @@ module.exports = SolidityTypeUReal;
 /* 421 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var f = __webpack_require__(24);
+var f = __webpack_require__(25);
 var SolidityType = __webpack_require__(34);
 
 /**
@@ -41726,9 +41906,9 @@ module.exports = SolidityTypeBytes;
 
 var coder = __webpack_require__(119);
 var utils = __webpack_require__(11);
-var errors = __webpack_require__(58);
+var errors = __webpack_require__(59);
 var formatters = __webpack_require__(37);
-var sha3 = __webpack_require__(64);
+var sha3 = __webpack_require__(65);
 
 /**
  * This prototype should be used to call/sendTransaction to solidity functions
@@ -42013,7 +42193,7 @@ module.exports = SolidityFunction;
  * @date 2014
  */
 
-var sha3 = __webpack_require__(64);
+var sha3 = __webpack_require__(65);
 var SolidityEvent = __webpack_require__(166);
 var formatters = __webpack_require__(37);
 var utils = __webpack_require__(11);
@@ -42590,7 +42770,7 @@ module.exports = Shh;
  */
 
 var utils = __webpack_require__(11);
-var Property = __webpack_require__(59);
+var Property = __webpack_require__(60);
 
 var Net = function (web3) {
     this._requestManager = web3._requestManager;
@@ -42652,7 +42832,7 @@ module.exports = Net;
 
 
 var Method = __webpack_require__(49);
-var Property = __webpack_require__(59);
+var Property = __webpack_require__(60);
 var formatters = __webpack_require__(37);
 
 function Personal(web3) {
@@ -42775,7 +42955,7 @@ module.exports = Personal;
 
 
 var Method = __webpack_require__(49);
-var Property = __webpack_require__(59);
+var Property = __webpack_require__(60);
 
 function Swarm(web3) {
     this._requestManager = web3._requestManager;
@@ -42923,7 +43103,7 @@ module.exports = {"version":"0.20.4"}
 var formatters = __webpack_require__(37);
 var utils = __webpack_require__(11);
 var Method = __webpack_require__(49);
-var Property = __webpack_require__(59);
+var Property = __webpack_require__(60);
 
 // TODO: refactor, so the input params are not altered.
 // it's necessary to make same 'extension' work with multiple providers
@@ -42997,7 +43177,7 @@ module.exports = extend;
  */
 
 var Jsonrpc = __webpack_require__(161);
-var errors = __webpack_require__(58);
+var errors = __webpack_require__(59);
 
 var Batch = function (web3) {
     this.requestManager = web3._requestManager;
@@ -43070,7 +43250,7 @@ module.exports = Batch;
  * @date 2015
  */
 
-var errors = __webpack_require__(58);
+var errors = __webpack_require__(59);
 
 // workaround to use httpprovider in different envs
 
@@ -45007,7 +45187,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(65)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
 
 /***/ }),
 /* 441 */
@@ -45284,7 +45464,7 @@ module.exports = XMLHttpRequest;
 
 
 var utils = __webpack_require__(11);
-var errors = __webpack_require__(58);
+var errors = __webpack_require__(59);
 
 
 var IpcProvider = function (path, net) {
@@ -45470,9 +45650,5890 @@ module.exports = IpcProvider;
 
 /***/ }),
 /* 447 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(process, global, setImmediate) {/* @preserve
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2013-2017 Petka Antonov
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+/**
+ * bluebird build version 3.5.1
+ * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, using, timers, filter, any, each
+*/
+!function(e){if(true)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise) {
+var SomePromiseArray = Promise._SomePromiseArray;
+function any(promises) {
+    var ret = new SomePromiseArray(promises);
+    var promise = ret.promise();
+    ret.setHowMany(1);
+    ret.setUnwrap();
+    ret.init();
+    return promise;
+}
+
+Promise.any = function (promises) {
+    return any(promises);
+};
+
+Promise.prototype.any = function () {
+    return any(this);
+};
+
+};
+
+},{}],2:[function(_dereq_,module,exports){
+"use strict";
+var firstLineError;
+try {throw new Error(); } catch (e) {firstLineError = e;}
+var schedule = _dereq_("./schedule");
+var Queue = _dereq_("./queue");
+var util = _dereq_("./util");
+
+function Async() {
+    this._customScheduler = false;
+    this._isTickUsed = false;
+    this._lateQueue = new Queue(16);
+    this._normalQueue = new Queue(16);
+    this._haveDrainedQueues = false;
+    this._trampolineEnabled = true;
+    var self = this;
+    this.drainQueues = function () {
+        self._drainQueues();
+    };
+    this._schedule = schedule;
+}
+
+Async.prototype.setScheduler = function(fn) {
+    var prev = this._schedule;
+    this._schedule = fn;
+    this._customScheduler = true;
+    return prev;
+};
+
+Async.prototype.hasCustomScheduler = function() {
+    return this._customScheduler;
+};
+
+Async.prototype.enableTrampoline = function() {
+    this._trampolineEnabled = true;
+};
+
+Async.prototype.disableTrampolineIfNecessary = function() {
+    if (util.hasDevTools) {
+        this._trampolineEnabled = false;
+    }
+};
+
+Async.prototype.haveItemsQueued = function () {
+    return this._isTickUsed || this._haveDrainedQueues;
+};
+
+
+Async.prototype.fatalError = function(e, isNode) {
+    if (isNode) {
+        process.stderr.write("Fatal " + (e instanceof Error ? e.stack : e) +
+            "\n");
+        process.exit(2);
+    } else {
+        this.throwLater(e);
+    }
+};
+
+Async.prototype.throwLater = function(fn, arg) {
+    if (arguments.length === 1) {
+        arg = fn;
+        fn = function () { throw arg; };
+    }
+    if (typeof setTimeout !== "undefined") {
+        setTimeout(function() {
+            fn(arg);
+        }, 0);
+    } else try {
+        this._schedule(function() {
+            fn(arg);
+        });
+    } catch (e) {
+        throw new Error("No async scheduler available\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+};
+
+function AsyncInvokeLater(fn, receiver, arg) {
+    this._lateQueue.push(fn, receiver, arg);
+    this._queueTick();
+}
+
+function AsyncInvoke(fn, receiver, arg) {
+    this._normalQueue.push(fn, receiver, arg);
+    this._queueTick();
+}
+
+function AsyncSettlePromises(promise) {
+    this._normalQueue._pushOne(promise);
+    this._queueTick();
+}
+
+if (!util.hasDevTools) {
+    Async.prototype.invokeLater = AsyncInvokeLater;
+    Async.prototype.invoke = AsyncInvoke;
+    Async.prototype.settlePromises = AsyncSettlePromises;
+} else {
+    Async.prototype.invokeLater = function (fn, receiver, arg) {
+        if (this._trampolineEnabled) {
+            AsyncInvokeLater.call(this, fn, receiver, arg);
+        } else {
+            this._schedule(function() {
+                setTimeout(function() {
+                    fn.call(receiver, arg);
+                }, 100);
+            });
+        }
+    };
+
+    Async.prototype.invoke = function (fn, receiver, arg) {
+        if (this._trampolineEnabled) {
+            AsyncInvoke.call(this, fn, receiver, arg);
+        } else {
+            this._schedule(function() {
+                fn.call(receiver, arg);
+            });
+        }
+    };
+
+    Async.prototype.settlePromises = function(promise) {
+        if (this._trampolineEnabled) {
+            AsyncSettlePromises.call(this, promise);
+        } else {
+            this._schedule(function() {
+                promise._settlePromises();
+            });
+        }
+    };
+}
+
+Async.prototype._drainQueue = function(queue) {
+    while (queue.length() > 0) {
+        var fn = queue.shift();
+        if (typeof fn !== "function") {
+            fn._settlePromises();
+            continue;
+        }
+        var receiver = queue.shift();
+        var arg = queue.shift();
+        fn.call(receiver, arg);
+    }
+};
+
+Async.prototype._drainQueues = function () {
+    this._drainQueue(this._normalQueue);
+    this._reset();
+    this._haveDrainedQueues = true;
+    this._drainQueue(this._lateQueue);
+};
+
+Async.prototype._queueTick = function () {
+    if (!this._isTickUsed) {
+        this._isTickUsed = true;
+        this._schedule(this.drainQueues);
+    }
+};
+
+Async.prototype._reset = function () {
+    this._isTickUsed = false;
+};
+
+module.exports = Async;
+module.exports.firstLineError = firstLineError;
+
+},{"./queue":26,"./schedule":29,"./util":36}],3:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, INTERNAL, tryConvertToPromise, debug) {
+var calledBind = false;
+var rejectThis = function(_, e) {
+    this._reject(e);
+};
+
+var targetRejected = function(e, context) {
+    context.promiseRejectionQueued = true;
+    context.bindingPromise._then(rejectThis, rejectThis, null, this, e);
+};
+
+var bindingResolved = function(thisArg, context) {
+    if (((this._bitField & 50397184) === 0)) {
+        this._resolveCallback(context.target);
+    }
+};
+
+var bindingRejected = function(e, context) {
+    if (!context.promiseRejectionQueued) this._reject(e);
+};
+
+Promise.prototype.bind = function (thisArg) {
+    if (!calledBind) {
+        calledBind = true;
+        Promise.prototype._propagateFrom = debug.propagateFromFunction();
+        Promise.prototype._boundValue = debug.boundValueFunction();
+    }
+    var maybePromise = tryConvertToPromise(thisArg);
+    var ret = new Promise(INTERNAL);
+    ret._propagateFrom(this, 1);
+    var target = this._target();
+    ret._setBoundTo(maybePromise);
+    if (maybePromise instanceof Promise) {
+        var context = {
+            promiseRejectionQueued: false,
+            promise: ret,
+            target: target,
+            bindingPromise: maybePromise
+        };
+        target._then(INTERNAL, targetRejected, undefined, ret, context);
+        maybePromise._then(
+            bindingResolved, bindingRejected, undefined, ret, context);
+        ret._setOnCancel(maybePromise);
+    } else {
+        ret._resolveCallback(target);
+    }
+    return ret;
+};
+
+Promise.prototype._setBoundTo = function (obj) {
+    if (obj !== undefined) {
+        this._bitField = this._bitField | 2097152;
+        this._boundTo = obj;
+    } else {
+        this._bitField = this._bitField & (~2097152);
+    }
+};
+
+Promise.prototype._isBound = function () {
+    return (this._bitField & 2097152) === 2097152;
+};
+
+Promise.bind = function (thisArg, value) {
+    return Promise.resolve(value).bind(thisArg);
+};
+};
+
+},{}],4:[function(_dereq_,module,exports){
+"use strict";
+var old;
+if (typeof Promise !== "undefined") old = Promise;
+function noConflict() {
+    try { if (Promise === bluebird) Promise = old; }
+    catch (e) {}
+    return bluebird;
+}
+var bluebird = _dereq_("./promise")();
+bluebird.noConflict = noConflict;
+module.exports = bluebird;
+
+},{"./promise":22}],5:[function(_dereq_,module,exports){
+"use strict";
+var cr = Object.create;
+if (cr) {
+    var callerCache = cr(null);
+    var getterCache = cr(null);
+    callerCache[" size"] = getterCache[" size"] = 0;
+}
+
+module.exports = function(Promise) {
+var util = _dereq_("./util");
+var canEvaluate = util.canEvaluate;
+var isIdentifier = util.isIdentifier;
+
+var getMethodCaller;
+var getGetter;
+if (false) {
+var makeMethodCaller = function (methodName) {
+    return new Function("ensureMethod", "                                    \n\
+        return function(obj) {                                               \n\
+            'use strict'                                                     \n\
+            var len = this.length;                                           \n\
+            ensureMethod(obj, 'methodName');                                 \n\
+            switch(len) {                                                    \n\
+                case 1: return obj.methodName(this[0]);                      \n\
+                case 2: return obj.methodName(this[0], this[1]);             \n\
+                case 3: return obj.methodName(this[0], this[1], this[2]);    \n\
+                case 0: return obj.methodName();                             \n\
+                default:                                                     \n\
+                    return obj.methodName.apply(obj, this);                  \n\
+            }                                                                \n\
+        };                                                                   \n\
+        ".replace(/methodName/g, methodName))(ensureMethod);
+};
+
+var makeGetter = function (propertyName) {
+    return new Function("obj", "                                             \n\
+        'use strict';                                                        \n\
+        return obj.propertyName;                                             \n\
+        ".replace("propertyName", propertyName));
+};
+
+var getCompiled = function(name, compiler, cache) {
+    var ret = cache[name];
+    if (typeof ret !== "function") {
+        if (!isIdentifier(name)) {
+            return null;
+        }
+        ret = compiler(name);
+        cache[name] = ret;
+        cache[" size"]++;
+        if (cache[" size"] > 512) {
+            var keys = Object.keys(cache);
+            for (var i = 0; i < 256; ++i) delete cache[keys[i]];
+            cache[" size"] = keys.length - 256;
+        }
+    }
+    return ret;
+};
+
+getMethodCaller = function(name) {
+    return getCompiled(name, makeMethodCaller, callerCache);
+};
+
+getGetter = function(name) {
+    return getCompiled(name, makeGetter, getterCache);
+};
+}
+
+function ensureMethod(obj, methodName) {
+    var fn;
+    if (obj != null) fn = obj[methodName];
+    if (typeof fn !== "function") {
+        var message = "Object " + util.classString(obj) + " has no method '" +
+            util.toString(methodName) + "'";
+        throw new Promise.TypeError(message);
+    }
+    return fn;
+}
+
+function caller(obj) {
+    var methodName = this.pop();
+    var fn = ensureMethod(obj, methodName);
+    return fn.apply(obj, this);
+}
+Promise.prototype.call = function (methodName) {
+    var args = [].slice.call(arguments, 1);;
+    if (false) {
+        if (canEvaluate) {
+            var maybeCaller = getMethodCaller(methodName);
+            if (maybeCaller !== null) {
+                return this._then(
+                    maybeCaller, undefined, undefined, args, undefined);
+            }
+        }
+    }
+    args.push(methodName);
+    return this._then(caller, undefined, undefined, args, undefined);
+};
+
+function namedGetter(obj) {
+    return obj[this];
+}
+function indexedGetter(obj) {
+    var index = +this;
+    if (index < 0) index = Math.max(0, index + obj.length);
+    return obj[index];
+}
+Promise.prototype.get = function (propertyName) {
+    var isIndex = (typeof propertyName === "number");
+    var getter;
+    if (!isIndex) {
+        if (canEvaluate) {
+            var maybeGetter = getGetter(propertyName);
+            getter = maybeGetter !== null ? maybeGetter : namedGetter;
+        } else {
+            getter = namedGetter;
+        }
+    } else {
+        getter = indexedGetter;
+    }
+    return this._then(getter, undefined, undefined, propertyName, undefined);
+};
+};
+
+},{"./util":36}],6:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, PromiseArray, apiRejection, debug) {
+var util = _dereq_("./util");
+var tryCatch = util.tryCatch;
+var errorObj = util.errorObj;
+var async = Promise._async;
+
+Promise.prototype["break"] = Promise.prototype.cancel = function() {
+    if (!debug.cancellation()) return this._warn("cancellation is disabled");
+
+    var promise = this;
+    var child = promise;
+    while (promise._isCancellable()) {
+        if (!promise._cancelBy(child)) {
+            if (child._isFollowing()) {
+                child._followee().cancel();
+            } else {
+                child._cancelBranched();
+            }
+            break;
+        }
+
+        var parent = promise._cancellationParent;
+        if (parent == null || !parent._isCancellable()) {
+            if (promise._isFollowing()) {
+                promise._followee().cancel();
+            } else {
+                promise._cancelBranched();
+            }
+            break;
+        } else {
+            if (promise._isFollowing()) promise._followee().cancel();
+            promise._setWillBeCancelled();
+            child = promise;
+            promise = parent;
+        }
+    }
+};
+
+Promise.prototype._branchHasCancelled = function() {
+    this._branchesRemainingToCancel--;
+};
+
+Promise.prototype._enoughBranchesHaveCancelled = function() {
+    return this._branchesRemainingToCancel === undefined ||
+           this._branchesRemainingToCancel <= 0;
+};
+
+Promise.prototype._cancelBy = function(canceller) {
+    if (canceller === this) {
+        this._branchesRemainingToCancel = 0;
+        this._invokeOnCancel();
+        return true;
+    } else {
+        this._branchHasCancelled();
+        if (this._enoughBranchesHaveCancelled()) {
+            this._invokeOnCancel();
+            return true;
+        }
+    }
+    return false;
+};
+
+Promise.prototype._cancelBranched = function() {
+    if (this._enoughBranchesHaveCancelled()) {
+        this._cancel();
+    }
+};
+
+Promise.prototype._cancel = function() {
+    if (!this._isCancellable()) return;
+    this._setCancelled();
+    async.invoke(this._cancelPromises, this, undefined);
+};
+
+Promise.prototype._cancelPromises = function() {
+    if (this._length() > 0) this._settlePromises();
+};
+
+Promise.prototype._unsetOnCancel = function() {
+    this._onCancelField = undefined;
+};
+
+Promise.prototype._isCancellable = function() {
+    return this.isPending() && !this._isCancelled();
+};
+
+Promise.prototype.isCancellable = function() {
+    return this.isPending() && !this.isCancelled();
+};
+
+Promise.prototype._doInvokeOnCancel = function(onCancelCallback, internalOnly) {
+    if (util.isArray(onCancelCallback)) {
+        for (var i = 0; i < onCancelCallback.length; ++i) {
+            this._doInvokeOnCancel(onCancelCallback[i], internalOnly);
+        }
+    } else if (onCancelCallback !== undefined) {
+        if (typeof onCancelCallback === "function") {
+            if (!internalOnly) {
+                var e = tryCatch(onCancelCallback).call(this._boundValue());
+                if (e === errorObj) {
+                    this._attachExtraTrace(e.e);
+                    async.throwLater(e.e);
+                }
+            }
+        } else {
+            onCancelCallback._resultCancelled(this);
+        }
+    }
+};
+
+Promise.prototype._invokeOnCancel = function() {
+    var onCancelCallback = this._onCancel();
+    this._unsetOnCancel();
+    async.invoke(this._doInvokeOnCancel, this, onCancelCallback);
+};
+
+Promise.prototype._invokeInternalOnCancel = function() {
+    if (this._isCancellable()) {
+        this._doInvokeOnCancel(this._onCancel(), true);
+        this._unsetOnCancel();
+    }
+};
+
+Promise.prototype._resultCancelled = function() {
+    this.cancel();
+};
+
+};
+
+},{"./util":36}],7:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(NEXT_FILTER) {
+var util = _dereq_("./util");
+var getKeys = _dereq_("./es5").keys;
+var tryCatch = util.tryCatch;
+var errorObj = util.errorObj;
+
+function catchFilter(instances, cb, promise) {
+    return function(e) {
+        var boundTo = promise._boundValue();
+        predicateLoop: for (var i = 0; i < instances.length; ++i) {
+            var item = instances[i];
+
+            if (item === Error ||
+                (item != null && item.prototype instanceof Error)) {
+                if (e instanceof item) {
+                    return tryCatch(cb).call(boundTo, e);
+                }
+            } else if (typeof item === "function") {
+                var matchesPredicate = tryCatch(item).call(boundTo, e);
+                if (matchesPredicate === errorObj) {
+                    return matchesPredicate;
+                } else if (matchesPredicate) {
+                    return tryCatch(cb).call(boundTo, e);
+                }
+            } else if (util.isObject(e)) {
+                var keys = getKeys(item);
+                for (var j = 0; j < keys.length; ++j) {
+                    var key = keys[j];
+                    if (item[key] != e[key]) {
+                        continue predicateLoop;
+                    }
+                }
+                return tryCatch(cb).call(boundTo, e);
+            }
+        }
+        return NEXT_FILTER;
+    };
+}
+
+return catchFilter;
+};
+
+},{"./es5":13,"./util":36}],8:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise) {
+var longStackTraces = false;
+var contextStack = [];
+
+Promise.prototype._promiseCreated = function() {};
+Promise.prototype._pushContext = function() {};
+Promise.prototype._popContext = function() {return null;};
+Promise._peekContext = Promise.prototype._peekContext = function() {};
+
+function Context() {
+    this._trace = new Context.CapturedTrace(peekContext());
+}
+Context.prototype._pushContext = function () {
+    if (this._trace !== undefined) {
+        this._trace._promiseCreated = null;
+        contextStack.push(this._trace);
+    }
+};
+
+Context.prototype._popContext = function () {
+    if (this._trace !== undefined) {
+        var trace = contextStack.pop();
+        var ret = trace._promiseCreated;
+        trace._promiseCreated = null;
+        return ret;
+    }
+    return null;
+};
+
+function createContext() {
+    if (longStackTraces) return new Context();
+}
+
+function peekContext() {
+    var lastIndex = contextStack.length - 1;
+    if (lastIndex >= 0) {
+        return contextStack[lastIndex];
+    }
+    return undefined;
+}
+Context.CapturedTrace = null;
+Context.create = createContext;
+Context.deactivateLongStackTraces = function() {};
+Context.activateLongStackTraces = function() {
+    var Promise_pushContext = Promise.prototype._pushContext;
+    var Promise_popContext = Promise.prototype._popContext;
+    var Promise_PeekContext = Promise._peekContext;
+    var Promise_peekContext = Promise.prototype._peekContext;
+    var Promise_promiseCreated = Promise.prototype._promiseCreated;
+    Context.deactivateLongStackTraces = function() {
+        Promise.prototype._pushContext = Promise_pushContext;
+        Promise.prototype._popContext = Promise_popContext;
+        Promise._peekContext = Promise_PeekContext;
+        Promise.prototype._peekContext = Promise_peekContext;
+        Promise.prototype._promiseCreated = Promise_promiseCreated;
+        longStackTraces = false;
+    };
+    longStackTraces = true;
+    Promise.prototype._pushContext = Context.prototype._pushContext;
+    Promise.prototype._popContext = Context.prototype._popContext;
+    Promise._peekContext = Promise.prototype._peekContext = peekContext;
+    Promise.prototype._promiseCreated = function() {
+        var ctx = this._peekContext();
+        if (ctx && ctx._promiseCreated == null) ctx._promiseCreated = this;
+    };
+};
+return Context;
+};
+
+},{}],9:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, Context) {
+var getDomain = Promise._getDomain;
+var async = Promise._async;
+var Warning = _dereq_("./errors").Warning;
+var util = _dereq_("./util");
+var canAttachTrace = util.canAttachTrace;
+var unhandledRejectionHandled;
+var possiblyUnhandledRejection;
+var bluebirdFramePattern =
+    /[\\\/]bluebird[\\\/]js[\\\/](release|debug|instrumented)/;
+var nodeFramePattern = /\((?:timers\.js):\d+:\d+\)/;
+var parseLinePattern = /[\/<\(](.+?):(\d+):(\d+)\)?\s*$/;
+var stackFramePattern = null;
+var formatStack = null;
+var indentStackFrames = false;
+var printWarning;
+var debugging = !!(util.env("BLUEBIRD_DEBUG") != 0 &&
+                        (true ||
+                         util.env("BLUEBIRD_DEBUG") ||
+                         util.env("NODE_ENV") === "development"));
+
+var warnings = !!(util.env("BLUEBIRD_WARNINGS") != 0 &&
+    (debugging || util.env("BLUEBIRD_WARNINGS")));
+
+var longStackTraces = !!(util.env("BLUEBIRD_LONG_STACK_TRACES") != 0 &&
+    (debugging || util.env("BLUEBIRD_LONG_STACK_TRACES")));
+
+var wForgottenReturn = util.env("BLUEBIRD_W_FORGOTTEN_RETURN") != 0 &&
+    (warnings || !!util.env("BLUEBIRD_W_FORGOTTEN_RETURN"));
+
+Promise.prototype.suppressUnhandledRejections = function() {
+    var target = this._target();
+    target._bitField = ((target._bitField & (~1048576)) |
+                      524288);
+};
+
+Promise.prototype._ensurePossibleRejectionHandled = function () {
+    if ((this._bitField & 524288) !== 0) return;
+    this._setRejectionIsUnhandled();
+    var self = this;
+    setTimeout(function() {
+        self._notifyUnhandledRejection();
+    }, 1);
+};
+
+Promise.prototype._notifyUnhandledRejectionIsHandled = function () {
+    fireRejectionEvent("rejectionHandled",
+                                  unhandledRejectionHandled, undefined, this);
+};
+
+Promise.prototype._setReturnedNonUndefined = function() {
+    this._bitField = this._bitField | 268435456;
+};
+
+Promise.prototype._returnedNonUndefined = function() {
+    return (this._bitField & 268435456) !== 0;
+};
+
+Promise.prototype._notifyUnhandledRejection = function () {
+    if (this._isRejectionUnhandled()) {
+        var reason = this._settledValue();
+        this._setUnhandledRejectionIsNotified();
+        fireRejectionEvent("unhandledRejection",
+                                      possiblyUnhandledRejection, reason, this);
+    }
+};
+
+Promise.prototype._setUnhandledRejectionIsNotified = function () {
+    this._bitField = this._bitField | 262144;
+};
+
+Promise.prototype._unsetUnhandledRejectionIsNotified = function () {
+    this._bitField = this._bitField & (~262144);
+};
+
+Promise.prototype._isUnhandledRejectionNotified = function () {
+    return (this._bitField & 262144) > 0;
+};
+
+Promise.prototype._setRejectionIsUnhandled = function () {
+    this._bitField = this._bitField | 1048576;
+};
+
+Promise.prototype._unsetRejectionIsUnhandled = function () {
+    this._bitField = this._bitField & (~1048576);
+    if (this._isUnhandledRejectionNotified()) {
+        this._unsetUnhandledRejectionIsNotified();
+        this._notifyUnhandledRejectionIsHandled();
+    }
+};
+
+Promise.prototype._isRejectionUnhandled = function () {
+    return (this._bitField & 1048576) > 0;
+};
+
+Promise.prototype._warn = function(message, shouldUseOwnTrace, promise) {
+    return warn(message, shouldUseOwnTrace, promise || this);
+};
+
+Promise.onPossiblyUnhandledRejection = function (fn) {
+    var domain = getDomain();
+    possiblyUnhandledRejection =
+        typeof fn === "function" ? (domain === null ?
+                                            fn : util.domainBind(domain, fn))
+                                 : undefined;
+};
+
+Promise.onUnhandledRejectionHandled = function (fn) {
+    var domain = getDomain();
+    unhandledRejectionHandled =
+        typeof fn === "function" ? (domain === null ?
+                                            fn : util.domainBind(domain, fn))
+                                 : undefined;
+};
+
+var disableLongStackTraces = function() {};
+Promise.longStackTraces = function () {
+    if (async.haveItemsQueued() && !config.longStackTraces) {
+        throw new Error("cannot enable long stack traces after promises have been created\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    if (!config.longStackTraces && longStackTracesIsSupported()) {
+        var Promise_captureStackTrace = Promise.prototype._captureStackTrace;
+        var Promise_attachExtraTrace = Promise.prototype._attachExtraTrace;
+        config.longStackTraces = true;
+        disableLongStackTraces = function() {
+            if (async.haveItemsQueued() && !config.longStackTraces) {
+                throw new Error("cannot enable long stack traces after promises have been created\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+            }
+            Promise.prototype._captureStackTrace = Promise_captureStackTrace;
+            Promise.prototype._attachExtraTrace = Promise_attachExtraTrace;
+            Context.deactivateLongStackTraces();
+            async.enableTrampoline();
+            config.longStackTraces = false;
+        };
+        Promise.prototype._captureStackTrace = longStackTracesCaptureStackTrace;
+        Promise.prototype._attachExtraTrace = longStackTracesAttachExtraTrace;
+        Context.activateLongStackTraces();
+        async.disableTrampolineIfNecessary();
+    }
+};
+
+Promise.hasLongStackTraces = function () {
+    return config.longStackTraces && longStackTracesIsSupported();
+};
+
+var fireDomEvent = (function() {
+    try {
+        if (typeof CustomEvent === "function") {
+            var event = new CustomEvent("CustomEvent");
+            util.global.dispatchEvent(event);
+            return function(name, event) {
+                var domEvent = new CustomEvent(name.toLowerCase(), {
+                    detail: event,
+                    cancelable: true
+                });
+                return !util.global.dispatchEvent(domEvent);
+            };
+        } else if (typeof Event === "function") {
+            var event = new Event("CustomEvent");
+            util.global.dispatchEvent(event);
+            return function(name, event) {
+                var domEvent = new Event(name.toLowerCase(), {
+                    cancelable: true
+                });
+                domEvent.detail = event;
+                return !util.global.dispatchEvent(domEvent);
+            };
+        } else {
+            var event = document.createEvent("CustomEvent");
+            event.initCustomEvent("testingtheevent", false, true, {});
+            util.global.dispatchEvent(event);
+            return function(name, event) {
+                var domEvent = document.createEvent("CustomEvent");
+                domEvent.initCustomEvent(name.toLowerCase(), false, true,
+                    event);
+                return !util.global.dispatchEvent(domEvent);
+            };
+        }
+    } catch (e) {}
+    return function() {
+        return false;
+    };
+})();
+
+var fireGlobalEvent = (function() {
+    if (util.isNode) {
+        return function() {
+            return process.emit.apply(process, arguments);
+        };
+    } else {
+        if (!util.global) {
+            return function() {
+                return false;
+            };
+        }
+        return function(name) {
+            var methodName = "on" + name.toLowerCase();
+            var method = util.global[methodName];
+            if (!method) return false;
+            method.apply(util.global, [].slice.call(arguments, 1));
+            return true;
+        };
+    }
+})();
+
+function generatePromiseLifecycleEventObject(name, promise) {
+    return {promise: promise};
+}
+
+var eventToObjectGenerator = {
+    promiseCreated: generatePromiseLifecycleEventObject,
+    promiseFulfilled: generatePromiseLifecycleEventObject,
+    promiseRejected: generatePromiseLifecycleEventObject,
+    promiseResolved: generatePromiseLifecycleEventObject,
+    promiseCancelled: generatePromiseLifecycleEventObject,
+    promiseChained: function(name, promise, child) {
+        return {promise: promise, child: child};
+    },
+    warning: function(name, warning) {
+        return {warning: warning};
+    },
+    unhandledRejection: function (name, reason, promise) {
+        return {reason: reason, promise: promise};
+    },
+    rejectionHandled: generatePromiseLifecycleEventObject
+};
+
+var activeFireEvent = function (name) {
+    var globalEventFired = false;
+    try {
+        globalEventFired = fireGlobalEvent.apply(null, arguments);
+    } catch (e) {
+        async.throwLater(e);
+        globalEventFired = true;
+    }
+
+    var domEventFired = false;
+    try {
+        domEventFired = fireDomEvent(name,
+                    eventToObjectGenerator[name].apply(null, arguments));
+    } catch (e) {
+        async.throwLater(e);
+        domEventFired = true;
+    }
+
+    return domEventFired || globalEventFired;
+};
+
+Promise.config = function(opts) {
+    opts = Object(opts);
+    if ("longStackTraces" in opts) {
+        if (opts.longStackTraces) {
+            Promise.longStackTraces();
+        } else if (!opts.longStackTraces && Promise.hasLongStackTraces()) {
+            disableLongStackTraces();
+        }
+    }
+    if ("warnings" in opts) {
+        var warningsOption = opts.warnings;
+        config.warnings = !!warningsOption;
+        wForgottenReturn = config.warnings;
+
+        if (util.isObject(warningsOption)) {
+            if ("wForgottenReturn" in warningsOption) {
+                wForgottenReturn = !!warningsOption.wForgottenReturn;
+            }
+        }
+    }
+    if ("cancellation" in opts && opts.cancellation && !config.cancellation) {
+        if (async.haveItemsQueued()) {
+            throw new Error(
+                "cannot enable cancellation after promises are in use");
+        }
+        Promise.prototype._clearCancellationData =
+            cancellationClearCancellationData;
+        Promise.prototype._propagateFrom = cancellationPropagateFrom;
+        Promise.prototype._onCancel = cancellationOnCancel;
+        Promise.prototype._setOnCancel = cancellationSetOnCancel;
+        Promise.prototype._attachCancellationCallback =
+            cancellationAttachCancellationCallback;
+        Promise.prototype._execute = cancellationExecute;
+        propagateFromFunction = cancellationPropagateFrom;
+        config.cancellation = true;
+    }
+    if ("monitoring" in opts) {
+        if (opts.monitoring && !config.monitoring) {
+            config.monitoring = true;
+            Promise.prototype._fireEvent = activeFireEvent;
+        } else if (!opts.monitoring && config.monitoring) {
+            config.monitoring = false;
+            Promise.prototype._fireEvent = defaultFireEvent;
+        }
+    }
+    return Promise;
+};
+
+function defaultFireEvent() { return false; }
+
+Promise.prototype._fireEvent = defaultFireEvent;
+Promise.prototype._execute = function(executor, resolve, reject) {
+    try {
+        executor(resolve, reject);
+    } catch (e) {
+        return e;
+    }
+};
+Promise.prototype._onCancel = function () {};
+Promise.prototype._setOnCancel = function (handler) { ; };
+Promise.prototype._attachCancellationCallback = function(onCancel) {
+    ;
+};
+Promise.prototype._captureStackTrace = function () {};
+Promise.prototype._attachExtraTrace = function () {};
+Promise.prototype._clearCancellationData = function() {};
+Promise.prototype._propagateFrom = function (parent, flags) {
+    ;
+    ;
+};
+
+function cancellationExecute(executor, resolve, reject) {
+    var promise = this;
+    try {
+        executor(resolve, reject, function(onCancel) {
+            if (typeof onCancel !== "function") {
+                throw new TypeError("onCancel must be a function, got: " +
+                                    util.toString(onCancel));
+            }
+            promise._attachCancellationCallback(onCancel);
+        });
+    } catch (e) {
+        return e;
+    }
+}
+
+function cancellationAttachCancellationCallback(onCancel) {
+    if (!this._isCancellable()) return this;
+
+    var previousOnCancel = this._onCancel();
+    if (previousOnCancel !== undefined) {
+        if (util.isArray(previousOnCancel)) {
+            previousOnCancel.push(onCancel);
+        } else {
+            this._setOnCancel([previousOnCancel, onCancel]);
+        }
+    } else {
+        this._setOnCancel(onCancel);
+    }
+}
+
+function cancellationOnCancel() {
+    return this._onCancelField;
+}
+
+function cancellationSetOnCancel(onCancel) {
+    this._onCancelField = onCancel;
+}
+
+function cancellationClearCancellationData() {
+    this._cancellationParent = undefined;
+    this._onCancelField = undefined;
+}
+
+function cancellationPropagateFrom(parent, flags) {
+    if ((flags & 1) !== 0) {
+        this._cancellationParent = parent;
+        var branchesRemainingToCancel = parent._branchesRemainingToCancel;
+        if (branchesRemainingToCancel === undefined) {
+            branchesRemainingToCancel = 0;
+        }
+        parent._branchesRemainingToCancel = branchesRemainingToCancel + 1;
+    }
+    if ((flags & 2) !== 0 && parent._isBound()) {
+        this._setBoundTo(parent._boundTo);
+    }
+}
+
+function bindingPropagateFrom(parent, flags) {
+    if ((flags & 2) !== 0 && parent._isBound()) {
+        this._setBoundTo(parent._boundTo);
+    }
+}
+var propagateFromFunction = bindingPropagateFrom;
+
+function boundValueFunction() {
+    var ret = this._boundTo;
+    if (ret !== undefined) {
+        if (ret instanceof Promise) {
+            if (ret.isFulfilled()) {
+                return ret.value();
+            } else {
+                return undefined;
+            }
+        }
+    }
+    return ret;
+}
+
+function longStackTracesCaptureStackTrace() {
+    this._trace = new CapturedTrace(this._peekContext());
+}
+
+function longStackTracesAttachExtraTrace(error, ignoreSelf) {
+    if (canAttachTrace(error)) {
+        var trace = this._trace;
+        if (trace !== undefined) {
+            if (ignoreSelf) trace = trace._parent;
+        }
+        if (trace !== undefined) {
+            trace.attachExtraTrace(error);
+        } else if (!error.__stackCleaned__) {
+            var parsed = parseStackAndMessage(error);
+            util.notEnumerableProp(error, "stack",
+                parsed.message + "\n" + parsed.stack.join("\n"));
+            util.notEnumerableProp(error, "__stackCleaned__", true);
+        }
+    }
+}
+
+function checkForgottenReturns(returnValue, promiseCreated, name, promise,
+                               parent) {
+    if (returnValue === undefined && promiseCreated !== null &&
+        wForgottenReturn) {
+        if (parent !== undefined && parent._returnedNonUndefined()) return;
+        if ((promise._bitField & 65535) === 0) return;
+
+        if (name) name = name + " ";
+        var handlerLine = "";
+        var creatorLine = "";
+        if (promiseCreated._trace) {
+            var traceLines = promiseCreated._trace.stack.split("\n");
+            var stack = cleanStack(traceLines);
+            for (var i = stack.length - 1; i >= 0; --i) {
+                var line = stack[i];
+                if (!nodeFramePattern.test(line)) {
+                    var lineMatches = line.match(parseLinePattern);
+                    if (lineMatches) {
+                        handlerLine  = "at " + lineMatches[1] +
+                            ":" + lineMatches[2] + ":" + lineMatches[3] + " ";
+                    }
+                    break;
+                }
+            }
+
+            if (stack.length > 0) {
+                var firstUserLine = stack[0];
+                for (var i = 0; i < traceLines.length; ++i) {
+
+                    if (traceLines[i] === firstUserLine) {
+                        if (i > 0) {
+                            creatorLine = "\n" + traceLines[i - 1];
+                        }
+                        break;
+                    }
+                }
+
+            }
+        }
+        var msg = "a promise was created in a " + name +
+            "handler " + handlerLine + "but was not returned from it, " +
+            "see http://goo.gl/rRqMUw" +
+            creatorLine;
+        promise._warn(msg, true, promiseCreated);
+    }
+}
+
+function deprecated(name, replacement) {
+    var message = name +
+        " is deprecated and will be removed in a future version.";
+    if (replacement) message += " Use " + replacement + " instead.";
+    return warn(message);
+}
+
+function warn(message, shouldUseOwnTrace, promise) {
+    if (!config.warnings) return;
+    var warning = new Warning(message);
+    var ctx;
+    if (shouldUseOwnTrace) {
+        promise._attachExtraTrace(warning);
+    } else if (config.longStackTraces && (ctx = Promise._peekContext())) {
+        ctx.attachExtraTrace(warning);
+    } else {
+        var parsed = parseStackAndMessage(warning);
+        warning.stack = parsed.message + "\n" + parsed.stack.join("\n");
+    }
+
+    if (!activeFireEvent("warning", warning)) {
+        formatAndLogError(warning, "", true);
+    }
+}
+
+function reconstructStack(message, stacks) {
+    for (var i = 0; i < stacks.length - 1; ++i) {
+        stacks[i].push("From previous event:");
+        stacks[i] = stacks[i].join("\n");
+    }
+    if (i < stacks.length) {
+        stacks[i] = stacks[i].join("\n");
+    }
+    return message + "\n" + stacks.join("\n");
+}
+
+function removeDuplicateOrEmptyJumps(stacks) {
+    for (var i = 0; i < stacks.length; ++i) {
+        if (stacks[i].length === 0 ||
+            ((i + 1 < stacks.length) && stacks[i][0] === stacks[i+1][0])) {
+            stacks.splice(i, 1);
+            i--;
+        }
+    }
+}
+
+function removeCommonRoots(stacks) {
+    var current = stacks[0];
+    for (var i = 1; i < stacks.length; ++i) {
+        var prev = stacks[i];
+        var currentLastIndex = current.length - 1;
+        var currentLastLine = current[currentLastIndex];
+        var commonRootMeetPoint = -1;
+
+        for (var j = prev.length - 1; j >= 0; --j) {
+            if (prev[j] === currentLastLine) {
+                commonRootMeetPoint = j;
+                break;
+            }
+        }
+
+        for (var j = commonRootMeetPoint; j >= 0; --j) {
+            var line = prev[j];
+            if (current[currentLastIndex] === line) {
+                current.pop();
+                currentLastIndex--;
+            } else {
+                break;
+            }
+        }
+        current = prev;
+    }
+}
+
+function cleanStack(stack) {
+    var ret = [];
+    for (var i = 0; i < stack.length; ++i) {
+        var line = stack[i];
+        var isTraceLine = "    (No stack trace)" === line ||
+            stackFramePattern.test(line);
+        var isInternalFrame = isTraceLine && shouldIgnore(line);
+        if (isTraceLine && !isInternalFrame) {
+            if (indentStackFrames && line.charAt(0) !== " ") {
+                line = "    " + line;
+            }
+            ret.push(line);
+        }
+    }
+    return ret;
+}
+
+function stackFramesAsArray(error) {
+    var stack = error.stack.replace(/\s+$/g, "").split("\n");
+    for (var i = 0; i < stack.length; ++i) {
+        var line = stack[i];
+        if ("    (No stack trace)" === line || stackFramePattern.test(line)) {
+            break;
+        }
+    }
+    if (i > 0 && error.name != "SyntaxError") {
+        stack = stack.slice(i);
+    }
+    return stack;
+}
+
+function parseStackAndMessage(error) {
+    var stack = error.stack;
+    var message = error.toString();
+    stack = typeof stack === "string" && stack.length > 0
+                ? stackFramesAsArray(error) : ["    (No stack trace)"];
+    return {
+        message: message,
+        stack: error.name == "SyntaxError" ? stack : cleanStack(stack)
+    };
+}
+
+function formatAndLogError(error, title, isSoft) {
+    if (typeof console !== "undefined") {
+        var message;
+        if (util.isObject(error)) {
+            var stack = error.stack;
+            message = title + formatStack(stack, error);
+        } else {
+            message = title + String(error);
+        }
+        if (typeof printWarning === "function") {
+            printWarning(message, isSoft);
+        } else if (typeof console.log === "function" ||
+            typeof console.log === "object") {
+            console.log(message);
+        }
+    }
+}
+
+function fireRejectionEvent(name, localHandler, reason, promise) {
+    var localEventFired = false;
+    try {
+        if (typeof localHandler === "function") {
+            localEventFired = true;
+            if (name === "rejectionHandled") {
+                localHandler(promise);
+            } else {
+                localHandler(reason, promise);
+            }
+        }
+    } catch (e) {
+        async.throwLater(e);
+    }
+
+    if (name === "unhandledRejection") {
+        if (!activeFireEvent(name, reason, promise) && !localEventFired) {
+            formatAndLogError(reason, "Unhandled rejection ");
+        }
+    } else {
+        activeFireEvent(name, promise);
+    }
+}
+
+function formatNonError(obj) {
+    var str;
+    if (typeof obj === "function") {
+        str = "[function " +
+            (obj.name || "anonymous") +
+            "]";
+    } else {
+        str = obj && typeof obj.toString === "function"
+            ? obj.toString() : util.toString(obj);
+        var ruselessToString = /\[object [a-zA-Z0-9$_]+\]/;
+        if (ruselessToString.test(str)) {
+            try {
+                var newStr = JSON.stringify(obj);
+                str = newStr;
+            }
+            catch(e) {
+
+            }
+        }
+        if (str.length === 0) {
+            str = "(empty array)";
+        }
+    }
+    return ("(<" + snip(str) + ">, no stack trace)");
+}
+
+function snip(str) {
+    var maxChars = 41;
+    if (str.length < maxChars) {
+        return str;
+    }
+    return str.substr(0, maxChars - 3) + "...";
+}
+
+function longStackTracesIsSupported() {
+    return typeof captureStackTrace === "function";
+}
+
+var shouldIgnore = function() { return false; };
+var parseLineInfoRegex = /[\/<\(]([^:\/]+):(\d+):(?:\d+)\)?\s*$/;
+function parseLineInfo(line) {
+    var matches = line.match(parseLineInfoRegex);
+    if (matches) {
+        return {
+            fileName: matches[1],
+            line: parseInt(matches[2], 10)
+        };
+    }
+}
+
+function setBounds(firstLineError, lastLineError) {
+    if (!longStackTracesIsSupported()) return;
+    var firstStackLines = firstLineError.stack.split("\n");
+    var lastStackLines = lastLineError.stack.split("\n");
+    var firstIndex = -1;
+    var lastIndex = -1;
+    var firstFileName;
+    var lastFileName;
+    for (var i = 0; i < firstStackLines.length; ++i) {
+        var result = parseLineInfo(firstStackLines[i]);
+        if (result) {
+            firstFileName = result.fileName;
+            firstIndex = result.line;
+            break;
+        }
+    }
+    for (var i = 0; i < lastStackLines.length; ++i) {
+        var result = parseLineInfo(lastStackLines[i]);
+        if (result) {
+            lastFileName = result.fileName;
+            lastIndex = result.line;
+            break;
+        }
+    }
+    if (firstIndex < 0 || lastIndex < 0 || !firstFileName || !lastFileName ||
+        firstFileName !== lastFileName || firstIndex >= lastIndex) {
+        return;
+    }
+
+    shouldIgnore = function(line) {
+        if (bluebirdFramePattern.test(line)) return true;
+        var info = parseLineInfo(line);
+        if (info) {
+            if (info.fileName === firstFileName &&
+                (firstIndex <= info.line && info.line <= lastIndex)) {
+                return true;
+            }
+        }
+        return false;
+    };
+}
+
+function CapturedTrace(parent) {
+    this._parent = parent;
+    this._promisesCreated = 0;
+    var length = this._length = 1 + (parent === undefined ? 0 : parent._length);
+    captureStackTrace(this, CapturedTrace);
+    if (length > 32) this.uncycle();
+}
+util.inherits(CapturedTrace, Error);
+Context.CapturedTrace = CapturedTrace;
+
+CapturedTrace.prototype.uncycle = function() {
+    var length = this._length;
+    if (length < 2) return;
+    var nodes = [];
+    var stackToIndex = {};
+
+    for (var i = 0, node = this; node !== undefined; ++i) {
+        nodes.push(node);
+        node = node._parent;
+    }
+    length = this._length = i;
+    for (var i = length - 1; i >= 0; --i) {
+        var stack = nodes[i].stack;
+        if (stackToIndex[stack] === undefined) {
+            stackToIndex[stack] = i;
+        }
+    }
+    for (var i = 0; i < length; ++i) {
+        var currentStack = nodes[i].stack;
+        var index = stackToIndex[currentStack];
+        if (index !== undefined && index !== i) {
+            if (index > 0) {
+                nodes[index - 1]._parent = undefined;
+                nodes[index - 1]._length = 1;
+            }
+            nodes[i]._parent = undefined;
+            nodes[i]._length = 1;
+            var cycleEdgeNode = i > 0 ? nodes[i - 1] : this;
+
+            if (index < length - 1) {
+                cycleEdgeNode._parent = nodes[index + 1];
+                cycleEdgeNode._parent.uncycle();
+                cycleEdgeNode._length =
+                    cycleEdgeNode._parent._length + 1;
+            } else {
+                cycleEdgeNode._parent = undefined;
+                cycleEdgeNode._length = 1;
+            }
+            var currentChildLength = cycleEdgeNode._length + 1;
+            for (var j = i - 2; j >= 0; --j) {
+                nodes[j]._length = currentChildLength;
+                currentChildLength++;
+            }
+            return;
+        }
+    }
+};
+
+CapturedTrace.prototype.attachExtraTrace = function(error) {
+    if (error.__stackCleaned__) return;
+    this.uncycle();
+    var parsed = parseStackAndMessage(error);
+    var message = parsed.message;
+    var stacks = [parsed.stack];
+
+    var trace = this;
+    while (trace !== undefined) {
+        stacks.push(cleanStack(trace.stack.split("\n")));
+        trace = trace._parent;
+    }
+    removeCommonRoots(stacks);
+    removeDuplicateOrEmptyJumps(stacks);
+    util.notEnumerableProp(error, "stack", reconstructStack(message, stacks));
+    util.notEnumerableProp(error, "__stackCleaned__", true);
+};
+
+var captureStackTrace = (function stackDetection() {
+    var v8stackFramePattern = /^\s*at\s*/;
+    var v8stackFormatter = function(stack, error) {
+        if (typeof stack === "string") return stack;
+
+        if (error.name !== undefined &&
+            error.message !== undefined) {
+            return error.toString();
+        }
+        return formatNonError(error);
+    };
+
+    if (typeof Error.stackTraceLimit === "number" &&
+        typeof Error.captureStackTrace === "function") {
+        Error.stackTraceLimit += 6;
+        stackFramePattern = v8stackFramePattern;
+        formatStack = v8stackFormatter;
+        var captureStackTrace = Error.captureStackTrace;
+
+        shouldIgnore = function(line) {
+            return bluebirdFramePattern.test(line);
+        };
+        return function(receiver, ignoreUntil) {
+            Error.stackTraceLimit += 6;
+            captureStackTrace(receiver, ignoreUntil);
+            Error.stackTraceLimit -= 6;
+        };
+    }
+    var err = new Error();
+
+    if (typeof err.stack === "string" &&
+        err.stack.split("\n")[0].indexOf("stackDetection@") >= 0) {
+        stackFramePattern = /@/;
+        formatStack = v8stackFormatter;
+        indentStackFrames = true;
+        return function captureStackTrace(o) {
+            o.stack = new Error().stack;
+        };
+    }
+
+    var hasStackAfterThrow;
+    try { throw new Error(); }
+    catch(e) {
+        hasStackAfterThrow = ("stack" in e);
+    }
+    if (!("stack" in err) && hasStackAfterThrow &&
+        typeof Error.stackTraceLimit === "number") {
+        stackFramePattern = v8stackFramePattern;
+        formatStack = v8stackFormatter;
+        return function captureStackTrace(o) {
+            Error.stackTraceLimit += 6;
+            try { throw new Error(); }
+            catch(e) { o.stack = e.stack; }
+            Error.stackTraceLimit -= 6;
+        };
+    }
+
+    formatStack = function(stack, error) {
+        if (typeof stack === "string") return stack;
+
+        if ((typeof error === "object" ||
+            typeof error === "function") &&
+            error.name !== undefined &&
+            error.message !== undefined) {
+            return error.toString();
+        }
+        return formatNonError(error);
+    };
+
+    return null;
+
+})([]);
+
+if (typeof console !== "undefined" && typeof console.warn !== "undefined") {
+    printWarning = function (message) {
+        console.warn(message);
+    };
+    if (util.isNode && process.stderr.isTTY) {
+        printWarning = function(message, isSoft) {
+            var color = isSoft ? "\u001b[33m" : "\u001b[31m";
+            console.warn(color + message + "\u001b[0m\n");
+        };
+    } else if (!util.isNode && typeof (new Error().stack) === "string") {
+        printWarning = function(message, isSoft) {
+            console.warn("%c" + message,
+                        isSoft ? "color: darkorange" : "color: red");
+        };
+    }
+}
+
+var config = {
+    warnings: warnings,
+    longStackTraces: false,
+    cancellation: false,
+    monitoring: false
+};
+
+if (longStackTraces) Promise.longStackTraces();
+
+return {
+    longStackTraces: function() {
+        return config.longStackTraces;
+    },
+    warnings: function() {
+        return config.warnings;
+    },
+    cancellation: function() {
+        return config.cancellation;
+    },
+    monitoring: function() {
+        return config.monitoring;
+    },
+    propagateFromFunction: function() {
+        return propagateFromFunction;
+    },
+    boundValueFunction: function() {
+        return boundValueFunction;
+    },
+    checkForgottenReturns: checkForgottenReturns,
+    setBounds: setBounds,
+    warn: warn,
+    deprecated: deprecated,
+    CapturedTrace: CapturedTrace,
+    fireDomEvent: fireDomEvent,
+    fireGlobalEvent: fireGlobalEvent
+};
+};
+
+},{"./errors":12,"./util":36}],10:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise) {
+function returner() {
+    return this.value;
+}
+function thrower() {
+    throw this.reason;
+}
+
+Promise.prototype["return"] =
+Promise.prototype.thenReturn = function (value) {
+    if (value instanceof Promise) value.suppressUnhandledRejections();
+    return this._then(
+        returner, undefined, undefined, {value: value}, undefined);
+};
+
+Promise.prototype["throw"] =
+Promise.prototype.thenThrow = function (reason) {
+    return this._then(
+        thrower, undefined, undefined, {reason: reason}, undefined);
+};
+
+Promise.prototype.catchThrow = function (reason) {
+    if (arguments.length <= 1) {
+        return this._then(
+            undefined, thrower, undefined, {reason: reason}, undefined);
+    } else {
+        var _reason = arguments[1];
+        var handler = function() {throw _reason;};
+        return this.caught(reason, handler);
+    }
+};
+
+Promise.prototype.catchReturn = function (value) {
+    if (arguments.length <= 1) {
+        if (value instanceof Promise) value.suppressUnhandledRejections();
+        return this._then(
+            undefined, returner, undefined, {value: value}, undefined);
+    } else {
+        var _value = arguments[1];
+        if (_value instanceof Promise) _value.suppressUnhandledRejections();
+        var handler = function() {return _value;};
+        return this.caught(value, handler);
+    }
+};
+};
+
+},{}],11:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, INTERNAL) {
+var PromiseReduce = Promise.reduce;
+var PromiseAll = Promise.all;
+
+function promiseAllThis() {
+    return PromiseAll(this);
+}
+
+function PromiseMapSeries(promises, fn) {
+    return PromiseReduce(promises, fn, INTERNAL, INTERNAL);
+}
+
+Promise.prototype.each = function (fn) {
+    return PromiseReduce(this, fn, INTERNAL, 0)
+              ._then(promiseAllThis, undefined, undefined, this, undefined);
+};
+
+Promise.prototype.mapSeries = function (fn) {
+    return PromiseReduce(this, fn, INTERNAL, INTERNAL);
+};
+
+Promise.each = function (promises, fn) {
+    return PromiseReduce(promises, fn, INTERNAL, 0)
+              ._then(promiseAllThis, undefined, undefined, promises, undefined);
+};
+
+Promise.mapSeries = PromiseMapSeries;
+};
+
+
+},{}],12:[function(_dereq_,module,exports){
+"use strict";
+var es5 = _dereq_("./es5");
+var Objectfreeze = es5.freeze;
+var util = _dereq_("./util");
+var inherits = util.inherits;
+var notEnumerableProp = util.notEnumerableProp;
+
+function subError(nameProperty, defaultMessage) {
+    function SubError(message) {
+        if (!(this instanceof SubError)) return new SubError(message);
+        notEnumerableProp(this, "message",
+            typeof message === "string" ? message : defaultMessage);
+        notEnumerableProp(this, "name", nameProperty);
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, this.constructor);
+        } else {
+            Error.call(this);
+        }
+    }
+    inherits(SubError, Error);
+    return SubError;
+}
+
+var _TypeError, _RangeError;
+var Warning = subError("Warning", "warning");
+var CancellationError = subError("CancellationError", "cancellation error");
+var TimeoutError = subError("TimeoutError", "timeout error");
+var AggregateError = subError("AggregateError", "aggregate error");
+try {
+    _TypeError = TypeError;
+    _RangeError = RangeError;
+} catch(e) {
+    _TypeError = subError("TypeError", "type error");
+    _RangeError = subError("RangeError", "range error");
+}
+
+var methods = ("join pop push shift unshift slice filter forEach some " +
+    "every map indexOf lastIndexOf reduce reduceRight sort reverse").split(" ");
+
+for (var i = 0; i < methods.length; ++i) {
+    if (typeof Array.prototype[methods[i]] === "function") {
+        AggregateError.prototype[methods[i]] = Array.prototype[methods[i]];
+    }
+}
+
+es5.defineProperty(AggregateError.prototype, "length", {
+    value: 0,
+    configurable: false,
+    writable: true,
+    enumerable: true
+});
+AggregateError.prototype["isOperational"] = true;
+var level = 0;
+AggregateError.prototype.toString = function() {
+    var indent = Array(level * 4 + 1).join(" ");
+    var ret = "\n" + indent + "AggregateError of:" + "\n";
+    level++;
+    indent = Array(level * 4 + 1).join(" ");
+    for (var i = 0; i < this.length; ++i) {
+        var str = this[i] === this ? "[Circular AggregateError]" : this[i] + "";
+        var lines = str.split("\n");
+        for (var j = 0; j < lines.length; ++j) {
+            lines[j] = indent + lines[j];
+        }
+        str = lines.join("\n");
+        ret += str + "\n";
+    }
+    level--;
+    return ret;
+};
+
+function OperationalError(message) {
+    if (!(this instanceof OperationalError))
+        return new OperationalError(message);
+    notEnumerableProp(this, "name", "OperationalError");
+    notEnumerableProp(this, "message", message);
+    this.cause = message;
+    this["isOperational"] = true;
+
+    if (message instanceof Error) {
+        notEnumerableProp(this, "message", message.message);
+        notEnumerableProp(this, "stack", message.stack);
+    } else if (Error.captureStackTrace) {
+        Error.captureStackTrace(this, this.constructor);
+    }
+
+}
+inherits(OperationalError, Error);
+
+var errorTypes = Error["__BluebirdErrorTypes__"];
+if (!errorTypes) {
+    errorTypes = Objectfreeze({
+        CancellationError: CancellationError,
+        TimeoutError: TimeoutError,
+        OperationalError: OperationalError,
+        RejectionError: OperationalError,
+        AggregateError: AggregateError
+    });
+    es5.defineProperty(Error, "__BluebirdErrorTypes__", {
+        value: errorTypes,
+        writable: false,
+        enumerable: false,
+        configurable: false
+    });
+}
+
+module.exports = {
+    Error: Error,
+    TypeError: _TypeError,
+    RangeError: _RangeError,
+    CancellationError: errorTypes.CancellationError,
+    OperationalError: errorTypes.OperationalError,
+    TimeoutError: errorTypes.TimeoutError,
+    AggregateError: errorTypes.AggregateError,
+    Warning: Warning
+};
+
+},{"./es5":13,"./util":36}],13:[function(_dereq_,module,exports){
+var isES5 = (function(){
+    "use strict";
+    return this === undefined;
+})();
+
+if (isES5) {
+    module.exports = {
+        freeze: Object.freeze,
+        defineProperty: Object.defineProperty,
+        getDescriptor: Object.getOwnPropertyDescriptor,
+        keys: Object.keys,
+        names: Object.getOwnPropertyNames,
+        getPrototypeOf: Object.getPrototypeOf,
+        isArray: Array.isArray,
+        isES5: isES5,
+        propertyIsWritable: function(obj, prop) {
+            var descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+            return !!(!descriptor || descriptor.writable || descriptor.set);
+        }
+    };
+} else {
+    var has = {}.hasOwnProperty;
+    var str = {}.toString;
+    var proto = {}.constructor.prototype;
+
+    var ObjectKeys = function (o) {
+        var ret = [];
+        for (var key in o) {
+            if (has.call(o, key)) {
+                ret.push(key);
+            }
+        }
+        return ret;
+    };
+
+    var ObjectGetDescriptor = function(o, key) {
+        return {value: o[key]};
+    };
+
+    var ObjectDefineProperty = function (o, key, desc) {
+        o[key] = desc.value;
+        return o;
+    };
+
+    var ObjectFreeze = function (obj) {
+        return obj;
+    };
+
+    var ObjectGetPrototypeOf = function (obj) {
+        try {
+            return Object(obj).constructor.prototype;
+        }
+        catch (e) {
+            return proto;
+        }
+    };
+
+    var ArrayIsArray = function (obj) {
+        try {
+            return str.call(obj) === "[object Array]";
+        }
+        catch(e) {
+            return false;
+        }
+    };
+
+    module.exports = {
+        isArray: ArrayIsArray,
+        keys: ObjectKeys,
+        names: ObjectKeys,
+        defineProperty: ObjectDefineProperty,
+        getDescriptor: ObjectGetDescriptor,
+        freeze: ObjectFreeze,
+        getPrototypeOf: ObjectGetPrototypeOf,
+        isES5: isES5,
+        propertyIsWritable: function() {
+            return true;
+        }
+    };
+}
+
+},{}],14:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, INTERNAL) {
+var PromiseMap = Promise.map;
+
+Promise.prototype.filter = function (fn, options) {
+    return PromiseMap(this, fn, options, INTERNAL);
+};
+
+Promise.filter = function (promises, fn, options) {
+    return PromiseMap(promises, fn, options, INTERNAL);
+};
+};
+
+},{}],15:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, tryConvertToPromise, NEXT_FILTER) {
+var util = _dereq_("./util");
+var CancellationError = Promise.CancellationError;
+var errorObj = util.errorObj;
+var catchFilter = _dereq_("./catch_filter")(NEXT_FILTER);
+
+function PassThroughHandlerContext(promise, type, handler) {
+    this.promise = promise;
+    this.type = type;
+    this.handler = handler;
+    this.called = false;
+    this.cancelPromise = null;
+}
+
+PassThroughHandlerContext.prototype.isFinallyHandler = function() {
+    return this.type === 0;
+};
+
+function FinallyHandlerCancelReaction(finallyHandler) {
+    this.finallyHandler = finallyHandler;
+}
+
+FinallyHandlerCancelReaction.prototype._resultCancelled = function() {
+    checkCancel(this.finallyHandler);
+};
+
+function checkCancel(ctx, reason) {
+    if (ctx.cancelPromise != null) {
+        if (arguments.length > 1) {
+            ctx.cancelPromise._reject(reason);
+        } else {
+            ctx.cancelPromise._cancel();
+        }
+        ctx.cancelPromise = null;
+        return true;
+    }
+    return false;
+}
+
+function succeed() {
+    return finallyHandler.call(this, this.promise._target()._settledValue());
+}
+function fail(reason) {
+    if (checkCancel(this, reason)) return;
+    errorObj.e = reason;
+    return errorObj;
+}
+function finallyHandler(reasonOrValue) {
+    var promise = this.promise;
+    var handler = this.handler;
+
+    if (!this.called) {
+        this.called = true;
+        var ret = this.isFinallyHandler()
+            ? handler.call(promise._boundValue())
+            : handler.call(promise._boundValue(), reasonOrValue);
+        if (ret === NEXT_FILTER) {
+            return ret;
+        } else if (ret !== undefined) {
+            promise._setReturnedNonUndefined();
+            var maybePromise = tryConvertToPromise(ret, promise);
+            if (maybePromise instanceof Promise) {
+                if (this.cancelPromise != null) {
+                    if (maybePromise._isCancelled()) {
+                        var reason =
+                            new CancellationError("late cancellation observer");
+                        promise._attachExtraTrace(reason);
+                        errorObj.e = reason;
+                        return errorObj;
+                    } else if (maybePromise.isPending()) {
+                        maybePromise._attachCancellationCallback(
+                            new FinallyHandlerCancelReaction(this));
+                    }
+                }
+                return maybePromise._then(
+                    succeed, fail, undefined, this, undefined);
+            }
+        }
+    }
+
+    if (promise.isRejected()) {
+        checkCancel(this);
+        errorObj.e = reasonOrValue;
+        return errorObj;
+    } else {
+        checkCancel(this);
+        return reasonOrValue;
+    }
+}
+
+Promise.prototype._passThrough = function(handler, type, success, fail) {
+    if (typeof handler !== "function") return this.then();
+    return this._then(success,
+                      fail,
+                      undefined,
+                      new PassThroughHandlerContext(this, type, handler),
+                      undefined);
+};
+
+Promise.prototype.lastly =
+Promise.prototype["finally"] = function (handler) {
+    return this._passThrough(handler,
+                             0,
+                             finallyHandler,
+                             finallyHandler);
+};
+
+
+Promise.prototype.tap = function (handler) {
+    return this._passThrough(handler, 1, finallyHandler);
+};
+
+Promise.prototype.tapCatch = function (handlerOrPredicate) {
+    var len = arguments.length;
+    if(len === 1) {
+        return this._passThrough(handlerOrPredicate,
+                                 1,
+                                 undefined,
+                                 finallyHandler);
+    } else {
+         var catchInstances = new Array(len - 1),
+            j = 0, i;
+        for (i = 0; i < len - 1; ++i) {
+            var item = arguments[i];
+            if (util.isObject(item)) {
+                catchInstances[j++] = item;
+            } else {
+                return Promise.reject(new TypeError(
+                    "tapCatch statement predicate: "
+                    + "expecting an object but got " + util.classString(item)
+                ));
+            }
+        }
+        catchInstances.length = j;
+        var handler = arguments[i];
+        return this._passThrough(catchFilter(catchInstances, handler, this),
+                                 1,
+                                 undefined,
+                                 finallyHandler);
+    }
+
+};
+
+return PassThroughHandlerContext;
+};
+
+},{"./catch_filter":7,"./util":36}],16:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise,
+                          apiRejection,
+                          INTERNAL,
+                          tryConvertToPromise,
+                          Proxyable,
+                          debug) {
+var errors = _dereq_("./errors");
+var TypeError = errors.TypeError;
+var util = _dereq_("./util");
+var errorObj = util.errorObj;
+var tryCatch = util.tryCatch;
+var yieldHandlers = [];
+
+function promiseFromYieldHandler(value, yieldHandlers, traceParent) {
+    for (var i = 0; i < yieldHandlers.length; ++i) {
+        traceParent._pushContext();
+        var result = tryCatch(yieldHandlers[i])(value);
+        traceParent._popContext();
+        if (result === errorObj) {
+            traceParent._pushContext();
+            var ret = Promise.reject(errorObj.e);
+            traceParent._popContext();
+            return ret;
+        }
+        var maybePromise = tryConvertToPromise(result, traceParent);
+        if (maybePromise instanceof Promise) return maybePromise;
+    }
+    return null;
+}
+
+function PromiseSpawn(generatorFunction, receiver, yieldHandler, stack) {
+    if (debug.cancellation()) {
+        var internal = new Promise(INTERNAL);
+        var _finallyPromise = this._finallyPromise = new Promise(INTERNAL);
+        this._promise = internal.lastly(function() {
+            return _finallyPromise;
+        });
+        internal._captureStackTrace();
+        internal._setOnCancel(this);
+    } else {
+        var promise = this._promise = new Promise(INTERNAL);
+        promise._captureStackTrace();
+    }
+    this._stack = stack;
+    this._generatorFunction = generatorFunction;
+    this._receiver = receiver;
+    this._generator = undefined;
+    this._yieldHandlers = typeof yieldHandler === "function"
+        ? [yieldHandler].concat(yieldHandlers)
+        : yieldHandlers;
+    this._yieldedPromise = null;
+    this._cancellationPhase = false;
+}
+util.inherits(PromiseSpawn, Proxyable);
+
+PromiseSpawn.prototype._isResolved = function() {
+    return this._promise === null;
+};
+
+PromiseSpawn.prototype._cleanup = function() {
+    this._promise = this._generator = null;
+    if (debug.cancellation() && this._finallyPromise !== null) {
+        this._finallyPromise._fulfill();
+        this._finallyPromise = null;
+    }
+};
+
+PromiseSpawn.prototype._promiseCancelled = function() {
+    if (this._isResolved()) return;
+    var implementsReturn = typeof this._generator["return"] !== "undefined";
+
+    var result;
+    if (!implementsReturn) {
+        var reason = new Promise.CancellationError(
+            "generator .return() sentinel");
+        Promise.coroutine.returnSentinel = reason;
+        this._promise._attachExtraTrace(reason);
+        this._promise._pushContext();
+        result = tryCatch(this._generator["throw"]).call(this._generator,
+                                                         reason);
+        this._promise._popContext();
+    } else {
+        this._promise._pushContext();
+        result = tryCatch(this._generator["return"]).call(this._generator,
+                                                          undefined);
+        this._promise._popContext();
+    }
+    this._cancellationPhase = true;
+    this._yieldedPromise = null;
+    this._continue(result);
+};
+
+PromiseSpawn.prototype._promiseFulfilled = function(value) {
+    this._yieldedPromise = null;
+    this._promise._pushContext();
+    var result = tryCatch(this._generator.next).call(this._generator, value);
+    this._promise._popContext();
+    this._continue(result);
+};
+
+PromiseSpawn.prototype._promiseRejected = function(reason) {
+    this._yieldedPromise = null;
+    this._promise._attachExtraTrace(reason);
+    this._promise._pushContext();
+    var result = tryCatch(this._generator["throw"])
+        .call(this._generator, reason);
+    this._promise._popContext();
+    this._continue(result);
+};
+
+PromiseSpawn.prototype._resultCancelled = function() {
+    if (this._yieldedPromise instanceof Promise) {
+        var promise = this._yieldedPromise;
+        this._yieldedPromise = null;
+        promise.cancel();
+    }
+};
+
+PromiseSpawn.prototype.promise = function () {
+    return this._promise;
+};
+
+PromiseSpawn.prototype._run = function () {
+    this._generator = this._generatorFunction.call(this._receiver);
+    this._receiver =
+        this._generatorFunction = undefined;
+    this._promiseFulfilled(undefined);
+};
+
+PromiseSpawn.prototype._continue = function (result) {
+    var promise = this._promise;
+    if (result === errorObj) {
+        this._cleanup();
+        if (this._cancellationPhase) {
+            return promise.cancel();
+        } else {
+            return promise._rejectCallback(result.e, false);
+        }
+    }
+
+    var value = result.value;
+    if (result.done === true) {
+        this._cleanup();
+        if (this._cancellationPhase) {
+            return promise.cancel();
+        } else {
+            return promise._resolveCallback(value);
+        }
+    } else {
+        var maybePromise = tryConvertToPromise(value, this._promise);
+        if (!(maybePromise instanceof Promise)) {
+            maybePromise =
+                promiseFromYieldHandler(maybePromise,
+                                        this._yieldHandlers,
+                                        this._promise);
+            if (maybePromise === null) {
+                this._promiseRejected(
+                    new TypeError(
+                        "A value %s was yielded that could not be treated as a promise\u000a\u000a    See http://goo.gl/MqrFmX\u000a\u000a".replace("%s", String(value)) +
+                        "From coroutine:\u000a" +
+                        this._stack.split("\n").slice(1, -7).join("\n")
+                    )
+                );
+                return;
+            }
+        }
+        maybePromise = maybePromise._target();
+        var bitField = maybePromise._bitField;
+        ;
+        if (((bitField & 50397184) === 0)) {
+            this._yieldedPromise = maybePromise;
+            maybePromise._proxy(this, null);
+        } else if (((bitField & 33554432) !== 0)) {
+            Promise._async.invoke(
+                this._promiseFulfilled, this, maybePromise._value()
+            );
+        } else if (((bitField & 16777216) !== 0)) {
+            Promise._async.invoke(
+                this._promiseRejected, this, maybePromise._reason()
+            );
+        } else {
+            this._promiseCancelled();
+        }
+    }
+};
+
+Promise.coroutine = function (generatorFunction, options) {
+    if (typeof generatorFunction !== "function") {
+        throw new TypeError("generatorFunction must be a function\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    var yieldHandler = Object(options).yieldHandler;
+    var PromiseSpawn$ = PromiseSpawn;
+    var stack = new Error().stack;
+    return function () {
+        var generator = generatorFunction.apply(this, arguments);
+        var spawn = new PromiseSpawn$(undefined, undefined, yieldHandler,
+                                      stack);
+        var ret = spawn.promise();
+        spawn._generator = generator;
+        spawn._promiseFulfilled(undefined);
+        return ret;
+    };
+};
+
+Promise.coroutine.addYieldHandler = function(fn) {
+    if (typeof fn !== "function") {
+        throw new TypeError("expecting a function but got " + util.classString(fn));
+    }
+    yieldHandlers.push(fn);
+};
+
+Promise.spawn = function (generatorFunction) {
+    debug.deprecated("Promise.spawn()", "Promise.coroutine()");
+    if (typeof generatorFunction !== "function") {
+        return apiRejection("generatorFunction must be a function\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    var spawn = new PromiseSpawn(generatorFunction, this);
+    var ret = spawn.promise();
+    spawn._run(Promise.spawn);
+    return ret;
+};
+};
+
+},{"./errors":12,"./util":36}],17:[function(_dereq_,module,exports){
+"use strict";
+module.exports =
+function(Promise, PromiseArray, tryConvertToPromise, INTERNAL, async,
+         getDomain) {
+var util = _dereq_("./util");
+var canEvaluate = util.canEvaluate;
+var tryCatch = util.tryCatch;
+var errorObj = util.errorObj;
+var reject;
+
+if (false) {
+if (canEvaluate) {
+    var thenCallback = function(i) {
+        return new Function("value", "holder", "                             \n\
+            'use strict';                                                    \n\
+            holder.pIndex = value;                                           \n\
+            holder.checkFulfillment(this);                                   \n\
+            ".replace(/Index/g, i));
+    };
+
+    var promiseSetter = function(i) {
+        return new Function("promise", "holder", "                           \n\
+            'use strict';                                                    \n\
+            holder.pIndex = promise;                                         \n\
+            ".replace(/Index/g, i));
+    };
+
+    var generateHolderClass = function(total) {
+        var props = new Array(total);
+        for (var i = 0; i < props.length; ++i) {
+            props[i] = "this.p" + (i+1);
+        }
+        var assignment = props.join(" = ") + " = null;";
+        var cancellationCode= "var promise;\n" + props.map(function(prop) {
+            return "                                                         \n\
+                promise = " + prop + ";                                      \n\
+                if (promise instanceof Promise) {                            \n\
+                    promise.cancel();                                        \n\
+                }                                                            \n\
+            ";
+        }).join("\n");
+        var passedArguments = props.join(", ");
+        var name = "Holder$" + total;
+
+
+        var code = "return function(tryCatch, errorObj, Promise, async) {    \n\
+            'use strict';                                                    \n\
+            function [TheName](fn) {                                         \n\
+                [TheProperties]                                              \n\
+                this.fn = fn;                                                \n\
+                this.asyncNeeded = true;                                     \n\
+                this.now = 0;                                                \n\
+            }                                                                \n\
+                                                                             \n\
+            [TheName].prototype._callFunction = function(promise) {          \n\
+                promise._pushContext();                                      \n\
+                var ret = tryCatch(this.fn)([ThePassedArguments]);           \n\
+                promise._popContext();                                       \n\
+                if (ret === errorObj) {                                      \n\
+                    promise._rejectCallback(ret.e, false);                   \n\
+                } else {                                                     \n\
+                    promise._resolveCallback(ret);                           \n\
+                }                                                            \n\
+            };                                                               \n\
+                                                                             \n\
+            [TheName].prototype.checkFulfillment = function(promise) {       \n\
+                var now = ++this.now;                                        \n\
+                if (now === [TheTotal]) {                                    \n\
+                    if (this.asyncNeeded) {                                  \n\
+                        async.invoke(this._callFunction, this, promise);     \n\
+                    } else {                                                 \n\
+                        this._callFunction(promise);                         \n\
+                    }                                                        \n\
+                                                                             \n\
+                }                                                            \n\
+            };                                                               \n\
+                                                                             \n\
+            [TheName].prototype._resultCancelled = function() {              \n\
+                [CancellationCode]                                           \n\
+            };                                                               \n\
+                                                                             \n\
+            return [TheName];                                                \n\
+        }(tryCatch, errorObj, Promise, async);                               \n\
+        ";
+
+        code = code.replace(/\[TheName\]/g, name)
+            .replace(/\[TheTotal\]/g, total)
+            .replace(/\[ThePassedArguments\]/g, passedArguments)
+            .replace(/\[TheProperties\]/g, assignment)
+            .replace(/\[CancellationCode\]/g, cancellationCode);
+
+        return new Function("tryCatch", "errorObj", "Promise", "async", code)
+                           (tryCatch, errorObj, Promise, async);
+    };
+
+    var holderClasses = [];
+    var thenCallbacks = [];
+    var promiseSetters = [];
+
+    for (var i = 0; i < 8; ++i) {
+        holderClasses.push(generateHolderClass(i + 1));
+        thenCallbacks.push(thenCallback(i + 1));
+        promiseSetters.push(promiseSetter(i + 1));
+    }
+
+    reject = function (reason) {
+        this._reject(reason);
+    };
+}}
+
+Promise.join = function () {
+    var last = arguments.length - 1;
+    var fn;
+    if (last > 0 && typeof arguments[last] === "function") {
+        fn = arguments[last];
+        if (false) {
+            if (last <= 8 && canEvaluate) {
+                var ret = new Promise(INTERNAL);
+                ret._captureStackTrace();
+                var HolderClass = holderClasses[last - 1];
+                var holder = new HolderClass(fn);
+                var callbacks = thenCallbacks;
+
+                for (var i = 0; i < last; ++i) {
+                    var maybePromise = tryConvertToPromise(arguments[i], ret);
+                    if (maybePromise instanceof Promise) {
+                        maybePromise = maybePromise._target();
+                        var bitField = maybePromise._bitField;
+                        ;
+                        if (((bitField & 50397184) === 0)) {
+                            maybePromise._then(callbacks[i], reject,
+                                               undefined, ret, holder);
+                            promiseSetters[i](maybePromise, holder);
+                            holder.asyncNeeded = false;
+                        } else if (((bitField & 33554432) !== 0)) {
+                            callbacks[i].call(ret,
+                                              maybePromise._value(), holder);
+                        } else if (((bitField & 16777216) !== 0)) {
+                            ret._reject(maybePromise._reason());
+                        } else {
+                            ret._cancel();
+                        }
+                    } else {
+                        callbacks[i].call(ret, maybePromise, holder);
+                    }
+                }
+
+                if (!ret._isFateSealed()) {
+                    if (holder.asyncNeeded) {
+                        var domain = getDomain();
+                        if (domain !== null) {
+                            holder.fn = util.domainBind(domain, holder.fn);
+                        }
+                    }
+                    ret._setAsyncGuaranteed();
+                    ret._setOnCancel(holder);
+                }
+                return ret;
+            }
+        }
+    }
+    var args = [].slice.call(arguments);;
+    if (fn) args.pop();
+    var ret = new PromiseArray(args).promise();
+    return fn !== undefined ? ret.spread(fn) : ret;
+};
+
+};
+
+},{"./util":36}],18:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise,
+                          PromiseArray,
+                          apiRejection,
+                          tryConvertToPromise,
+                          INTERNAL,
+                          debug) {
+var getDomain = Promise._getDomain;
+var util = _dereq_("./util");
+var tryCatch = util.tryCatch;
+var errorObj = util.errorObj;
+var async = Promise._async;
+
+function MappingPromiseArray(promises, fn, limit, _filter) {
+    this.constructor$(promises);
+    this._promise._captureStackTrace();
+    var domain = getDomain();
+    this._callback = domain === null ? fn : util.domainBind(domain, fn);
+    this._preservedValues = _filter === INTERNAL
+        ? new Array(this.length())
+        : null;
+    this._limit = limit;
+    this._inFlight = 0;
+    this._queue = [];
+    async.invoke(this._asyncInit, this, undefined);
+}
+util.inherits(MappingPromiseArray, PromiseArray);
+
+MappingPromiseArray.prototype._asyncInit = function() {
+    this._init$(undefined, -2);
+};
+
+MappingPromiseArray.prototype._init = function () {};
+
+MappingPromiseArray.prototype._promiseFulfilled = function (value, index) {
+    var values = this._values;
+    var length = this.length();
+    var preservedValues = this._preservedValues;
+    var limit = this._limit;
+
+    if (index < 0) {
+        index = (index * -1) - 1;
+        values[index] = value;
+        if (limit >= 1) {
+            this._inFlight--;
+            this._drainQueue();
+            if (this._isResolved()) return true;
+        }
+    } else {
+        if (limit >= 1 && this._inFlight >= limit) {
+            values[index] = value;
+            this._queue.push(index);
+            return false;
+        }
+        if (preservedValues !== null) preservedValues[index] = value;
+
+        var promise = this._promise;
+        var callback = this._callback;
+        var receiver = promise._boundValue();
+        promise._pushContext();
+        var ret = tryCatch(callback).call(receiver, value, index, length);
+        var promiseCreated = promise._popContext();
+        debug.checkForgottenReturns(
+            ret,
+            promiseCreated,
+            preservedValues !== null ? "Promise.filter" : "Promise.map",
+            promise
+        );
+        if (ret === errorObj) {
+            this._reject(ret.e);
+            return true;
+        }
+
+        var maybePromise = tryConvertToPromise(ret, this._promise);
+        if (maybePromise instanceof Promise) {
+            maybePromise = maybePromise._target();
+            var bitField = maybePromise._bitField;
+            ;
+            if (((bitField & 50397184) === 0)) {
+                if (limit >= 1) this._inFlight++;
+                values[index] = maybePromise;
+                maybePromise._proxy(this, (index + 1) * -1);
+                return false;
+            } else if (((bitField & 33554432) !== 0)) {
+                ret = maybePromise._value();
+            } else if (((bitField & 16777216) !== 0)) {
+                this._reject(maybePromise._reason());
+                return true;
+            } else {
+                this._cancel();
+                return true;
+            }
+        }
+        values[index] = ret;
+    }
+    var totalResolved = ++this._totalResolved;
+    if (totalResolved >= length) {
+        if (preservedValues !== null) {
+            this._filter(values, preservedValues);
+        } else {
+            this._resolve(values);
+        }
+        return true;
+    }
+    return false;
+};
+
+MappingPromiseArray.prototype._drainQueue = function () {
+    var queue = this._queue;
+    var limit = this._limit;
+    var values = this._values;
+    while (queue.length > 0 && this._inFlight < limit) {
+        if (this._isResolved()) return;
+        var index = queue.pop();
+        this._promiseFulfilled(values[index], index);
+    }
+};
+
+MappingPromiseArray.prototype._filter = function (booleans, values) {
+    var len = values.length;
+    var ret = new Array(len);
+    var j = 0;
+    for (var i = 0; i < len; ++i) {
+        if (booleans[i]) ret[j++] = values[i];
+    }
+    ret.length = j;
+    this._resolve(ret);
+};
+
+MappingPromiseArray.prototype.preservedValues = function () {
+    return this._preservedValues;
+};
+
+function map(promises, fn, options, _filter) {
+    if (typeof fn !== "function") {
+        return apiRejection("expecting a function but got " + util.classString(fn));
+    }
+
+    var limit = 0;
+    if (options !== undefined) {
+        if (typeof options === "object" && options !== null) {
+            if (typeof options.concurrency !== "number") {
+                return Promise.reject(
+                    new TypeError("'concurrency' must be a number but it is " +
+                                    util.classString(options.concurrency)));
+            }
+            limit = options.concurrency;
+        } else {
+            return Promise.reject(new TypeError(
+                            "options argument must be an object but it is " +
+                             util.classString(options)));
+        }
+    }
+    limit = typeof limit === "number" &&
+        isFinite(limit) && limit >= 1 ? limit : 0;
+    return new MappingPromiseArray(promises, fn, limit, _filter).promise();
+}
+
+Promise.prototype.map = function (fn, options) {
+    return map(this, fn, options, null);
+};
+
+Promise.map = function (promises, fn, options, _filter) {
+    return map(promises, fn, options, _filter);
+};
+
+
+};
+
+},{"./util":36}],19:[function(_dereq_,module,exports){
+"use strict";
+module.exports =
+function(Promise, INTERNAL, tryConvertToPromise, apiRejection, debug) {
+var util = _dereq_("./util");
+var tryCatch = util.tryCatch;
+
+Promise.method = function (fn) {
+    if (typeof fn !== "function") {
+        throw new Promise.TypeError("expecting a function but got " + util.classString(fn));
+    }
+    return function () {
+        var ret = new Promise(INTERNAL);
+        ret._captureStackTrace();
+        ret._pushContext();
+        var value = tryCatch(fn).apply(this, arguments);
+        var promiseCreated = ret._popContext();
+        debug.checkForgottenReturns(
+            value, promiseCreated, "Promise.method", ret);
+        ret._resolveFromSyncValue(value);
+        return ret;
+    };
+};
+
+Promise.attempt = Promise["try"] = function (fn) {
+    if (typeof fn !== "function") {
+        return apiRejection("expecting a function but got " + util.classString(fn));
+    }
+    var ret = new Promise(INTERNAL);
+    ret._captureStackTrace();
+    ret._pushContext();
+    var value;
+    if (arguments.length > 1) {
+        debug.deprecated("calling Promise.try with more than 1 argument");
+        var arg = arguments[1];
+        var ctx = arguments[2];
+        value = util.isArray(arg) ? tryCatch(fn).apply(ctx, arg)
+                                  : tryCatch(fn).call(ctx, arg);
+    } else {
+        value = tryCatch(fn)();
+    }
+    var promiseCreated = ret._popContext();
+    debug.checkForgottenReturns(
+        value, promiseCreated, "Promise.try", ret);
+    ret._resolveFromSyncValue(value);
+    return ret;
+};
+
+Promise.prototype._resolveFromSyncValue = function (value) {
+    if (value === util.errorObj) {
+        this._rejectCallback(value.e, false);
+    } else {
+        this._resolveCallback(value, true);
+    }
+};
+};
+
+},{"./util":36}],20:[function(_dereq_,module,exports){
+"use strict";
+var util = _dereq_("./util");
+var maybeWrapAsError = util.maybeWrapAsError;
+var errors = _dereq_("./errors");
+var OperationalError = errors.OperationalError;
+var es5 = _dereq_("./es5");
+
+function isUntypedError(obj) {
+    return obj instanceof Error &&
+        es5.getPrototypeOf(obj) === Error.prototype;
+}
+
+var rErrorKey = /^(?:name|message|stack|cause)$/;
+function wrapAsOperationalError(obj) {
+    var ret;
+    if (isUntypedError(obj)) {
+        ret = new OperationalError(obj);
+        ret.name = obj.name;
+        ret.message = obj.message;
+        ret.stack = obj.stack;
+        var keys = es5.keys(obj);
+        for (var i = 0; i < keys.length; ++i) {
+            var key = keys[i];
+            if (!rErrorKey.test(key)) {
+                ret[key] = obj[key];
+            }
+        }
+        return ret;
+    }
+    util.markAsOriginatingFromRejection(obj);
+    return obj;
+}
+
+function nodebackForPromise(promise, multiArgs) {
+    return function(err, value) {
+        if (promise === null) return;
+        if (err) {
+            var wrapped = wrapAsOperationalError(maybeWrapAsError(err));
+            promise._attachExtraTrace(wrapped);
+            promise._reject(wrapped);
+        } else if (!multiArgs) {
+            promise._fulfill(value);
+        } else {
+            var args = [].slice.call(arguments, 1);;
+            promise._fulfill(args);
+        }
+        promise = null;
+    };
+}
+
+module.exports = nodebackForPromise;
+
+},{"./errors":12,"./es5":13,"./util":36}],21:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise) {
+var util = _dereq_("./util");
+var async = Promise._async;
+var tryCatch = util.tryCatch;
+var errorObj = util.errorObj;
+
+function spreadAdapter(val, nodeback) {
+    var promise = this;
+    if (!util.isArray(val)) return successAdapter.call(promise, val, nodeback);
+    var ret =
+        tryCatch(nodeback).apply(promise._boundValue(), [null].concat(val));
+    if (ret === errorObj) {
+        async.throwLater(ret.e);
+    }
+}
+
+function successAdapter(val, nodeback) {
+    var promise = this;
+    var receiver = promise._boundValue();
+    var ret = val === undefined
+        ? tryCatch(nodeback).call(receiver, null)
+        : tryCatch(nodeback).call(receiver, null, val);
+    if (ret === errorObj) {
+        async.throwLater(ret.e);
+    }
+}
+function errorAdapter(reason, nodeback) {
+    var promise = this;
+    if (!reason) {
+        var newReason = new Error(reason + "");
+        newReason.cause = reason;
+        reason = newReason;
+    }
+    var ret = tryCatch(nodeback).call(promise._boundValue(), reason);
+    if (ret === errorObj) {
+        async.throwLater(ret.e);
+    }
+}
+
+Promise.prototype.asCallback = Promise.prototype.nodeify = function (nodeback,
+                                                                     options) {
+    if (typeof nodeback == "function") {
+        var adapter = successAdapter;
+        if (options !== undefined && Object(options).spread) {
+            adapter = spreadAdapter;
+        }
+        this._then(
+            adapter,
+            errorAdapter,
+            undefined,
+            this,
+            nodeback
+        );
+    }
+    return this;
+};
+};
+
+},{"./util":36}],22:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function() {
+var makeSelfResolutionError = function () {
+    return new TypeError("circular promise resolution chain\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+};
+var reflectHandler = function() {
+    return new Promise.PromiseInspection(this._target());
+};
+var apiRejection = function(msg) {
+    return Promise.reject(new TypeError(msg));
+};
+function Proxyable() {}
+var UNDEFINED_BINDING = {};
+var util = _dereq_("./util");
+
+var getDomain;
+if (util.isNode) {
+    getDomain = function() {
+        var ret = process.domain;
+        if (ret === undefined) ret = null;
+        return ret;
+    };
+} else {
+    getDomain = function() {
+        return null;
+    };
+}
+util.notEnumerableProp(Promise, "_getDomain", getDomain);
+
+var es5 = _dereq_("./es5");
+var Async = _dereq_("./async");
+var async = new Async();
+es5.defineProperty(Promise, "_async", {value: async});
+var errors = _dereq_("./errors");
+var TypeError = Promise.TypeError = errors.TypeError;
+Promise.RangeError = errors.RangeError;
+var CancellationError = Promise.CancellationError = errors.CancellationError;
+Promise.TimeoutError = errors.TimeoutError;
+Promise.OperationalError = errors.OperationalError;
+Promise.RejectionError = errors.OperationalError;
+Promise.AggregateError = errors.AggregateError;
+var INTERNAL = function(){};
+var APPLY = {};
+var NEXT_FILTER = {};
+var tryConvertToPromise = _dereq_("./thenables")(Promise, INTERNAL);
+var PromiseArray =
+    _dereq_("./promise_array")(Promise, INTERNAL,
+                               tryConvertToPromise, apiRejection, Proxyable);
+var Context = _dereq_("./context")(Promise);
+ /*jshint unused:false*/
+var createContext = Context.create;
+var debug = _dereq_("./debuggability")(Promise, Context);
+var CapturedTrace = debug.CapturedTrace;
+var PassThroughHandlerContext =
+    _dereq_("./finally")(Promise, tryConvertToPromise, NEXT_FILTER);
+var catchFilter = _dereq_("./catch_filter")(NEXT_FILTER);
+var nodebackForPromise = _dereq_("./nodeback");
+var errorObj = util.errorObj;
+var tryCatch = util.tryCatch;
+function check(self, executor) {
+    if (self == null || self.constructor !== Promise) {
+        throw new TypeError("the promise constructor cannot be invoked directly\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    if (typeof executor !== "function") {
+        throw new TypeError("expecting a function but got " + util.classString(executor));
+    }
+
+}
+
+function Promise(executor) {
+    if (executor !== INTERNAL) {
+        check(this, executor);
+    }
+    this._bitField = 0;
+    this._fulfillmentHandler0 = undefined;
+    this._rejectionHandler0 = undefined;
+    this._promise0 = undefined;
+    this._receiver0 = undefined;
+    this._resolveFromExecutor(executor);
+    this._promiseCreated();
+    this._fireEvent("promiseCreated", this);
+}
+
+Promise.prototype.toString = function () {
+    return "[object Promise]";
+};
+
+Promise.prototype.caught = Promise.prototype["catch"] = function (fn) {
+    var len = arguments.length;
+    if (len > 1) {
+        var catchInstances = new Array(len - 1),
+            j = 0, i;
+        for (i = 0; i < len - 1; ++i) {
+            var item = arguments[i];
+            if (util.isObject(item)) {
+                catchInstances[j++] = item;
+            } else {
+                return apiRejection("Catch statement predicate: " +
+                    "expecting an object but got " + util.classString(item));
+            }
+        }
+        catchInstances.length = j;
+        fn = arguments[i];
+        return this.then(undefined, catchFilter(catchInstances, fn, this));
+    }
+    return this.then(undefined, fn);
+};
+
+Promise.prototype.reflect = function () {
+    return this._then(reflectHandler,
+        reflectHandler, undefined, this, undefined);
+};
+
+Promise.prototype.then = function (didFulfill, didReject) {
+    if (debug.warnings() && arguments.length > 0 &&
+        typeof didFulfill !== "function" &&
+        typeof didReject !== "function") {
+        var msg = ".then() only accepts functions but was passed: " +
+                util.classString(didFulfill);
+        if (arguments.length > 1) {
+            msg += ", " + util.classString(didReject);
+        }
+        this._warn(msg);
+    }
+    return this._then(didFulfill, didReject, undefined, undefined, undefined);
+};
+
+Promise.prototype.done = function (didFulfill, didReject) {
+    var promise =
+        this._then(didFulfill, didReject, undefined, undefined, undefined);
+    promise._setIsFinal();
+};
+
+Promise.prototype.spread = function (fn) {
+    if (typeof fn !== "function") {
+        return apiRejection("expecting a function but got " + util.classString(fn));
+    }
+    return this.all()._then(fn, undefined, undefined, APPLY, undefined);
+};
+
+Promise.prototype.toJSON = function () {
+    var ret = {
+        isFulfilled: false,
+        isRejected: false,
+        fulfillmentValue: undefined,
+        rejectionReason: undefined
+    };
+    if (this.isFulfilled()) {
+        ret.fulfillmentValue = this.value();
+        ret.isFulfilled = true;
+    } else if (this.isRejected()) {
+        ret.rejectionReason = this.reason();
+        ret.isRejected = true;
+    }
+    return ret;
+};
+
+Promise.prototype.all = function () {
+    if (arguments.length > 0) {
+        this._warn(".all() was passed arguments but it does not take any");
+    }
+    return new PromiseArray(this).promise();
+};
+
+Promise.prototype.error = function (fn) {
+    return this.caught(util.originatesFromRejection, fn);
+};
+
+Promise.getNewLibraryCopy = module.exports;
+
+Promise.is = function (val) {
+    return val instanceof Promise;
+};
+
+Promise.fromNode = Promise.fromCallback = function(fn) {
+    var ret = new Promise(INTERNAL);
+    ret._captureStackTrace();
+    var multiArgs = arguments.length > 1 ? !!Object(arguments[1]).multiArgs
+                                         : false;
+    var result = tryCatch(fn)(nodebackForPromise(ret, multiArgs));
+    if (result === errorObj) {
+        ret._rejectCallback(result.e, true);
+    }
+    if (!ret._isFateSealed()) ret._setAsyncGuaranteed();
+    return ret;
+};
+
+Promise.all = function (promises) {
+    return new PromiseArray(promises).promise();
+};
+
+Promise.cast = function (obj) {
+    var ret = tryConvertToPromise(obj);
+    if (!(ret instanceof Promise)) {
+        ret = new Promise(INTERNAL);
+        ret._captureStackTrace();
+        ret._setFulfilled();
+        ret._rejectionHandler0 = obj;
+    }
+    return ret;
+};
+
+Promise.resolve = Promise.fulfilled = Promise.cast;
+
+Promise.reject = Promise.rejected = function (reason) {
+    var ret = new Promise(INTERNAL);
+    ret._captureStackTrace();
+    ret._rejectCallback(reason, true);
+    return ret;
+};
+
+Promise.setScheduler = function(fn) {
+    if (typeof fn !== "function") {
+        throw new TypeError("expecting a function but got " + util.classString(fn));
+    }
+    return async.setScheduler(fn);
+};
+
+Promise.prototype._then = function (
+    didFulfill,
+    didReject,
+    _,    receiver,
+    internalData
+) {
+    var haveInternalData = internalData !== undefined;
+    var promise = haveInternalData ? internalData : new Promise(INTERNAL);
+    var target = this._target();
+    var bitField = target._bitField;
+
+    if (!haveInternalData) {
+        promise._propagateFrom(this, 3);
+        promise._captureStackTrace();
+        if (receiver === undefined &&
+            ((this._bitField & 2097152) !== 0)) {
+            if (!((bitField & 50397184) === 0)) {
+                receiver = this._boundValue();
+            } else {
+                receiver = target === this ? undefined : this._boundTo;
+            }
+        }
+        this._fireEvent("promiseChained", this, promise);
+    }
+
+    var domain = getDomain();
+    if (!((bitField & 50397184) === 0)) {
+        var handler, value, settler = target._settlePromiseCtx;
+        if (((bitField & 33554432) !== 0)) {
+            value = target._rejectionHandler0;
+            handler = didFulfill;
+        } else if (((bitField & 16777216) !== 0)) {
+            value = target._fulfillmentHandler0;
+            handler = didReject;
+            target._unsetRejectionIsUnhandled();
+        } else {
+            settler = target._settlePromiseLateCancellationObserver;
+            value = new CancellationError("late cancellation observer");
+            target._attachExtraTrace(value);
+            handler = didReject;
+        }
+
+        async.invoke(settler, target, {
+            handler: domain === null ? handler
+                : (typeof handler === "function" &&
+                    util.domainBind(domain, handler)),
+            promise: promise,
+            receiver: receiver,
+            value: value
+        });
+    } else {
+        target._addCallbacks(didFulfill, didReject, promise, receiver, domain);
+    }
+
+    return promise;
+};
+
+Promise.prototype._length = function () {
+    return this._bitField & 65535;
+};
+
+Promise.prototype._isFateSealed = function () {
+    return (this._bitField & 117506048) !== 0;
+};
+
+Promise.prototype._isFollowing = function () {
+    return (this._bitField & 67108864) === 67108864;
+};
+
+Promise.prototype._setLength = function (len) {
+    this._bitField = (this._bitField & -65536) |
+        (len & 65535);
+};
+
+Promise.prototype._setFulfilled = function () {
+    this._bitField = this._bitField | 33554432;
+    this._fireEvent("promiseFulfilled", this);
+};
+
+Promise.prototype._setRejected = function () {
+    this._bitField = this._bitField | 16777216;
+    this._fireEvent("promiseRejected", this);
+};
+
+Promise.prototype._setFollowing = function () {
+    this._bitField = this._bitField | 67108864;
+    this._fireEvent("promiseResolved", this);
+};
+
+Promise.prototype._setIsFinal = function () {
+    this._bitField = this._bitField | 4194304;
+};
+
+Promise.prototype._isFinal = function () {
+    return (this._bitField & 4194304) > 0;
+};
+
+Promise.prototype._unsetCancelled = function() {
+    this._bitField = this._bitField & (~65536);
+};
+
+Promise.prototype._setCancelled = function() {
+    this._bitField = this._bitField | 65536;
+    this._fireEvent("promiseCancelled", this);
+};
+
+Promise.prototype._setWillBeCancelled = function() {
+    this._bitField = this._bitField | 8388608;
+};
+
+Promise.prototype._setAsyncGuaranteed = function() {
+    if (async.hasCustomScheduler()) return;
+    this._bitField = this._bitField | 134217728;
+};
+
+Promise.prototype._receiverAt = function (index) {
+    var ret = index === 0 ? this._receiver0 : this[
+            index * 4 - 4 + 3];
+    if (ret === UNDEFINED_BINDING) {
+        return undefined;
+    } else if (ret === undefined && this._isBound()) {
+        return this._boundValue();
+    }
+    return ret;
+};
+
+Promise.prototype._promiseAt = function (index) {
+    return this[
+            index * 4 - 4 + 2];
+};
+
+Promise.prototype._fulfillmentHandlerAt = function (index) {
+    return this[
+            index * 4 - 4 + 0];
+};
+
+Promise.prototype._rejectionHandlerAt = function (index) {
+    return this[
+            index * 4 - 4 + 1];
+};
+
+Promise.prototype._boundValue = function() {};
+
+Promise.prototype._migrateCallback0 = function (follower) {
+    var bitField = follower._bitField;
+    var fulfill = follower._fulfillmentHandler0;
+    var reject = follower._rejectionHandler0;
+    var promise = follower._promise0;
+    var receiver = follower._receiverAt(0);
+    if (receiver === undefined) receiver = UNDEFINED_BINDING;
+    this._addCallbacks(fulfill, reject, promise, receiver, null);
+};
+
+Promise.prototype._migrateCallbackAt = function (follower, index) {
+    var fulfill = follower._fulfillmentHandlerAt(index);
+    var reject = follower._rejectionHandlerAt(index);
+    var promise = follower._promiseAt(index);
+    var receiver = follower._receiverAt(index);
+    if (receiver === undefined) receiver = UNDEFINED_BINDING;
+    this._addCallbacks(fulfill, reject, promise, receiver, null);
+};
+
+Promise.prototype._addCallbacks = function (
+    fulfill,
+    reject,
+    promise,
+    receiver,
+    domain
+) {
+    var index = this._length();
+
+    if (index >= 65535 - 4) {
+        index = 0;
+        this._setLength(0);
+    }
+
+    if (index === 0) {
+        this._promise0 = promise;
+        this._receiver0 = receiver;
+        if (typeof fulfill === "function") {
+            this._fulfillmentHandler0 =
+                domain === null ? fulfill : util.domainBind(domain, fulfill);
+        }
+        if (typeof reject === "function") {
+            this._rejectionHandler0 =
+                domain === null ? reject : util.domainBind(domain, reject);
+        }
+    } else {
+        var base = index * 4 - 4;
+        this[base + 2] = promise;
+        this[base + 3] = receiver;
+        if (typeof fulfill === "function") {
+            this[base + 0] =
+                domain === null ? fulfill : util.domainBind(domain, fulfill);
+        }
+        if (typeof reject === "function") {
+            this[base + 1] =
+                domain === null ? reject : util.domainBind(domain, reject);
+        }
+    }
+    this._setLength(index + 1);
+    return index;
+};
+
+Promise.prototype._proxy = function (proxyable, arg) {
+    this._addCallbacks(undefined, undefined, arg, proxyable, null);
+};
+
+Promise.prototype._resolveCallback = function(value, shouldBind) {
+    if (((this._bitField & 117506048) !== 0)) return;
+    if (value === this)
+        return this._rejectCallback(makeSelfResolutionError(), false);
+    var maybePromise = tryConvertToPromise(value, this);
+    if (!(maybePromise instanceof Promise)) return this._fulfill(value);
+
+    if (shouldBind) this._propagateFrom(maybePromise, 2);
+
+    var promise = maybePromise._target();
+
+    if (promise === this) {
+        this._reject(makeSelfResolutionError());
+        return;
+    }
+
+    var bitField = promise._bitField;
+    if (((bitField & 50397184) === 0)) {
+        var len = this._length();
+        if (len > 0) promise._migrateCallback0(this);
+        for (var i = 1; i < len; ++i) {
+            promise._migrateCallbackAt(this, i);
+        }
+        this._setFollowing();
+        this._setLength(0);
+        this._setFollowee(promise);
+    } else if (((bitField & 33554432) !== 0)) {
+        this._fulfill(promise._value());
+    } else if (((bitField & 16777216) !== 0)) {
+        this._reject(promise._reason());
+    } else {
+        var reason = new CancellationError("late cancellation observer");
+        promise._attachExtraTrace(reason);
+        this._reject(reason);
+    }
+};
+
+Promise.prototype._rejectCallback =
+function(reason, synchronous, ignoreNonErrorWarnings) {
+    var trace = util.ensureErrorObject(reason);
+    var hasStack = trace === reason;
+    if (!hasStack && !ignoreNonErrorWarnings && debug.warnings()) {
+        var message = "a promise was rejected with a non-error: " +
+            util.classString(reason);
+        this._warn(message, true);
+    }
+    this._attachExtraTrace(trace, synchronous ? hasStack : false);
+    this._reject(reason);
+};
+
+Promise.prototype._resolveFromExecutor = function (executor) {
+    if (executor === INTERNAL) return;
+    var promise = this;
+    this._captureStackTrace();
+    this._pushContext();
+    var synchronous = true;
+    var r = this._execute(executor, function(value) {
+        promise._resolveCallback(value);
+    }, function (reason) {
+        promise._rejectCallback(reason, synchronous);
+    });
+    synchronous = false;
+    this._popContext();
+
+    if (r !== undefined) {
+        promise._rejectCallback(r, true);
+    }
+};
+
+Promise.prototype._settlePromiseFromHandler = function (
+    handler, receiver, value, promise
+) {
+    var bitField = promise._bitField;
+    if (((bitField & 65536) !== 0)) return;
+    promise._pushContext();
+    var x;
+    if (receiver === APPLY) {
+        if (!value || typeof value.length !== "number") {
+            x = errorObj;
+            x.e = new TypeError("cannot .spread() a non-array: " +
+                                    util.classString(value));
+        } else {
+            x = tryCatch(handler).apply(this._boundValue(), value);
+        }
+    } else {
+        x = tryCatch(handler).call(receiver, value);
+    }
+    var promiseCreated = promise._popContext();
+    bitField = promise._bitField;
+    if (((bitField & 65536) !== 0)) return;
+
+    if (x === NEXT_FILTER) {
+        promise._reject(value);
+    } else if (x === errorObj) {
+        promise._rejectCallback(x.e, false);
+    } else {
+        debug.checkForgottenReturns(x, promiseCreated, "",  promise, this);
+        promise._resolveCallback(x);
+    }
+};
+
+Promise.prototype._target = function() {
+    var ret = this;
+    while (ret._isFollowing()) ret = ret._followee();
+    return ret;
+};
+
+Promise.prototype._followee = function() {
+    return this._rejectionHandler0;
+};
+
+Promise.prototype._setFollowee = function(promise) {
+    this._rejectionHandler0 = promise;
+};
+
+Promise.prototype._settlePromise = function(promise, handler, receiver, value) {
+    var isPromise = promise instanceof Promise;
+    var bitField = this._bitField;
+    var asyncGuaranteed = ((bitField & 134217728) !== 0);
+    if (((bitField & 65536) !== 0)) {
+        if (isPromise) promise._invokeInternalOnCancel();
+
+        if (receiver instanceof PassThroughHandlerContext &&
+            receiver.isFinallyHandler()) {
+            receiver.cancelPromise = promise;
+            if (tryCatch(handler).call(receiver, value) === errorObj) {
+                promise._reject(errorObj.e);
+            }
+        } else if (handler === reflectHandler) {
+            promise._fulfill(reflectHandler.call(receiver));
+        } else if (receiver instanceof Proxyable) {
+            receiver._promiseCancelled(promise);
+        } else if (isPromise || promise instanceof PromiseArray) {
+            promise._cancel();
+        } else {
+            receiver.cancel();
+        }
+    } else if (typeof handler === "function") {
+        if (!isPromise) {
+            handler.call(receiver, value, promise);
+        } else {
+            if (asyncGuaranteed) promise._setAsyncGuaranteed();
+            this._settlePromiseFromHandler(handler, receiver, value, promise);
+        }
+    } else if (receiver instanceof Proxyable) {
+        if (!receiver._isResolved()) {
+            if (((bitField & 33554432) !== 0)) {
+                receiver._promiseFulfilled(value, promise);
+            } else {
+                receiver._promiseRejected(value, promise);
+            }
+        }
+    } else if (isPromise) {
+        if (asyncGuaranteed) promise._setAsyncGuaranteed();
+        if (((bitField & 33554432) !== 0)) {
+            promise._fulfill(value);
+        } else {
+            promise._reject(value);
+        }
+    }
+};
+
+Promise.prototype._settlePromiseLateCancellationObserver = function(ctx) {
+    var handler = ctx.handler;
+    var promise = ctx.promise;
+    var receiver = ctx.receiver;
+    var value = ctx.value;
+    if (typeof handler === "function") {
+        if (!(promise instanceof Promise)) {
+            handler.call(receiver, value, promise);
+        } else {
+            this._settlePromiseFromHandler(handler, receiver, value, promise);
+        }
+    } else if (promise instanceof Promise) {
+        promise._reject(value);
+    }
+};
+
+Promise.prototype._settlePromiseCtx = function(ctx) {
+    this._settlePromise(ctx.promise, ctx.handler, ctx.receiver, ctx.value);
+};
+
+Promise.prototype._settlePromise0 = function(handler, value, bitField) {
+    var promise = this._promise0;
+    var receiver = this._receiverAt(0);
+    this._promise0 = undefined;
+    this._receiver0 = undefined;
+    this._settlePromise(promise, handler, receiver, value);
+};
+
+Promise.prototype._clearCallbackDataAtIndex = function(index) {
+    var base = index * 4 - 4;
+    this[base + 2] =
+    this[base + 3] =
+    this[base + 0] =
+    this[base + 1] = undefined;
+};
+
+Promise.prototype._fulfill = function (value) {
+    var bitField = this._bitField;
+    if (((bitField & 117506048) >>> 16)) return;
+    if (value === this) {
+        var err = makeSelfResolutionError();
+        this._attachExtraTrace(err);
+        return this._reject(err);
+    }
+    this._setFulfilled();
+    this._rejectionHandler0 = value;
+
+    if ((bitField & 65535) > 0) {
+        if (((bitField & 134217728) !== 0)) {
+            this._settlePromises();
+        } else {
+            async.settlePromises(this);
+        }
+    }
+};
+
+Promise.prototype._reject = function (reason) {
+    var bitField = this._bitField;
+    if (((bitField & 117506048) >>> 16)) return;
+    this._setRejected();
+    this._fulfillmentHandler0 = reason;
+
+    if (this._isFinal()) {
+        return async.fatalError(reason, util.isNode);
+    }
+
+    if ((bitField & 65535) > 0) {
+        async.settlePromises(this);
+    } else {
+        this._ensurePossibleRejectionHandled();
+    }
+};
+
+Promise.prototype._fulfillPromises = function (len, value) {
+    for (var i = 1; i < len; i++) {
+        var handler = this._fulfillmentHandlerAt(i);
+        var promise = this._promiseAt(i);
+        var receiver = this._receiverAt(i);
+        this._clearCallbackDataAtIndex(i);
+        this._settlePromise(promise, handler, receiver, value);
+    }
+};
+
+Promise.prototype._rejectPromises = function (len, reason) {
+    for (var i = 1; i < len; i++) {
+        var handler = this._rejectionHandlerAt(i);
+        var promise = this._promiseAt(i);
+        var receiver = this._receiverAt(i);
+        this._clearCallbackDataAtIndex(i);
+        this._settlePromise(promise, handler, receiver, reason);
+    }
+};
+
+Promise.prototype._settlePromises = function () {
+    var bitField = this._bitField;
+    var len = (bitField & 65535);
+
+    if (len > 0) {
+        if (((bitField & 16842752) !== 0)) {
+            var reason = this._fulfillmentHandler0;
+            this._settlePromise0(this._rejectionHandler0, reason, bitField);
+            this._rejectPromises(len, reason);
+        } else {
+            var value = this._rejectionHandler0;
+            this._settlePromise0(this._fulfillmentHandler0, value, bitField);
+            this._fulfillPromises(len, value);
+        }
+        this._setLength(0);
+    }
+    this._clearCancellationData();
+};
+
+Promise.prototype._settledValue = function() {
+    var bitField = this._bitField;
+    if (((bitField & 33554432) !== 0)) {
+        return this._rejectionHandler0;
+    } else if (((bitField & 16777216) !== 0)) {
+        return this._fulfillmentHandler0;
+    }
+};
+
+function deferResolve(v) {this.promise._resolveCallback(v);}
+function deferReject(v) {this.promise._rejectCallback(v, false);}
+
+Promise.defer = Promise.pending = function() {
+    debug.deprecated("Promise.defer", "new Promise");
+    var promise = new Promise(INTERNAL);
+    return {
+        promise: promise,
+        resolve: deferResolve,
+        reject: deferReject
+    };
+};
+
+util.notEnumerableProp(Promise,
+                       "_makeSelfResolutionError",
+                       makeSelfResolutionError);
+
+_dereq_("./method")(Promise, INTERNAL, tryConvertToPromise, apiRejection,
+    debug);
+_dereq_("./bind")(Promise, INTERNAL, tryConvertToPromise, debug);
+_dereq_("./cancel")(Promise, PromiseArray, apiRejection, debug);
+_dereq_("./direct_resolve")(Promise);
+_dereq_("./synchronous_inspection")(Promise);
+_dereq_("./join")(
+    Promise, PromiseArray, tryConvertToPromise, INTERNAL, async, getDomain);
+Promise.Promise = Promise;
+Promise.version = "3.5.1";
+_dereq_('./map.js')(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
+_dereq_('./call_get.js')(Promise);
+_dereq_('./using.js')(Promise, apiRejection, tryConvertToPromise, createContext, INTERNAL, debug);
+_dereq_('./timers.js')(Promise, INTERNAL, debug);
+_dereq_('./generators.js')(Promise, apiRejection, INTERNAL, tryConvertToPromise, Proxyable, debug);
+_dereq_('./nodeify.js')(Promise);
+_dereq_('./promisify.js')(Promise, INTERNAL);
+_dereq_('./props.js')(Promise, PromiseArray, tryConvertToPromise, apiRejection);
+_dereq_('./race.js')(Promise, INTERNAL, tryConvertToPromise, apiRejection);
+_dereq_('./reduce.js')(Promise, PromiseArray, apiRejection, tryConvertToPromise, INTERNAL, debug);
+_dereq_('./settle.js')(Promise, PromiseArray, debug);
+_dereq_('./some.js')(Promise, PromiseArray, apiRejection);
+_dereq_('./filter.js')(Promise, INTERNAL);
+_dereq_('./each.js')(Promise, INTERNAL);
+_dereq_('./any.js')(Promise);
+                                                         
+    util.toFastProperties(Promise);                                          
+    util.toFastProperties(Promise.prototype);                                
+    function fillTypes(value) {                                              
+        var p = new Promise(INTERNAL);                                       
+        p._fulfillmentHandler0 = value;                                      
+        p._rejectionHandler0 = value;                                        
+        p._promise0 = value;                                                 
+        p._receiver0 = value;                                                
+    }                                                                        
+    // Complete slack tracking, opt out of field-type tracking and           
+    // stabilize map                                                         
+    fillTypes({a: 1});                                                       
+    fillTypes({b: 2});                                                       
+    fillTypes({c: 3});                                                       
+    fillTypes(1);                                                            
+    fillTypes(function(){});                                                 
+    fillTypes(undefined);                                                    
+    fillTypes(false);                                                        
+    fillTypes(new Promise(INTERNAL));                                        
+    debug.setBounds(Async.firstLineError, util.lastLineError);               
+    return Promise;                                                          
+
+};
+
+},{"./any.js":1,"./async":2,"./bind":3,"./call_get.js":5,"./cancel":6,"./catch_filter":7,"./context":8,"./debuggability":9,"./direct_resolve":10,"./each.js":11,"./errors":12,"./es5":13,"./filter.js":14,"./finally":15,"./generators.js":16,"./join":17,"./map.js":18,"./method":19,"./nodeback":20,"./nodeify.js":21,"./promise_array":23,"./promisify.js":24,"./props.js":25,"./race.js":27,"./reduce.js":28,"./settle.js":30,"./some.js":31,"./synchronous_inspection":32,"./thenables":33,"./timers.js":34,"./using.js":35,"./util":36}],23:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, INTERNAL, tryConvertToPromise,
+    apiRejection, Proxyable) {
+var util = _dereq_("./util");
+var isArray = util.isArray;
+
+function toResolutionValue(val) {
+    switch(val) {
+    case -2: return [];
+    case -3: return {};
+    case -6: return new Map();
+    }
+}
+
+function PromiseArray(values) {
+    var promise = this._promise = new Promise(INTERNAL);
+    if (values instanceof Promise) {
+        promise._propagateFrom(values, 3);
+    }
+    promise._setOnCancel(this);
+    this._values = values;
+    this._length = 0;
+    this._totalResolved = 0;
+    this._init(undefined, -2);
+}
+util.inherits(PromiseArray, Proxyable);
+
+PromiseArray.prototype.length = function () {
+    return this._length;
+};
+
+PromiseArray.prototype.promise = function () {
+    return this._promise;
+};
+
+PromiseArray.prototype._init = function init(_, resolveValueIfEmpty) {
+    var values = tryConvertToPromise(this._values, this._promise);
+    if (values instanceof Promise) {
+        values = values._target();
+        var bitField = values._bitField;
+        ;
+        this._values = values;
+
+        if (((bitField & 50397184) === 0)) {
+            this._promise._setAsyncGuaranteed();
+            return values._then(
+                init,
+                this._reject,
+                undefined,
+                this,
+                resolveValueIfEmpty
+           );
+        } else if (((bitField & 33554432) !== 0)) {
+            values = values._value();
+        } else if (((bitField & 16777216) !== 0)) {
+            return this._reject(values._reason());
+        } else {
+            return this._cancel();
+        }
+    }
+    values = util.asArray(values);
+    if (values === null) {
+        var err = apiRejection(
+            "expecting an array or an iterable object but got " + util.classString(values)).reason();
+        this._promise._rejectCallback(err, false);
+        return;
+    }
+
+    if (values.length === 0) {
+        if (resolveValueIfEmpty === -5) {
+            this._resolveEmptyArray();
+        }
+        else {
+            this._resolve(toResolutionValue(resolveValueIfEmpty));
+        }
+        return;
+    }
+    this._iterate(values);
+};
+
+PromiseArray.prototype._iterate = function(values) {
+    var len = this.getActualLength(values.length);
+    this._length = len;
+    this._values = this.shouldCopyValues() ? new Array(len) : this._values;
+    var result = this._promise;
+    var isResolved = false;
+    var bitField = null;
+    for (var i = 0; i < len; ++i) {
+        var maybePromise = tryConvertToPromise(values[i], result);
+
+        if (maybePromise instanceof Promise) {
+            maybePromise = maybePromise._target();
+            bitField = maybePromise._bitField;
+        } else {
+            bitField = null;
+        }
+
+        if (isResolved) {
+            if (bitField !== null) {
+                maybePromise.suppressUnhandledRejections();
+            }
+        } else if (bitField !== null) {
+            if (((bitField & 50397184) === 0)) {
+                maybePromise._proxy(this, i);
+                this._values[i] = maybePromise;
+            } else if (((bitField & 33554432) !== 0)) {
+                isResolved = this._promiseFulfilled(maybePromise._value(), i);
+            } else if (((bitField & 16777216) !== 0)) {
+                isResolved = this._promiseRejected(maybePromise._reason(), i);
+            } else {
+                isResolved = this._promiseCancelled(i);
+            }
+        } else {
+            isResolved = this._promiseFulfilled(maybePromise, i);
+        }
+    }
+    if (!isResolved) result._setAsyncGuaranteed();
+};
+
+PromiseArray.prototype._isResolved = function () {
+    return this._values === null;
+};
+
+PromiseArray.prototype._resolve = function (value) {
+    this._values = null;
+    this._promise._fulfill(value);
+};
+
+PromiseArray.prototype._cancel = function() {
+    if (this._isResolved() || !this._promise._isCancellable()) return;
+    this._values = null;
+    this._promise._cancel();
+};
+
+PromiseArray.prototype._reject = function (reason) {
+    this._values = null;
+    this._promise._rejectCallback(reason, false);
+};
+
+PromiseArray.prototype._promiseFulfilled = function (value, index) {
+    this._values[index] = value;
+    var totalResolved = ++this._totalResolved;
+    if (totalResolved >= this._length) {
+        this._resolve(this._values);
+        return true;
+    }
+    return false;
+};
+
+PromiseArray.prototype._promiseCancelled = function() {
+    this._cancel();
+    return true;
+};
+
+PromiseArray.prototype._promiseRejected = function (reason) {
+    this._totalResolved++;
+    this._reject(reason);
+    return true;
+};
+
+PromiseArray.prototype._resultCancelled = function() {
+    if (this._isResolved()) return;
+    var values = this._values;
+    this._cancel();
+    if (values instanceof Promise) {
+        values.cancel();
+    } else {
+        for (var i = 0; i < values.length; ++i) {
+            if (values[i] instanceof Promise) {
+                values[i].cancel();
+            }
+        }
+    }
+};
+
+PromiseArray.prototype.shouldCopyValues = function () {
+    return true;
+};
+
+PromiseArray.prototype.getActualLength = function (len) {
+    return len;
+};
+
+return PromiseArray;
+};
+
+},{"./util":36}],24:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, INTERNAL) {
+var THIS = {};
+var util = _dereq_("./util");
+var nodebackForPromise = _dereq_("./nodeback");
+var withAppended = util.withAppended;
+var maybeWrapAsError = util.maybeWrapAsError;
+var canEvaluate = util.canEvaluate;
+var TypeError = _dereq_("./errors").TypeError;
+var defaultSuffix = "Async";
+var defaultPromisified = {__isPromisified__: true};
+var noCopyProps = [
+    "arity",    "length",
+    "name",
+    "arguments",
+    "caller",
+    "callee",
+    "prototype",
+    "__isPromisified__"
+];
+var noCopyPropsPattern = new RegExp("^(?:" + noCopyProps.join("|") + ")$");
+
+var defaultFilter = function(name) {
+    return util.isIdentifier(name) &&
+        name.charAt(0) !== "_" &&
+        name !== "constructor";
+};
+
+function propsFilter(key) {
+    return !noCopyPropsPattern.test(key);
+}
+
+function isPromisified(fn) {
+    try {
+        return fn.__isPromisified__ === true;
+    }
+    catch (e) {
+        return false;
+    }
+}
+
+function hasPromisified(obj, key, suffix) {
+    var val = util.getDataPropertyOrDefault(obj, key + suffix,
+                                            defaultPromisified);
+    return val ? isPromisified(val) : false;
+}
+function checkValid(ret, suffix, suffixRegexp) {
+    for (var i = 0; i < ret.length; i += 2) {
+        var key = ret[i];
+        if (suffixRegexp.test(key)) {
+            var keyWithoutAsyncSuffix = key.replace(suffixRegexp, "");
+            for (var j = 0; j < ret.length; j += 2) {
+                if (ret[j] === keyWithoutAsyncSuffix) {
+                    throw new TypeError("Cannot promisify an API that has normal methods with '%s'-suffix\u000a\u000a    See http://goo.gl/MqrFmX\u000a"
+                        .replace("%s", suffix));
+                }
+            }
+        }
+    }
+}
+
+function promisifiableMethods(obj, suffix, suffixRegexp, filter) {
+    var keys = util.inheritedDataKeys(obj);
+    var ret = [];
+    for (var i = 0; i < keys.length; ++i) {
+        var key = keys[i];
+        var value = obj[key];
+        var passesDefaultFilter = filter === defaultFilter
+            ? true : defaultFilter(key, value, obj);
+        if (typeof value === "function" &&
+            !isPromisified(value) &&
+            !hasPromisified(obj, key, suffix) &&
+            filter(key, value, obj, passesDefaultFilter)) {
+            ret.push(key, value);
+        }
+    }
+    checkValid(ret, suffix, suffixRegexp);
+    return ret;
+}
+
+var escapeIdentRegex = function(str) {
+    return str.replace(/([$])/, "\\$");
+};
+
+var makeNodePromisifiedEval;
+if (false) {
+var switchCaseArgumentOrder = function(likelyArgumentCount) {
+    var ret = [likelyArgumentCount];
+    var min = Math.max(0, likelyArgumentCount - 1 - 3);
+    for(var i = likelyArgumentCount - 1; i >= min; --i) {
+        ret.push(i);
+    }
+    for(var i = likelyArgumentCount + 1; i <= 3; ++i) {
+        ret.push(i);
+    }
+    return ret;
+};
+
+var argumentSequence = function(argumentCount) {
+    return util.filledRange(argumentCount, "_arg", "");
+};
+
+var parameterDeclaration = function(parameterCount) {
+    return util.filledRange(
+        Math.max(parameterCount, 3), "_arg", "");
+};
+
+var parameterCount = function(fn) {
+    if (typeof fn.length === "number") {
+        return Math.max(Math.min(fn.length, 1023 + 1), 0);
+    }
+    return 0;
+};
+
+makeNodePromisifiedEval =
+function(callback, receiver, originalName, fn, _, multiArgs) {
+    var newParameterCount = Math.max(0, parameterCount(fn) - 1);
+    var argumentOrder = switchCaseArgumentOrder(newParameterCount);
+    var shouldProxyThis = typeof callback === "string" || receiver === THIS;
+
+    function generateCallForArgumentCount(count) {
+        var args = argumentSequence(count).join(", ");
+        var comma = count > 0 ? ", " : "";
+        var ret;
+        if (shouldProxyThis) {
+            ret = "ret = callback.call(this, {{args}}, nodeback); break;\n";
+        } else {
+            ret = receiver === undefined
+                ? "ret = callback({{args}}, nodeback); break;\n"
+                : "ret = callback.call(receiver, {{args}}, nodeback); break;\n";
+        }
+        return ret.replace("{{args}}", args).replace(", ", comma);
+    }
+
+    function generateArgumentSwitchCase() {
+        var ret = "";
+        for (var i = 0; i < argumentOrder.length; ++i) {
+            ret += "case " + argumentOrder[i] +":" +
+                generateCallForArgumentCount(argumentOrder[i]);
+        }
+
+        ret += "                                                             \n\
+        default:                                                             \n\
+            var args = new Array(len + 1);                                   \n\
+            var i = 0;                                                       \n\
+            for (var i = 0; i < len; ++i) {                                  \n\
+               args[i] = arguments[i];                                       \n\
+            }                                                                \n\
+            args[i] = nodeback;                                              \n\
+            [CodeForCall]                                                    \n\
+            break;                                                           \n\
+        ".replace("[CodeForCall]", (shouldProxyThis
+                                ? "ret = callback.apply(this, args);\n"
+                                : "ret = callback.apply(receiver, args);\n"));
+        return ret;
+    }
+
+    var getFunctionCode = typeof callback === "string"
+                                ? ("this != null ? this['"+callback+"'] : fn")
+                                : "fn";
+    var body = "'use strict';                                                \n\
+        var ret = function (Parameters) {                                    \n\
+            'use strict';                                                    \n\
+            var len = arguments.length;                                      \n\
+            var promise = new Promise(INTERNAL);                             \n\
+            promise._captureStackTrace();                                    \n\
+            var nodeback = nodebackForPromise(promise, " + multiArgs + ");   \n\
+            var ret;                                                         \n\
+            var callback = tryCatch([GetFunctionCode]);                      \n\
+            switch(len) {                                                    \n\
+                [CodeForSwitchCase]                                          \n\
+            }                                                                \n\
+            if (ret === errorObj) {                                          \n\
+                promise._rejectCallback(maybeWrapAsError(ret.e), true, true);\n\
+            }                                                                \n\
+            if (!promise._isFateSealed()) promise._setAsyncGuaranteed();     \n\
+            return promise;                                                  \n\
+        };                                                                   \n\
+        notEnumerableProp(ret, '__isPromisified__', true);                   \n\
+        return ret;                                                          \n\
+    ".replace("[CodeForSwitchCase]", generateArgumentSwitchCase())
+        .replace("[GetFunctionCode]", getFunctionCode);
+    body = body.replace("Parameters", parameterDeclaration(newParameterCount));
+    return new Function("Promise",
+                        "fn",
+                        "receiver",
+                        "withAppended",
+                        "maybeWrapAsError",
+                        "nodebackForPromise",
+                        "tryCatch",
+                        "errorObj",
+                        "notEnumerableProp",
+                        "INTERNAL",
+                        body)(
+                    Promise,
+                    fn,
+                    receiver,
+                    withAppended,
+                    maybeWrapAsError,
+                    nodebackForPromise,
+                    util.tryCatch,
+                    util.errorObj,
+                    util.notEnumerableProp,
+                    INTERNAL);
+};
+}
+
+function makeNodePromisifiedClosure(callback, receiver, _, fn, __, multiArgs) {
+    var defaultThis = (function() {return this;})();
+    var method = callback;
+    if (typeof method === "string") {
+        callback = fn;
+    }
+    function promisified() {
+        var _receiver = receiver;
+        if (receiver === THIS) _receiver = this;
+        var promise = new Promise(INTERNAL);
+        promise._captureStackTrace();
+        var cb = typeof method === "string" && this !== defaultThis
+            ? this[method] : callback;
+        var fn = nodebackForPromise(promise, multiArgs);
+        try {
+            cb.apply(_receiver, withAppended(arguments, fn));
+        } catch(e) {
+            promise._rejectCallback(maybeWrapAsError(e), true, true);
+        }
+        if (!promise._isFateSealed()) promise._setAsyncGuaranteed();
+        return promise;
+    }
+    util.notEnumerableProp(promisified, "__isPromisified__", true);
+    return promisified;
+}
+
+var makeNodePromisified = canEvaluate
+    ? makeNodePromisifiedEval
+    : makeNodePromisifiedClosure;
+
+function promisifyAll(obj, suffix, filter, promisifier, multiArgs) {
+    var suffixRegexp = new RegExp(escapeIdentRegex(suffix) + "$");
+    var methods =
+        promisifiableMethods(obj, suffix, suffixRegexp, filter);
+
+    for (var i = 0, len = methods.length; i < len; i+= 2) {
+        var key = methods[i];
+        var fn = methods[i+1];
+        var promisifiedKey = key + suffix;
+        if (promisifier === makeNodePromisified) {
+            obj[promisifiedKey] =
+                makeNodePromisified(key, THIS, key, fn, suffix, multiArgs);
+        } else {
+            var promisified = promisifier(fn, function() {
+                return makeNodePromisified(key, THIS, key,
+                                           fn, suffix, multiArgs);
+            });
+            util.notEnumerableProp(promisified, "__isPromisified__", true);
+            obj[promisifiedKey] = promisified;
+        }
+    }
+    util.toFastProperties(obj);
+    return obj;
+}
+
+function promisify(callback, receiver, multiArgs) {
+    return makeNodePromisified(callback, receiver, undefined,
+                                callback, null, multiArgs);
+}
+
+Promise.promisify = function (fn, options) {
+    if (typeof fn !== "function") {
+        throw new TypeError("expecting a function but got " + util.classString(fn));
+    }
+    if (isPromisified(fn)) {
+        return fn;
+    }
+    options = Object(options);
+    var receiver = options.context === undefined ? THIS : options.context;
+    var multiArgs = !!options.multiArgs;
+    var ret = promisify(fn, receiver, multiArgs);
+    util.copyDescriptors(fn, ret, propsFilter);
+    return ret;
+};
+
+Promise.promisifyAll = function (target, options) {
+    if (typeof target !== "function" && typeof target !== "object") {
+        throw new TypeError("the target of promisifyAll must be an object or a function\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    options = Object(options);
+    var multiArgs = !!options.multiArgs;
+    var suffix = options.suffix;
+    if (typeof suffix !== "string") suffix = defaultSuffix;
+    var filter = options.filter;
+    if (typeof filter !== "function") filter = defaultFilter;
+    var promisifier = options.promisifier;
+    if (typeof promisifier !== "function") promisifier = makeNodePromisified;
+
+    if (!util.isIdentifier(suffix)) {
+        throw new RangeError("suffix must be a valid identifier\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+
+    var keys = util.inheritedDataKeys(target);
+    for (var i = 0; i < keys.length; ++i) {
+        var value = target[keys[i]];
+        if (keys[i] !== "constructor" &&
+            util.isClass(value)) {
+            promisifyAll(value.prototype, suffix, filter, promisifier,
+                multiArgs);
+            promisifyAll(value, suffix, filter, promisifier, multiArgs);
+        }
+    }
+
+    return promisifyAll(target, suffix, filter, promisifier, multiArgs);
+};
+};
+
+
+},{"./errors":12,"./nodeback":20,"./util":36}],25:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(
+    Promise, PromiseArray, tryConvertToPromise, apiRejection) {
+var util = _dereq_("./util");
+var isObject = util.isObject;
+var es5 = _dereq_("./es5");
+var Es6Map;
+if (typeof Map === "function") Es6Map = Map;
+
+var mapToEntries = (function() {
+    var index = 0;
+    var size = 0;
+
+    function extractEntry(value, key) {
+        this[index] = value;
+        this[index + size] = key;
+        index++;
+    }
+
+    return function mapToEntries(map) {
+        size = map.size;
+        index = 0;
+        var ret = new Array(map.size * 2);
+        map.forEach(extractEntry, ret);
+        return ret;
+    };
+})();
+
+var entriesToMap = function(entries) {
+    var ret = new Es6Map();
+    var length = entries.length / 2 | 0;
+    for (var i = 0; i < length; ++i) {
+        var key = entries[length + i];
+        var value = entries[i];
+        ret.set(key, value);
+    }
+    return ret;
+};
+
+function PropertiesPromiseArray(obj) {
+    var isMap = false;
+    var entries;
+    if (Es6Map !== undefined && obj instanceof Es6Map) {
+        entries = mapToEntries(obj);
+        isMap = true;
+    } else {
+        var keys = es5.keys(obj);
+        var len = keys.length;
+        entries = new Array(len * 2);
+        for (var i = 0; i < len; ++i) {
+            var key = keys[i];
+            entries[i] = obj[key];
+            entries[i + len] = key;
+        }
+    }
+    this.constructor$(entries);
+    this._isMap = isMap;
+    this._init$(undefined, isMap ? -6 : -3);
+}
+util.inherits(PropertiesPromiseArray, PromiseArray);
+
+PropertiesPromiseArray.prototype._init = function () {};
+
+PropertiesPromiseArray.prototype._promiseFulfilled = function (value, index) {
+    this._values[index] = value;
+    var totalResolved = ++this._totalResolved;
+    if (totalResolved >= this._length) {
+        var val;
+        if (this._isMap) {
+            val = entriesToMap(this._values);
+        } else {
+            val = {};
+            var keyOffset = this.length();
+            for (var i = 0, len = this.length(); i < len; ++i) {
+                val[this._values[i + keyOffset]] = this._values[i];
+            }
+        }
+        this._resolve(val);
+        return true;
+    }
+    return false;
+};
+
+PropertiesPromiseArray.prototype.shouldCopyValues = function () {
+    return false;
+};
+
+PropertiesPromiseArray.prototype.getActualLength = function (len) {
+    return len >> 1;
+};
+
+function props(promises) {
+    var ret;
+    var castValue = tryConvertToPromise(promises);
+
+    if (!isObject(castValue)) {
+        return apiRejection("cannot await properties of a non-object\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    } else if (castValue instanceof Promise) {
+        ret = castValue._then(
+            Promise.props, undefined, undefined, undefined, undefined);
+    } else {
+        ret = new PropertiesPromiseArray(castValue).promise();
+    }
+
+    if (castValue instanceof Promise) {
+        ret._propagateFrom(castValue, 2);
+    }
+    return ret;
+}
+
+Promise.prototype.props = function () {
+    return props(this);
+};
+
+Promise.props = function (promises) {
+    return props(promises);
+};
+};
+
+},{"./es5":13,"./util":36}],26:[function(_dereq_,module,exports){
+"use strict";
+function arrayMove(src, srcIndex, dst, dstIndex, len) {
+    for (var j = 0; j < len; ++j) {
+        dst[j + dstIndex] = src[j + srcIndex];
+        src[j + srcIndex] = void 0;
+    }
+}
+
+function Queue(capacity) {
+    this._capacity = capacity;
+    this._length = 0;
+    this._front = 0;
+}
+
+Queue.prototype._willBeOverCapacity = function (size) {
+    return this._capacity < size;
+};
+
+Queue.prototype._pushOne = function (arg) {
+    var length = this.length();
+    this._checkCapacity(length + 1);
+    var i = (this._front + length) & (this._capacity - 1);
+    this[i] = arg;
+    this._length = length + 1;
+};
+
+Queue.prototype.push = function (fn, receiver, arg) {
+    var length = this.length() + 3;
+    if (this._willBeOverCapacity(length)) {
+        this._pushOne(fn);
+        this._pushOne(receiver);
+        this._pushOne(arg);
+        return;
+    }
+    var j = this._front + length - 3;
+    this._checkCapacity(length);
+    var wrapMask = this._capacity - 1;
+    this[(j + 0) & wrapMask] = fn;
+    this[(j + 1) & wrapMask] = receiver;
+    this[(j + 2) & wrapMask] = arg;
+    this._length = length;
+};
+
+Queue.prototype.shift = function () {
+    var front = this._front,
+        ret = this[front];
+
+    this[front] = undefined;
+    this._front = (front + 1) & (this._capacity - 1);
+    this._length--;
+    return ret;
+};
+
+Queue.prototype.length = function () {
+    return this._length;
+};
+
+Queue.prototype._checkCapacity = function (size) {
+    if (this._capacity < size) {
+        this._resizeTo(this._capacity << 1);
+    }
+};
+
+Queue.prototype._resizeTo = function (capacity) {
+    var oldCapacity = this._capacity;
+    this._capacity = capacity;
+    var front = this._front;
+    var length = this._length;
+    var moveItemsCount = (front + length) & (oldCapacity - 1);
+    arrayMove(this, 0, this, oldCapacity, moveItemsCount);
+};
+
+module.exports = Queue;
+
+},{}],27:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(
+    Promise, INTERNAL, tryConvertToPromise, apiRejection) {
+var util = _dereq_("./util");
+
+var raceLater = function (promise) {
+    return promise.then(function(array) {
+        return race(array, promise);
+    });
+};
+
+function race(promises, parent) {
+    var maybePromise = tryConvertToPromise(promises);
+
+    if (maybePromise instanceof Promise) {
+        return raceLater(maybePromise);
+    } else {
+        promises = util.asArray(promises);
+        if (promises === null)
+            return apiRejection("expecting an array or an iterable object but got " + util.classString(promises));
+    }
+
+    var ret = new Promise(INTERNAL);
+    if (parent !== undefined) {
+        ret._propagateFrom(parent, 3);
+    }
+    var fulfill = ret._fulfill;
+    var reject = ret._reject;
+    for (var i = 0, len = promises.length; i < len; ++i) {
+        var val = promises[i];
+
+        if (val === undefined && !(i in promises)) {
+            continue;
+        }
+
+        Promise.cast(val)._then(fulfill, reject, undefined, ret, null);
+    }
+    return ret;
+}
+
+Promise.race = function (promises) {
+    return race(promises, undefined);
+};
+
+Promise.prototype.race = function () {
+    return race(this, undefined);
+};
+
+};
+
+},{"./util":36}],28:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise,
+                          PromiseArray,
+                          apiRejection,
+                          tryConvertToPromise,
+                          INTERNAL,
+                          debug) {
+var getDomain = Promise._getDomain;
+var util = _dereq_("./util");
+var tryCatch = util.tryCatch;
+
+function ReductionPromiseArray(promises, fn, initialValue, _each) {
+    this.constructor$(promises);
+    var domain = getDomain();
+    this._fn = domain === null ? fn : util.domainBind(domain, fn);
+    if (initialValue !== undefined) {
+        initialValue = Promise.resolve(initialValue);
+        initialValue._attachCancellationCallback(this);
+    }
+    this._initialValue = initialValue;
+    this._currentCancellable = null;
+    if(_each === INTERNAL) {
+        this._eachValues = Array(this._length);
+    } else if (_each === 0) {
+        this._eachValues = null;
+    } else {
+        this._eachValues = undefined;
+    }
+    this._promise._captureStackTrace();
+    this._init$(undefined, -5);
+}
+util.inherits(ReductionPromiseArray, PromiseArray);
+
+ReductionPromiseArray.prototype._gotAccum = function(accum) {
+    if (this._eachValues !== undefined && 
+        this._eachValues !== null && 
+        accum !== INTERNAL) {
+        this._eachValues.push(accum);
+    }
+};
+
+ReductionPromiseArray.prototype._eachComplete = function(value) {
+    if (this._eachValues !== null) {
+        this._eachValues.push(value);
+    }
+    return this._eachValues;
+};
+
+ReductionPromiseArray.prototype._init = function() {};
+
+ReductionPromiseArray.prototype._resolveEmptyArray = function() {
+    this._resolve(this._eachValues !== undefined ? this._eachValues
+                                                 : this._initialValue);
+};
+
+ReductionPromiseArray.prototype.shouldCopyValues = function () {
+    return false;
+};
+
+ReductionPromiseArray.prototype._resolve = function(value) {
+    this._promise._resolveCallback(value);
+    this._values = null;
+};
+
+ReductionPromiseArray.prototype._resultCancelled = function(sender) {
+    if (sender === this._initialValue) return this._cancel();
+    if (this._isResolved()) return;
+    this._resultCancelled$();
+    if (this._currentCancellable instanceof Promise) {
+        this._currentCancellable.cancel();
+    }
+    if (this._initialValue instanceof Promise) {
+        this._initialValue.cancel();
+    }
+};
+
+ReductionPromiseArray.prototype._iterate = function (values) {
+    this._values = values;
+    var value;
+    var i;
+    var length = values.length;
+    if (this._initialValue !== undefined) {
+        value = this._initialValue;
+        i = 0;
+    } else {
+        value = Promise.resolve(values[0]);
+        i = 1;
+    }
+
+    this._currentCancellable = value;
+
+    if (!value.isRejected()) {
+        for (; i < length; ++i) {
+            var ctx = {
+                accum: null,
+                value: values[i],
+                index: i,
+                length: length,
+                array: this
+            };
+            value = value._then(gotAccum, undefined, undefined, ctx, undefined);
+        }
+    }
+
+    if (this._eachValues !== undefined) {
+        value = value
+            ._then(this._eachComplete, undefined, undefined, this, undefined);
+    }
+    value._then(completed, completed, undefined, value, this);
+};
+
+Promise.prototype.reduce = function (fn, initialValue) {
+    return reduce(this, fn, initialValue, null);
+};
+
+Promise.reduce = function (promises, fn, initialValue, _each) {
+    return reduce(promises, fn, initialValue, _each);
+};
+
+function completed(valueOrReason, array) {
+    if (this.isFulfilled()) {
+        array._resolve(valueOrReason);
+    } else {
+        array._reject(valueOrReason);
+    }
+}
+
+function reduce(promises, fn, initialValue, _each) {
+    if (typeof fn !== "function") {
+        return apiRejection("expecting a function but got " + util.classString(fn));
+    }
+    var array = new ReductionPromiseArray(promises, fn, initialValue, _each);
+    return array.promise();
+}
+
+function gotAccum(accum) {
+    this.accum = accum;
+    this.array._gotAccum(accum);
+    var value = tryConvertToPromise(this.value, this.array._promise);
+    if (value instanceof Promise) {
+        this.array._currentCancellable = value;
+        return value._then(gotValue, undefined, undefined, this, undefined);
+    } else {
+        return gotValue.call(this, value);
+    }
+}
+
+function gotValue(value) {
+    var array = this.array;
+    var promise = array._promise;
+    var fn = tryCatch(array._fn);
+    promise._pushContext();
+    var ret;
+    if (array._eachValues !== undefined) {
+        ret = fn.call(promise._boundValue(), value, this.index, this.length);
+    } else {
+        ret = fn.call(promise._boundValue(),
+                              this.accum, value, this.index, this.length);
+    }
+    if (ret instanceof Promise) {
+        array._currentCancellable = ret;
+    }
+    var promiseCreated = promise._popContext();
+    debug.checkForgottenReturns(
+        ret,
+        promiseCreated,
+        array._eachValues !== undefined ? "Promise.each" : "Promise.reduce",
+        promise
+    );
+    return ret;
+}
+};
+
+},{"./util":36}],29:[function(_dereq_,module,exports){
+"use strict";
+var util = _dereq_("./util");
+var schedule;
+var noAsyncScheduler = function() {
+    throw new Error("No async scheduler available\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+};
+var NativePromise = util.getNativePromise();
+if (util.isNode && typeof MutationObserver === "undefined") {
+    var GlobalSetImmediate = global.setImmediate;
+    var ProcessNextTick = process.nextTick;
+    schedule = util.isRecentNode
+                ? function(fn) { GlobalSetImmediate.call(global, fn); }
+                : function(fn) { ProcessNextTick.call(process, fn); };
+} else if (typeof NativePromise === "function" &&
+           typeof NativePromise.resolve === "function") {
+    var nativePromise = NativePromise.resolve();
+    schedule = function(fn) {
+        nativePromise.then(fn);
+    };
+} else if ((typeof MutationObserver !== "undefined") &&
+          !(typeof window !== "undefined" &&
+            window.navigator &&
+            (window.navigator.standalone || window.cordova))) {
+    schedule = (function() {
+        var div = document.createElement("div");
+        var opts = {attributes: true};
+        var toggleScheduled = false;
+        var div2 = document.createElement("div");
+        var o2 = new MutationObserver(function() {
+            div.classList.toggle("foo");
+            toggleScheduled = false;
+        });
+        o2.observe(div2, opts);
+
+        var scheduleToggle = function() {
+            if (toggleScheduled) return;
+            toggleScheduled = true;
+            div2.classList.toggle("foo");
+        };
+
+        return function schedule(fn) {
+            var o = new MutationObserver(function() {
+                o.disconnect();
+                fn();
+            });
+            o.observe(div, opts);
+            scheduleToggle();
+        };
+    })();
+} else if (typeof setImmediate !== "undefined") {
+    schedule = function (fn) {
+        setImmediate(fn);
+    };
+} else if (typeof setTimeout !== "undefined") {
+    schedule = function (fn) {
+        setTimeout(fn, 0);
+    };
+} else {
+    schedule = noAsyncScheduler;
+}
+module.exports = schedule;
+
+},{"./util":36}],30:[function(_dereq_,module,exports){
+"use strict";
+module.exports =
+    function(Promise, PromiseArray, debug) {
+var PromiseInspection = Promise.PromiseInspection;
+var util = _dereq_("./util");
+
+function SettledPromiseArray(values) {
+    this.constructor$(values);
+}
+util.inherits(SettledPromiseArray, PromiseArray);
+
+SettledPromiseArray.prototype._promiseResolved = function (index, inspection) {
+    this._values[index] = inspection;
+    var totalResolved = ++this._totalResolved;
+    if (totalResolved >= this._length) {
+        this._resolve(this._values);
+        return true;
+    }
+    return false;
+};
+
+SettledPromiseArray.prototype._promiseFulfilled = function (value, index) {
+    var ret = new PromiseInspection();
+    ret._bitField = 33554432;
+    ret._settledValueField = value;
+    return this._promiseResolved(index, ret);
+};
+SettledPromiseArray.prototype._promiseRejected = function (reason, index) {
+    var ret = new PromiseInspection();
+    ret._bitField = 16777216;
+    ret._settledValueField = reason;
+    return this._promiseResolved(index, ret);
+};
+
+Promise.settle = function (promises) {
+    debug.deprecated(".settle()", ".reflect()");
+    return new SettledPromiseArray(promises).promise();
+};
+
+Promise.prototype.settle = function () {
+    return Promise.settle(this);
+};
+};
+
+},{"./util":36}],31:[function(_dereq_,module,exports){
+"use strict";
+module.exports =
+function(Promise, PromiseArray, apiRejection) {
+var util = _dereq_("./util");
+var RangeError = _dereq_("./errors").RangeError;
+var AggregateError = _dereq_("./errors").AggregateError;
+var isArray = util.isArray;
+var CANCELLATION = {};
+
+
+function SomePromiseArray(values) {
+    this.constructor$(values);
+    this._howMany = 0;
+    this._unwrap = false;
+    this._initialized = false;
+}
+util.inherits(SomePromiseArray, PromiseArray);
+
+SomePromiseArray.prototype._init = function () {
+    if (!this._initialized) {
+        return;
+    }
+    if (this._howMany === 0) {
+        this._resolve([]);
+        return;
+    }
+    this._init$(undefined, -5);
+    var isArrayResolved = isArray(this._values);
+    if (!this._isResolved() &&
+        isArrayResolved &&
+        this._howMany > this._canPossiblyFulfill()) {
+        this._reject(this._getRangeError(this.length()));
+    }
+};
+
+SomePromiseArray.prototype.init = function () {
+    this._initialized = true;
+    this._init();
+};
+
+SomePromiseArray.prototype.setUnwrap = function () {
+    this._unwrap = true;
+};
+
+SomePromiseArray.prototype.howMany = function () {
+    return this._howMany;
+};
+
+SomePromiseArray.prototype.setHowMany = function (count) {
+    this._howMany = count;
+};
+
+SomePromiseArray.prototype._promiseFulfilled = function (value) {
+    this._addFulfilled(value);
+    if (this._fulfilled() === this.howMany()) {
+        this._values.length = this.howMany();
+        if (this.howMany() === 1 && this._unwrap) {
+            this._resolve(this._values[0]);
+        } else {
+            this._resolve(this._values);
+        }
+        return true;
+    }
+    return false;
+
+};
+SomePromiseArray.prototype._promiseRejected = function (reason) {
+    this._addRejected(reason);
+    return this._checkOutcome();
+};
+
+SomePromiseArray.prototype._promiseCancelled = function () {
+    if (this._values instanceof Promise || this._values == null) {
+        return this._cancel();
+    }
+    this._addRejected(CANCELLATION);
+    return this._checkOutcome();
+};
+
+SomePromiseArray.prototype._checkOutcome = function() {
+    if (this.howMany() > this._canPossiblyFulfill()) {
+        var e = new AggregateError();
+        for (var i = this.length(); i < this._values.length; ++i) {
+            if (this._values[i] !== CANCELLATION) {
+                e.push(this._values[i]);
+            }
+        }
+        if (e.length > 0) {
+            this._reject(e);
+        } else {
+            this._cancel();
+        }
+        return true;
+    }
+    return false;
+};
+
+SomePromiseArray.prototype._fulfilled = function () {
+    return this._totalResolved;
+};
+
+SomePromiseArray.prototype._rejected = function () {
+    return this._values.length - this.length();
+};
+
+SomePromiseArray.prototype._addRejected = function (reason) {
+    this._values.push(reason);
+};
+
+SomePromiseArray.prototype._addFulfilled = function (value) {
+    this._values[this._totalResolved++] = value;
+};
+
+SomePromiseArray.prototype._canPossiblyFulfill = function () {
+    return this.length() - this._rejected();
+};
+
+SomePromiseArray.prototype._getRangeError = function (count) {
+    var message = "Input array must contain at least " +
+            this._howMany + " items but contains only " + count + " items";
+    return new RangeError(message);
+};
+
+SomePromiseArray.prototype._resolveEmptyArray = function () {
+    this._reject(this._getRangeError(0));
+};
+
+function some(promises, howMany) {
+    if ((howMany | 0) !== howMany || howMany < 0) {
+        return apiRejection("expecting a positive integer\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    var ret = new SomePromiseArray(promises);
+    var promise = ret.promise();
+    ret.setHowMany(howMany);
+    ret.init();
+    return promise;
+}
+
+Promise.some = function (promises, howMany) {
+    return some(promises, howMany);
+};
+
+Promise.prototype.some = function (howMany) {
+    return some(this, howMany);
+};
+
+Promise._SomePromiseArray = SomePromiseArray;
+};
+
+},{"./errors":12,"./util":36}],32:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise) {
+function PromiseInspection(promise) {
+    if (promise !== undefined) {
+        promise = promise._target();
+        this._bitField = promise._bitField;
+        this._settledValueField = promise._isFateSealed()
+            ? promise._settledValue() : undefined;
+    }
+    else {
+        this._bitField = 0;
+        this._settledValueField = undefined;
+    }
+}
+
+PromiseInspection.prototype._settledValue = function() {
+    return this._settledValueField;
+};
+
+var value = PromiseInspection.prototype.value = function () {
+    if (!this.isFulfilled()) {
+        throw new TypeError("cannot get fulfillment value of a non-fulfilled promise\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    return this._settledValue();
+};
+
+var reason = PromiseInspection.prototype.error =
+PromiseInspection.prototype.reason = function () {
+    if (!this.isRejected()) {
+        throw new TypeError("cannot get rejection reason of a non-rejected promise\u000a\u000a    See http://goo.gl/MqrFmX\u000a");
+    }
+    return this._settledValue();
+};
+
+var isFulfilled = PromiseInspection.prototype.isFulfilled = function() {
+    return (this._bitField & 33554432) !== 0;
+};
+
+var isRejected = PromiseInspection.prototype.isRejected = function () {
+    return (this._bitField & 16777216) !== 0;
+};
+
+var isPending = PromiseInspection.prototype.isPending = function () {
+    return (this._bitField & 50397184) === 0;
+};
+
+var isResolved = PromiseInspection.prototype.isResolved = function () {
+    return (this._bitField & 50331648) !== 0;
+};
+
+PromiseInspection.prototype.isCancelled = function() {
+    return (this._bitField & 8454144) !== 0;
+};
+
+Promise.prototype.__isCancelled = function() {
+    return (this._bitField & 65536) === 65536;
+};
+
+Promise.prototype._isCancelled = function() {
+    return this._target().__isCancelled();
+};
+
+Promise.prototype.isCancelled = function() {
+    return (this._target()._bitField & 8454144) !== 0;
+};
+
+Promise.prototype.isPending = function() {
+    return isPending.call(this._target());
+};
+
+Promise.prototype.isRejected = function() {
+    return isRejected.call(this._target());
+};
+
+Promise.prototype.isFulfilled = function() {
+    return isFulfilled.call(this._target());
+};
+
+Promise.prototype.isResolved = function() {
+    return isResolved.call(this._target());
+};
+
+Promise.prototype.value = function() {
+    return value.call(this._target());
+};
+
+Promise.prototype.reason = function() {
+    var target = this._target();
+    target._unsetRejectionIsUnhandled();
+    return reason.call(target);
+};
+
+Promise.prototype._value = function() {
+    return this._settledValue();
+};
+
+Promise.prototype._reason = function() {
+    this._unsetRejectionIsUnhandled();
+    return this._settledValue();
+};
+
+Promise.PromiseInspection = PromiseInspection;
+};
+
+},{}],33:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, INTERNAL) {
+var util = _dereq_("./util");
+var errorObj = util.errorObj;
+var isObject = util.isObject;
+
+function tryConvertToPromise(obj, context) {
+    if (isObject(obj)) {
+        if (obj instanceof Promise) return obj;
+        var then = getThen(obj);
+        if (then === errorObj) {
+            if (context) context._pushContext();
+            var ret = Promise.reject(then.e);
+            if (context) context._popContext();
+            return ret;
+        } else if (typeof then === "function") {
+            if (isAnyBluebirdPromise(obj)) {
+                var ret = new Promise(INTERNAL);
+                obj._then(
+                    ret._fulfill,
+                    ret._reject,
+                    undefined,
+                    ret,
+                    null
+                );
+                return ret;
+            }
+            return doThenable(obj, then, context);
+        }
+    }
+    return obj;
+}
+
+function doGetThen(obj) {
+    return obj.then;
+}
+
+function getThen(obj) {
+    try {
+        return doGetThen(obj);
+    } catch (e) {
+        errorObj.e = e;
+        return errorObj;
+    }
+}
+
+var hasProp = {}.hasOwnProperty;
+function isAnyBluebirdPromise(obj) {
+    try {
+        return hasProp.call(obj, "_promise0");
+    } catch (e) {
+        return false;
+    }
+}
+
+function doThenable(x, then, context) {
+    var promise = new Promise(INTERNAL);
+    var ret = promise;
+    if (context) context._pushContext();
+    promise._captureStackTrace();
+    if (context) context._popContext();
+    var synchronous = true;
+    var result = util.tryCatch(then).call(x, resolve, reject);
+    synchronous = false;
+
+    if (promise && result === errorObj) {
+        promise._rejectCallback(result.e, true, true);
+        promise = null;
+    }
+
+    function resolve(value) {
+        if (!promise) return;
+        promise._resolveCallback(value);
+        promise = null;
+    }
+
+    function reject(reason) {
+        if (!promise) return;
+        promise._rejectCallback(reason, synchronous, true);
+        promise = null;
+    }
+    return ret;
+}
+
+return tryConvertToPromise;
+};
+
+},{"./util":36}],34:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function(Promise, INTERNAL, debug) {
+var util = _dereq_("./util");
+var TimeoutError = Promise.TimeoutError;
+
+function HandleWrapper(handle)  {
+    this.handle = handle;
+}
+
+HandleWrapper.prototype._resultCancelled = function() {
+    clearTimeout(this.handle);
+};
+
+var afterValue = function(value) { return delay(+this).thenReturn(value); };
+var delay = Promise.delay = function (ms, value) {
+    var ret;
+    var handle;
+    if (value !== undefined) {
+        ret = Promise.resolve(value)
+                ._then(afterValue, null, null, ms, undefined);
+        if (debug.cancellation() && value instanceof Promise) {
+            ret._setOnCancel(value);
+        }
+    } else {
+        ret = new Promise(INTERNAL);
+        handle = setTimeout(function() { ret._fulfill(); }, +ms);
+        if (debug.cancellation()) {
+            ret._setOnCancel(new HandleWrapper(handle));
+        }
+        ret._captureStackTrace();
+    }
+    ret._setAsyncGuaranteed();
+    return ret;
+};
+
+Promise.prototype.delay = function (ms) {
+    return delay(ms, this);
+};
+
+var afterTimeout = function (promise, message, parent) {
+    var err;
+    if (typeof message !== "string") {
+        if (message instanceof Error) {
+            err = message;
+        } else {
+            err = new TimeoutError("operation timed out");
+        }
+    } else {
+        err = new TimeoutError(message);
+    }
+    util.markAsOriginatingFromRejection(err);
+    promise._attachExtraTrace(err);
+    promise._reject(err);
+
+    if (parent != null) {
+        parent.cancel();
+    }
+};
+
+function successClear(value) {
+    clearTimeout(this.handle);
+    return value;
+}
+
+function failureClear(reason) {
+    clearTimeout(this.handle);
+    throw reason;
+}
+
+Promise.prototype.timeout = function (ms, message) {
+    ms = +ms;
+    var ret, parent;
+
+    var handleWrapper = new HandleWrapper(setTimeout(function timeoutTimeout() {
+        if (ret.isPending()) {
+            afterTimeout(ret, message, parent);
+        }
+    }, ms));
+
+    if (debug.cancellation()) {
+        parent = this.then();
+        ret = parent._then(successClear, failureClear,
+                            undefined, handleWrapper, undefined);
+        ret._setOnCancel(handleWrapper);
+    } else {
+        ret = this._then(successClear, failureClear,
+                            undefined, handleWrapper, undefined);
+    }
+
+    return ret;
+};
+
+};
+
+},{"./util":36}],35:[function(_dereq_,module,exports){
+"use strict";
+module.exports = function (Promise, apiRejection, tryConvertToPromise,
+    createContext, INTERNAL, debug) {
+    var util = _dereq_("./util");
+    var TypeError = _dereq_("./errors").TypeError;
+    var inherits = _dereq_("./util").inherits;
+    var errorObj = util.errorObj;
+    var tryCatch = util.tryCatch;
+    var NULL = {};
+
+    function thrower(e) {
+        setTimeout(function(){throw e;}, 0);
+    }
+
+    function castPreservingDisposable(thenable) {
+        var maybePromise = tryConvertToPromise(thenable);
+        if (maybePromise !== thenable &&
+            typeof thenable._isDisposable === "function" &&
+            typeof thenable._getDisposer === "function" &&
+            thenable._isDisposable()) {
+            maybePromise._setDisposable(thenable._getDisposer());
+        }
+        return maybePromise;
+    }
+    function dispose(resources, inspection) {
+        var i = 0;
+        var len = resources.length;
+        var ret = new Promise(INTERNAL);
+        function iterator() {
+            if (i >= len) return ret._fulfill();
+            var maybePromise = castPreservingDisposable(resources[i++]);
+            if (maybePromise instanceof Promise &&
+                maybePromise._isDisposable()) {
+                try {
+                    maybePromise = tryConvertToPromise(
+                        maybePromise._getDisposer().tryDispose(inspection),
+                        resources.promise);
+                } catch (e) {
+                    return thrower(e);
+                }
+                if (maybePromise instanceof Promise) {
+                    return maybePromise._then(iterator, thrower,
+                                              null, null, null);
+                }
+            }
+            iterator();
+        }
+        iterator();
+        return ret;
+    }
+
+    function Disposer(data, promise, context) {
+        this._data = data;
+        this._promise = promise;
+        this._context = context;
+    }
+
+    Disposer.prototype.data = function () {
+        return this._data;
+    };
+
+    Disposer.prototype.promise = function () {
+        return this._promise;
+    };
+
+    Disposer.prototype.resource = function () {
+        if (this.promise().isFulfilled()) {
+            return this.promise().value();
+        }
+        return NULL;
+    };
+
+    Disposer.prototype.tryDispose = function(inspection) {
+        var resource = this.resource();
+        var context = this._context;
+        if (context !== undefined) context._pushContext();
+        var ret = resource !== NULL
+            ? this.doDispose(resource, inspection) : null;
+        if (context !== undefined) context._popContext();
+        this._promise._unsetDisposable();
+        this._data = null;
+        return ret;
+    };
+
+    Disposer.isDisposer = function (d) {
+        return (d != null &&
+                typeof d.resource === "function" &&
+                typeof d.tryDispose === "function");
+    };
+
+    function FunctionDisposer(fn, promise, context) {
+        this.constructor$(fn, promise, context);
+    }
+    inherits(FunctionDisposer, Disposer);
+
+    FunctionDisposer.prototype.doDispose = function (resource, inspection) {
+        var fn = this.data();
+        return fn.call(resource, resource, inspection);
+    };
+
+    function maybeUnwrapDisposer(value) {
+        if (Disposer.isDisposer(value)) {
+            this.resources[this.index]._setDisposable(value);
+            return value.promise();
+        }
+        return value;
+    }
+
+    function ResourceList(length) {
+        this.length = length;
+        this.promise = null;
+        this[length-1] = null;
+    }
+
+    ResourceList.prototype._resultCancelled = function() {
+        var len = this.length;
+        for (var i = 0; i < len; ++i) {
+            var item = this[i];
+            if (item instanceof Promise) {
+                item.cancel();
+            }
+        }
+    };
+
+    Promise.using = function () {
+        var len = arguments.length;
+        if (len < 2) return apiRejection(
+                        "you must pass at least 2 arguments to Promise.using");
+        var fn = arguments[len - 1];
+        if (typeof fn !== "function") {
+            return apiRejection("expecting a function but got " + util.classString(fn));
+        }
+        var input;
+        var spreadArgs = true;
+        if (len === 2 && Array.isArray(arguments[0])) {
+            input = arguments[0];
+            len = input.length;
+            spreadArgs = false;
+        } else {
+            input = arguments;
+            len--;
+        }
+        var resources = new ResourceList(len);
+        for (var i = 0; i < len; ++i) {
+            var resource = input[i];
+            if (Disposer.isDisposer(resource)) {
+                var disposer = resource;
+                resource = resource.promise();
+                resource._setDisposable(disposer);
+            } else {
+                var maybePromise = tryConvertToPromise(resource);
+                if (maybePromise instanceof Promise) {
+                    resource =
+                        maybePromise._then(maybeUnwrapDisposer, null, null, {
+                            resources: resources,
+                            index: i
+                    }, undefined);
+                }
+            }
+            resources[i] = resource;
+        }
+
+        var reflectedResources = new Array(resources.length);
+        for (var i = 0; i < reflectedResources.length; ++i) {
+            reflectedResources[i] = Promise.resolve(resources[i]).reflect();
+        }
+
+        var resultPromise = Promise.all(reflectedResources)
+            .then(function(inspections) {
+                for (var i = 0; i < inspections.length; ++i) {
+                    var inspection = inspections[i];
+                    if (inspection.isRejected()) {
+                        errorObj.e = inspection.error();
+                        return errorObj;
+                    } else if (!inspection.isFulfilled()) {
+                        resultPromise.cancel();
+                        return;
+                    }
+                    inspections[i] = inspection.value();
+                }
+                promise._pushContext();
+
+                fn = tryCatch(fn);
+                var ret = spreadArgs
+                    ? fn.apply(undefined, inspections) : fn(inspections);
+                var promiseCreated = promise._popContext();
+                debug.checkForgottenReturns(
+                    ret, promiseCreated, "Promise.using", promise);
+                return ret;
+            });
+
+        var promise = resultPromise.lastly(function() {
+            var inspection = new Promise.PromiseInspection(resultPromise);
+            return dispose(resources, inspection);
+        });
+        resources.promise = promise;
+        promise._setOnCancel(resources);
+        return promise;
+    };
+
+    Promise.prototype._setDisposable = function (disposer) {
+        this._bitField = this._bitField | 131072;
+        this._disposer = disposer;
+    };
+
+    Promise.prototype._isDisposable = function () {
+        return (this._bitField & 131072) > 0;
+    };
+
+    Promise.prototype._getDisposer = function () {
+        return this._disposer;
+    };
+
+    Promise.prototype._unsetDisposable = function () {
+        this._bitField = this._bitField & (~131072);
+        this._disposer = undefined;
+    };
+
+    Promise.prototype.disposer = function (fn) {
+        if (typeof fn === "function") {
+            return new FunctionDisposer(fn, this, createContext());
+        }
+        throw new TypeError();
+    };
+
+};
+
+},{"./errors":12,"./util":36}],36:[function(_dereq_,module,exports){
+"use strict";
+var es5 = _dereq_("./es5");
+var canEvaluate = typeof navigator == "undefined";
+
+var errorObj = {e: {}};
+var tryCatchTarget;
+var globalObject = typeof self !== "undefined" ? self :
+    typeof window !== "undefined" ? window :
+    typeof global !== "undefined" ? global :
+    this !== undefined ? this : null;
+
+function tryCatcher() {
+    try {
+        var target = tryCatchTarget;
+        tryCatchTarget = null;
+        return target.apply(this, arguments);
+    } catch (e) {
+        errorObj.e = e;
+        return errorObj;
+    }
+}
+function tryCatch(fn) {
+    tryCatchTarget = fn;
+    return tryCatcher;
+}
+
+var inherits = function(Child, Parent) {
+    var hasProp = {}.hasOwnProperty;
+
+    function T() {
+        this.constructor = Child;
+        this.constructor$ = Parent;
+        for (var propertyName in Parent.prototype) {
+            if (hasProp.call(Parent.prototype, propertyName) &&
+                propertyName.charAt(propertyName.length-1) !== "$"
+           ) {
+                this[propertyName + "$"] = Parent.prototype[propertyName];
+            }
+        }
+    }
+    T.prototype = Parent.prototype;
+    Child.prototype = new T();
+    return Child.prototype;
+};
+
+
+function isPrimitive(val) {
+    return val == null || val === true || val === false ||
+        typeof val === "string" || typeof val === "number";
+
+}
+
+function isObject(value) {
+    return typeof value === "function" ||
+           typeof value === "object" && value !== null;
+}
+
+function maybeWrapAsError(maybeError) {
+    if (!isPrimitive(maybeError)) return maybeError;
+
+    return new Error(safeToString(maybeError));
+}
+
+function withAppended(target, appendee) {
+    var len = target.length;
+    var ret = new Array(len + 1);
+    var i;
+    for (i = 0; i < len; ++i) {
+        ret[i] = target[i];
+    }
+    ret[i] = appendee;
+    return ret;
+}
+
+function getDataPropertyOrDefault(obj, key, defaultValue) {
+    if (es5.isES5) {
+        var desc = Object.getOwnPropertyDescriptor(obj, key);
+
+        if (desc != null) {
+            return desc.get == null && desc.set == null
+                    ? desc.value
+                    : defaultValue;
+        }
+    } else {
+        return {}.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
+    }
+}
+
+function notEnumerableProp(obj, name, value) {
+    if (isPrimitive(obj)) return obj;
+    var descriptor = {
+        value: value,
+        configurable: true,
+        enumerable: false,
+        writable: true
+    };
+    es5.defineProperty(obj, name, descriptor);
+    return obj;
+}
+
+function thrower(r) {
+    throw r;
+}
+
+var inheritedDataKeys = (function() {
+    var excludedPrototypes = [
+        Array.prototype,
+        Object.prototype,
+        Function.prototype
+    ];
+
+    var isExcludedProto = function(val) {
+        for (var i = 0; i < excludedPrototypes.length; ++i) {
+            if (excludedPrototypes[i] === val) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    if (es5.isES5) {
+        var getKeys = Object.getOwnPropertyNames;
+        return function(obj) {
+            var ret = [];
+            var visitedKeys = Object.create(null);
+            while (obj != null && !isExcludedProto(obj)) {
+                var keys;
+                try {
+                    keys = getKeys(obj);
+                } catch (e) {
+                    return ret;
+                }
+                for (var i = 0; i < keys.length; ++i) {
+                    var key = keys[i];
+                    if (visitedKeys[key]) continue;
+                    visitedKeys[key] = true;
+                    var desc = Object.getOwnPropertyDescriptor(obj, key);
+                    if (desc != null && desc.get == null && desc.set == null) {
+                        ret.push(key);
+                    }
+                }
+                obj = es5.getPrototypeOf(obj);
+            }
+            return ret;
+        };
+    } else {
+        var hasProp = {}.hasOwnProperty;
+        return function(obj) {
+            if (isExcludedProto(obj)) return [];
+            var ret = [];
+
+            /*jshint forin:false */
+            enumeration: for (var key in obj) {
+                if (hasProp.call(obj, key)) {
+                    ret.push(key);
+                } else {
+                    for (var i = 0; i < excludedPrototypes.length; ++i) {
+                        if (hasProp.call(excludedPrototypes[i], key)) {
+                            continue enumeration;
+                        }
+                    }
+                    ret.push(key);
+                }
+            }
+            return ret;
+        };
+    }
+
+})();
+
+var thisAssignmentPattern = /this\s*\.\s*\S+\s*=/;
+function isClass(fn) {
+    try {
+        if (typeof fn === "function") {
+            var keys = es5.names(fn.prototype);
+
+            var hasMethods = es5.isES5 && keys.length > 1;
+            var hasMethodsOtherThanConstructor = keys.length > 0 &&
+                !(keys.length === 1 && keys[0] === "constructor");
+            var hasThisAssignmentAndStaticMethods =
+                thisAssignmentPattern.test(fn + "") && es5.names(fn).length > 0;
+
+            if (hasMethods || hasMethodsOtherThanConstructor ||
+                hasThisAssignmentAndStaticMethods) {
+                return true;
+            }
+        }
+        return false;
+    } catch (e) {
+        return false;
+    }
+}
+
+function toFastProperties(obj) {
+    /*jshint -W027,-W055,-W031*/
+    function FakeConstructor() {}
+    FakeConstructor.prototype = obj;
+    var l = 8;
+    while (l--) new FakeConstructor();
+    return obj;
+    eval(obj);
+}
+
+var rident = /^[a-z$_][a-z$_0-9]*$/i;
+function isIdentifier(str) {
+    return rident.test(str);
+}
+
+function filledRange(count, prefix, suffix) {
+    var ret = new Array(count);
+    for(var i = 0; i < count; ++i) {
+        ret[i] = prefix + i + suffix;
+    }
+    return ret;
+}
+
+function safeToString(obj) {
+    try {
+        return obj + "";
+    } catch (e) {
+        return "[no string representation]";
+    }
+}
+
+function isError(obj) {
+    return obj instanceof Error ||
+        (obj !== null &&
+           typeof obj === "object" &&
+           typeof obj.message === "string" &&
+           typeof obj.name === "string");
+}
+
+function markAsOriginatingFromRejection(e) {
+    try {
+        notEnumerableProp(e, "isOperational", true);
+    }
+    catch(ignore) {}
+}
+
+function originatesFromRejection(e) {
+    if (e == null) return false;
+    return ((e instanceof Error["__BluebirdErrorTypes__"].OperationalError) ||
+        e["isOperational"] === true);
+}
+
+function canAttachTrace(obj) {
+    return isError(obj) && es5.propertyIsWritable(obj, "stack");
+}
+
+var ensureErrorObject = (function() {
+    if (!("stack" in new Error())) {
+        return function(value) {
+            if (canAttachTrace(value)) return value;
+            try {throw new Error(safeToString(value));}
+            catch(err) {return err;}
+        };
+    } else {
+        return function(value) {
+            if (canAttachTrace(value)) return value;
+            return new Error(safeToString(value));
+        };
+    }
+})();
+
+function classString(obj) {
+    return {}.toString.call(obj);
+}
+
+function copyDescriptors(from, to, filter) {
+    var keys = es5.names(from);
+    for (var i = 0; i < keys.length; ++i) {
+        var key = keys[i];
+        if (filter(key)) {
+            try {
+                es5.defineProperty(to, key, es5.getDescriptor(from, key));
+            } catch (ignore) {}
+        }
+    }
+}
+
+var asArray = function(v) {
+    if (es5.isArray(v)) {
+        return v;
+    }
+    return null;
+};
+
+if (typeof Symbol !== "undefined" && Symbol.iterator) {
+    var ArrayFrom = typeof Array.from === "function" ? function(v) {
+        return Array.from(v);
+    } : function(v) {
+        var ret = [];
+        var it = v[Symbol.iterator]();
+        var itResult;
+        while (!((itResult = it.next()).done)) {
+            ret.push(itResult.value);
+        }
+        return ret;
+    };
+
+    asArray = function(v) {
+        if (es5.isArray(v)) {
+            return v;
+        } else if (v != null && typeof v[Symbol.iterator] === "function") {
+            return ArrayFrom(v);
+        }
+        return null;
+    };
+}
+
+var isNode = typeof process !== "undefined" &&
+        classString(process).toLowerCase() === "[object process]";
+
+var hasEnvVariables = typeof process !== "undefined" &&
+    typeof process.env !== "undefined";
+
+function env(key) {
+    return hasEnvVariables ? process.env[key] : undefined;
+}
+
+function getNativePromise() {
+    if (typeof Promise === "function") {
+        try {
+            var promise = new Promise(function(){});
+            if ({}.toString.call(promise) === "[object Promise]") {
+                return Promise;
+            }
+        } catch (e) {}
+    }
+}
+
+function domainBind(self, cb) {
+    return self.bind(cb);
+}
+
+var ret = {
+    isClass: isClass,
+    isIdentifier: isIdentifier,
+    inheritedDataKeys: inheritedDataKeys,
+    getDataPropertyOrDefault: getDataPropertyOrDefault,
+    thrower: thrower,
+    isArray: es5.isArray,
+    asArray: asArray,
+    notEnumerableProp: notEnumerableProp,
+    isPrimitive: isPrimitive,
+    isObject: isObject,
+    isError: isError,
+    canEvaluate: canEvaluate,
+    errorObj: errorObj,
+    tryCatch: tryCatch,
+    inherits: inherits,
+    withAppended: withAppended,
+    maybeWrapAsError: maybeWrapAsError,
+    toFastProperties: toFastProperties,
+    filledRange: filledRange,
+    toString: safeToString,
+    canAttachTrace: canAttachTrace,
+    ensureErrorObject: ensureErrorObject,
+    originatesFromRejection: originatesFromRejection,
+    markAsOriginatingFromRejection: markAsOriginatingFromRejection,
+    classString: classString,
+    copyDescriptors: copyDescriptors,
+    hasDevTools: typeof chrome !== "undefined" && chrome &&
+                 typeof chrome.loadTimes === "function",
+    isNode: isNode,
+    hasEnvVariables: hasEnvVariables,
+    env: env,
+    global: globalObject,
+    getNativePromise: getNativePromise,
+    domainBind: domainBind
+};
+ret.isRecentNode = ret.isNode && (function() {
+    var version = process.versions.node.split(".").map(Number);
+    return (version[0] === 0 && version[1] > 10) || (version[0] > 0);
+})();
+
+if (ret.isNode) ret.toFastProperties(process);
+
+try {throw new Error(); } catch (e) {ret.lastLineError = e;}
+module.exports = ret;
+
+},{"./es5":13}]},{},[4])(4)
+});                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(24), __webpack_require__(50), __webpack_require__(448).setImmediate))
+
+/***/ }),
+/* 448 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
+};
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(window, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__(449);
+exports.setImmediate = setImmediate;
+exports.clearImmediate = clearImmediate;
+
+
+/***/ }),
+/* 449 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50), __webpack_require__(24)))
+
+/***/ }),
+/* 450 */
 /***/ (function(module, exports) {
 
-module.exports = {"contractName":"Trees","abi":[{"constant":false,"inputs":[{"name":"_account","type":"address"}],"name":"getTreeIds","outputs":[{"components":[{"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"name":"","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"treeOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_admin","type":"address"}],"name":"removeAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"isAdmin","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_treeNumber","type":"uint256"},{"name":"_originalOwner","type":"address"}],"name":"buyTree","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"defaultTreesPower","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"generateTree","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"defaultTreesOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_admin","type":"address"}],"name":"addAdmin","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"trees","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"treeBalances","outputs":[{"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"defaultTreesValue","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastTreeId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_id","type":"uint256"}],"name":"getTreeById","outputs":[{"components":[{"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"name":"","type":"tuple"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_user","type":"address"}],"name":"getTreesByAddress","outputs":[{"components":[{"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"name":"","type":"tuple[]"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"treesOnSale","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_treeNumber","type":"uint256"},{"name":"_receiver","type":"address"}],"name":"putTreeOnSale","outputs":[],"payable":true,"stateMutability":"payable","type":"function"}],"bytecode":"0x60606040526000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16600760006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506001600855600a600955336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506114e2806100bf6000396000f3006060604052600436106100fc576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630a425a33146101015780630d4c055a1461018a5780631785f53c146101ed57806324d7806c146102265780632ab28ce414610277578063388a1526146102ae57806340f555a5146102d757806353458f5e146102ec57806370480275146103415780637a5080221461037a5780638259de1a146103b15780638da5cb5b1461045357806395647f45146104a8578063b1ae9887146104d1578063b47e4364146104fa578063ca084f9614610531578063e5c7bc6c146105ba578063f71d211a146105f1575b600080fd5b341561010c57600080fd5b610138600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610628565b60405180806020018281038252838181518152602001915080516000925b818410156101795782849060200190602002015181526020019260010192610156565b925050509250505060405180910390f35b341561019557600080fd5b6101ab60048080359060200190919050506108bf565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156101f857600080fd5b610224600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506108f2565b005b341561023157600080fd5b61025d600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506109a8565b604051808215151515815260200191505060405180910390f35b6102ac600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506109c8565b005b34156102b957600080fd5b6102c1610cf2565b6040518082815260200191505060405180910390f35b34156102e257600080fd5b6102ea610cf8565b005b34156102f757600080fd5b6102ff610f59565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561034c57600080fd5b610378600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610f7f565b005b341561038557600080fd5b61039b6004808035906020019091905050611034565b6040518082815260200191505060405180910390f35b34156103bc57600080fd5b6103f1600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091908035906020019091905050611058565b604051808681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001848152602001838152602001821515151581526020019550505050505060405180910390f35b341561045e57600080fd5b6104666110d7565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156104b357600080fd5b6104bb6110fc565b6040518082815260200191505060405180910390f35b34156104dc57600080fd5b6104e4611102565b6040518082815260200191505060405180910390f35b341561050557600080fd5b61051b6004808035906020019091905050611108565b6040518082815260200191505060405180910390f35b341561053c57600080fd5b610568600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061123f565b60405180806020018281038252838181518152602001915080516000925b818410156105a95782849060200190602002015181526020019260010192610586565b925050509250505060405180910390f35b34156105c557600080fd5b6105db6004808035906020019091905050611373565b6040518082815260200191505060405180910390f35b610626600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050611397565b005b61063061145a565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614151561079257600260008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b82821015610787578382906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff161515151581525050815260200190600101906106c5565b5050505090506108ba565b600260003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b828210156108b3578382906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff161515151581525050815260200190600101906107f1565b5050505090505b919050565b60036020528060005260406000206000915054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561094d57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b60008060006109d561146e565b60006005878154811015156109e657fe5b906000526020600020900154141515156109ff57600080fd5b339350600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002086815481101515610a4e57fe5b9060005260206000209060050201600201549250600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002086815481101515610aae57fe5b906000526020600020906005020160030154915060a0604051908101604052808781526020018673ffffffffffffffffffffffffffffffffffffffff168152602001848152602001838152602001600015158152509050600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002086815481101515610b5157fe5b90600052602060002090600502016000808201600090556001820160006101000a81549073ffffffffffffffffffffffffffffffffffffffff0219169055600282016000905560038201600090556004820160006101000a81549060ff0219169055505080600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002087815481101515610c0257fe5b90600052602060002090600502016000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550604082015181600201556060820151816003015560808201518160040160006101000a81548160ff021916908315150217905550905050836003600088815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550505050505050565b60095481565b6000610d0261146e565b600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff161515610d5a57600080fd5b6001600654019150600160066000828254019250508190555060a060405190810160405280838152602001600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160085481526020016009548152602001600115158152509050600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff166003600084815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508060026000600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002083815481101515610ebf57fe5b90600052602060002090600502016000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550604082015181600201556060820151816003015560808201518160040160006101000a81548160ff0219169083151502179055509050505050565b600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610fda57600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60048181548110151561104357fe5b90600052602060002090016000915090505481565b60026020528160005260406000208181548110151561107357fe5b9060005260206000209060050201600091509150508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060020154908060030154908060040160009054906101000a900460ff16905085565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60085481565b60065481565b61111061146e565b600260006003600085815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208281548110151561118f57fe5b906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff1615151515815250509050919050565b61124761145a565b600260008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b82821015611368578382906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff161515151581525050815260200190600101906112a6565b505050509050919050565b60058181548110151561138257fe5b90600052602060002090016000915090505481565b60006005838154811015156113a857fe5b906000526020600020900154141515156113c157600080fd5b816005838154811015156113d157fe5b9060005260206000209001819055506001600260008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208381548110151561142e57fe5b906000526020600020906005020160040160006101000a81548160ff0219169083151502179055505050565b602060405190810160405280600081525090565b60a06040519081016040528060008152602001600073ffffffffffffffffffffffffffffffffffffffff168152602001600081526020016000815260200160001515815250905600a165627a7a72305820044f3e8211f791156439e87e5801a5bcec8857b6ab365649cf8b37f64d4747030029","deployedBytecode":"0x6060604052600436106100fc576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630a425a33146101015780630d4c055a1461018a5780631785f53c146101ed57806324d7806c146102265780632ab28ce414610277578063388a1526146102ae57806340f555a5146102d757806353458f5e146102ec57806370480275146103415780637a5080221461037a5780638259de1a146103b15780638da5cb5b1461045357806395647f45146104a8578063b1ae9887146104d1578063b47e4364146104fa578063ca084f9614610531578063e5c7bc6c146105ba578063f71d211a146105f1575b600080fd5b341561010c57600080fd5b610138600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610628565b60405180806020018281038252838181518152602001915080516000925b818410156101795782849060200190602002015181526020019260010192610156565b925050509250505060405180910390f35b341561019557600080fd5b6101ab60048080359060200190919050506108bf565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156101f857600080fd5b610224600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506108f2565b005b341561023157600080fd5b61025d600480803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506109a8565b604051808215151515815260200191505060405180910390f35b6102ac600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff169060200190919050506109c8565b005b34156102b957600080fd5b6102c1610cf2565b6040518082815260200191505060405180910390f35b34156102e257600080fd5b6102ea610cf8565b005b34156102f757600080fd5b6102ff610f59565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561034c57600080fd5b610378600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610f7f565b005b341561038557600080fd5b61039b6004808035906020019091905050611034565b6040518082815260200191505060405180910390f35b34156103bc57600080fd5b6103f1600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091908035906020019091905050611058565b604051808681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001848152602001838152602001821515151581526020019550505050505060405180910390f35b341561045e57600080fd5b6104666110d7565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156104b357600080fd5b6104bb6110fc565b6040518082815260200191505060405180910390f35b34156104dc57600080fd5b6104e4611102565b6040518082815260200191505060405180910390f35b341561050557600080fd5b61051b6004808035906020019091905050611108565b6040518082815260200191505060405180910390f35b341561053c57600080fd5b610568600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061123f565b60405180806020018281038252838181518152602001915080516000925b818410156105a95782849060200190602002015181526020019260010192610586565b925050509250505060405180910390f35b34156105c557600080fd5b6105db6004808035906020019091905050611373565b6040518082815260200191505060405180910390f35b610626600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050611397565b005b61063061145a565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614151561079257600260008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b82821015610787578382906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff161515151581525050815260200190600101906106c5565b5050505090506108ba565b600260003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b828210156108b3578382906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff161515151581525050815260200190600101906107f1565b5050505090505b919050565b60036020528060005260406000206000915054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561094d57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b60008060006109d561146e565b60006005878154811015156109e657fe5b906000526020600020900154141515156109ff57600080fd5b339350600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002086815481101515610a4e57fe5b9060005260206000209060050201600201549250600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002086815481101515610aae57fe5b906000526020600020906005020160030154915060a0604051908101604052808781526020018673ffffffffffffffffffffffffffffffffffffffff168152602001848152602001838152602001600015158152509050600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002086815481101515610b5157fe5b90600052602060002090600502016000808201600090556001820160006101000a81549073ffffffffffffffffffffffffffffffffffffffff0219169055600282016000905560038201600090556004820160006101000a81549060ff0219169055505080600260008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002087815481101515610c0257fe5b90600052602060002090600502016000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550604082015181600201556060820151816003015560808201518160040160006101000a81548160ff021916908315150217905550905050836003600088815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550505050505050565b60095481565b6000610d0261146e565b600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff161515610d5a57600080fd5b6001600654019150600160066000828254019250508190555060a060405190810160405280838152602001600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160085481526020016009548152602001600115158152509050600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff166003600084815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508060026000600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002083815481101515610ebf57fe5b90600052602060002090600502016000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550604082015181600201556060820151816003015560808201518160040160006101000a81548160ff0219169083151502179055509050505050565b600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610fda57600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60048181548110151561104357fe5b90600052602060002090016000915090505481565b60026020528160005260406000208181548110151561107357fe5b9060005260206000209060050201600091509150508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060020154908060030154908060040160009054906101000a900460ff16905085565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60085481565b60065481565b61111061146e565b600260006003600085815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208281548110151561118f57fe5b906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff1615151515815250509050919050565b61124761145a565b600260008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b82821015611368578382906000526020600020906005020160a06040519081016040529081600082015481526020016001820160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200160028201548152602001600382015481526020016004820160009054906101000a900460ff161515151581525050815260200190600101906112a6565b505050509050919050565b60058181548110151561138257fe5b90600052602060002090016000915090505481565b60006005838154811015156113a857fe5b906000526020600020900154141515156113c157600080fd5b816005838154811015156113d157fe5b9060005260206000209001819055506001600260008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208381548110151561142e57fe5b906000526020600020906005020160040160006101000a81548160ff0219169083151502179055505050565b602060405190810160405280600081525090565b60a06040519081016040528060008152602001600073ffffffffffffffffffffffffffffffffffffffff168152602001600081526020016000815260200160001515815250905600a165627a7a72305820044f3e8211f791156439e87e5801a5bcec8857b6ab365649cf8b37f64d4747030029","sourceMap":"693:2847:1:-;;;1249:5;;;;;;;;;;;1214:40;;;;;;;;;;;;;;;;;;;;1294:1;1259:36;;1367:2;1332:37;;310:10;302:5;;:18;;;;;;;;;;;;;;;;;;693:2847;;;;;;","deployedSourceMap":"693:2847:1:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1724:173;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;835:44;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;424:90;;;;;;;;;;;;;;;;;;;;;;;;;;;;73:39;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2926:611;;;;;;;;;;;;;;;;;;;;;;;;;;;;1332:37;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2011:449;;;;;;;;;;;;;;1214:40;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;332:86;;;;;;;;;;;;;;;;;;;;;;;;;;;;1124:22;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;756:46;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;48:20;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1259:36;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1184:25;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1458:108;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1572:104;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1151:28;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2689:231;;;;;;;;;;;;;;;;;;;;;;;;;;;;1724:173;1777:6;;:::i;:::-;1815:1;1795:22;;:8;:22;;;;1792:99;;;1826:12;:22;1839:8;1826:22;;;;;;;;;;;;;;;1819:29;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1792:99;1867:12;:24;1880:10;1867:24;;;;;;;;;;;;;;;1860:31;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1724:173;;;;:::o;835:44::-;;;;;;;;;;;;;;;;;;;;;;:::o;424:90::-;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;503:5;485:7;:15;493:6;485:15;;;;;;;;;;;;;;;;:23;;;;;;;;;;;;;;;;;;424:90;:::o;73:39::-;;;;;;;;;;;;;;;;;;;;;;:::o;2926:611::-;3055:16;3091:21;3173;3255:20;;:::i;:::-;3046:1;3018:11;3030;3018:24;;;;;;;;;;;;;;;;;;;:29;;3010:38;;;;;;;;3074:10;3055:29;;3115:12;:28;3128:14;3115:28;;;;;;;;;;;;;;;3144:11;3115:41;;;;;;;;;;;;;;;;;;;;:51;;;3091:75;;3197:12;:28;3210:14;3197:28;;;;;;;;;;;;;;;3226:11;3197:41;;;;;;;;;;;;;;;;;;;;:51;;;3173:75;;3278:70;;;;;;;;;3283:11;3278:70;;;;3296:14;3278:70;;;;;;3312:13;3278:70;;;;3327:13;3278:70;;;;3342:5;3278:70;;;;;3255:93;;3364:12;:28;3377:14;3364:28;;;;;;;;;;;;;;;3393:11;3364:41;;;;;;;;;;;;;;;;;;;;;3357:48;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3483:8;3445:12;:22;3458:8;3445:22;;;;;;;;;;;;;;;3468:11;3445:35;;;;;;;;;;;;;;;;;;;;:46;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3523:8;3498:9;:22;3508:11;3498:22;;;;;;;;;;;;:33;;;;;;;;;;;;;;;;;;2926:611;;;;;;:::o;1332:37::-;;;;:::o;2011:449::-;2059:17;2122:19;;:::i;:::-;231:7;:19;239:10;231:19;;;;;;;;;;;;;;;;;;;;;;;;;223:28;;;;;;;;2092:1;2079:10;;:14;2059:34;;2114:1;2100:10;;:15;;;;;;;;;;;2144:78;;;;;;;;;2149:9;2144:78;;;;2160:17;;;;;;;;;;;2144:78;;;;;;2179:17;;2144:78;;;;2198:17;;2144:78;;;;2217:4;2144:78;;;;;2122:100;;2378:17;;;;;;;;;;;2355:9;:20;2365:9;2355:20;;;;;;;;;;;;:40;;;;;;;;;;;;;;;;;;2447:7;2402:12;:31;2415:17;;;;;;;;;;;2402:31;;;;;;;;;;;;;;;2434:9;2402:42;;;;;;;;;;;;;;;;;;;;:52;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2011:449;;:::o;1214:40::-;;;;;;;;;;;;;:::o;332:86::-;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;408:4;390:7;:15;398:6;390:15;;;;;;;;;;;;;;;;:22;;;;;;;;;;;;;;;;;;332:86;:::o;1124:22::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;756:46::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;48:20::-;;;;;;;;;;;;;:::o;1259:36::-;;;;:::o;1184:25::-;;;;:::o;1458:108::-;1507:4;;:::i;:::-;1527:12;:28;1540:9;:14;1550:3;1540:14;;;;;;;;;;;;;;;;;;;;;1527:28;;;;;;;;;;;;;;;1556:3;1527:33;;;;;;;;;;;;;;;;;;;;1520:40;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1458:108;;;:::o;1572:104::-;1629:6;;:::i;:::-;1651:12;:19;1664:5;1651:19;;;;;;;;;;;;;;;1644:26;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1572:104;;;:::o;1151:28::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;2689:231::-;2810:1;2782:11;2794;2782:24;;;;;;;;;;;;;;;;;;;:29;;2774:38;;;;;;;;2846:11;2819;2831;2819:24;;;;;;;;;;;;;;;;;;:38;;;;2910:4;2864:12;:23;2877:9;2864:23;;;;;;;;;;;;;;;2888:11;2864:36;;;;;;;;;;;;;;;;;;;;:43;;;:50;;;;;;;;;;;;;;;;;;2689:231;;:::o;693:2847::-;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o","source":"pragma solidity ^0.4.18;\r\n\r\ncontract Admin {\r\n  address public owner;\r\n  mapping(address => bool) public isAdmin;\r\n\r\n  modifier onlyOwner() {\r\n    require(msg.sender == owner);\r\n    _;\r\n  }\r\n\r\n  modifier onlyAdmin() {\r\n    require(isAdmin[msg.sender]);\r\n    _;\r\n  }\r\n\r\n  function Admin() public {\r\n    owner = msg.sender;\r\n  }\r\n\r\n  function addAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = true;\r\n  }\r\n\r\n  function removeAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = false;\r\n  }\r\n}\r\n\r\n// To add a tree do the following:\r\n// - Create a new Tree with the ID, owner, treeValue and power to generate fruits\r\n// - Update the treeBalances and treeOwner mappings\r\ncontract Trees is Admin {\r\n  // What address has what trees\r\n  mapping(address => Tree[]) public treeBalances;\r\n  // Who owns that tree ID\r\n  mapping(uint256 => address) public treeOwner;\r\n\r\n  struct Tree {\r\n    uint256 ID;\r\n    address owner;\r\n    uint256 treeValue;\r\n    uint256 treePower; // How much ether that tree is generating from 0 to 100 where 100 is the total power combined of all the trees\r\n    bool onSale;\r\n  }\r\n\r\n  uint256[] public trees;\r\n  uint256[] public treesOnSale;\r\n  uint256 public lastTreeId;\r\n  address public defaultTreesOwner = owner;\r\n  uint256 public defaultTreesValue = 1; // 1 ether is the default value\r\n  uint256 public defaultTreesPower = 10; // 10% of the total power\r\n\r\n  // To get the tree information of a specific tree ID\r\n  function getTreeById(uint256 _id) public returns(Tree) {\r\n    return treeBalances[treeOwner[_id]][_id];\r\n  }\r\n\r\n  function getTreesByAddress(address _user) public returns(Tree[]) {\r\n    return treeBalances[_user];\r\n  }\r\n\r\n  // To get all the tree IDs of one user\r\n  function getTreeIds(address _account) public returns(Tree[]) {\r\n    if(_account != address(0)) return treeBalances[_account];\r\n    else return treeBalances[msg.sender];\r\n  }\r\n\r\n  // This will be called automatically by the server\r\n  // The contract itself will hold the initial trees\r\n  function generateTree() public onlyAdmin {\r\n    uint256 newTreeId = lastTreeId + 1;\r\n    lastTreeId += 1;\r\n    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, defaultTreesValue, defaultTreesPower, true);\r\n\r\n    // Update the treeBalances and treeOwner mappings\r\n    // We add the tree to the same array position to find it easier\r\n    treeOwner[newTreeId] = defaultTreesOwner;\r\n    treeBalances[defaultTreesOwner][newTreeId] = newTree;\r\n  }\r\n\r\n  // This is payable, the user will send the payment here\r\n  // We delete the tree from the owner first and we add that to the receiver\r\n  // When you sell you're actually putting the tree on the market, not losing it yet\r\n  function putTreeOnSale(uint256 _treeNumber, address _receiver) public payable {\r\n    require(treesOnSale[_treeNumber] != 0);\r\n    treesOnSale[_treeNumber] = _treeNumber;\r\n    treeBalances[_receiver][_treeNumber].onSale = true;\r\n  }\r\n\r\n  function buyTree(uint256 _treeNumber, address _originalOwner) public payable {\r\n    require(treesOnSale[_treeNumber] != 0);\r\n    address newOwner = msg.sender;\r\n    uint256 treeValueCopy = treeBalances[_originalOwner][_treeNumber].treeValue;\r\n    uint256 treePowerCopy = treeBalances[_originalOwner][_treeNumber].treePower;\r\n    Tree memory treeCopy = Tree(_treeNumber, _originalOwner, treeValueCopy, treePowerCopy, false);\r\n\r\n    delete treeBalances[_originalOwner][_treeNumber];\r\n\r\n    // Updated the 2 mappings\r\n    treeBalances[newOwner][_treeNumber] = treeCopy;\r\n    treeOwner[_treeNumber] = newOwner;\r\n  }\r\n}\r\n","sourcePath":"C:\\Users\\merunas\\Desktop\\money-trees\\contracts\\Trees.sol","ast":{"attributes":{"absolutePath":"/C/Users/merunas/Desktop/money-trees/contracts/Trees.sol","exportedSymbols":{"Admin":[124],"Trees":[358]}},"children":[{"attributes":{"literals":["solidity","^","0.4",".18"]},"id":58,"name":"PragmaDirective","src":"0:24:1"},{"attributes":{"baseContracts":[null],"contractDependencies":[null],"contractKind":"contract","documentation":null,"fullyImplemented":true,"linearizedBaseContracts":[124],"name":"Admin","scope":359},"children":[{"attributes":{"constant":false,"name":"owner","scope":124,"stateVariable":true,"storageLocation":"default","type":"address","value":null,"visibility":"public"},"children":[{"attributes":{"name":"address","type":"address"},"id":59,"name":"ElementaryTypeName","src":"48:7:1"}],"id":60,"name":"VariableDeclaration","src":"48:20:1"},{"attributes":{"constant":false,"name":"isAdmin","scope":124,"stateVariable":true,"storageLocation":"default","type":"mapping(address => bool)","value":null,"visibility":"public"},"children":[{"attributes":{"type":"mapping(address => bool)"},"children":[{"attributes":{"name":"address","type":"address"},"id":61,"name":"ElementaryTypeName","src":"81:7:1"},{"attributes":{"name":"bool","type":"bool"},"id":62,"name":"ElementaryTypeName","src":"92:4:1"}],"id":63,"name":"Mapping","src":"73:24:1"}],"id":64,"name":"VariableDeclaration","src":"73:39:1"},{"attributes":{"name":"onlyOwner","visibility":"internal"},"children":[{"attributes":{"parameters":[null]},"children":[],"id":65,"name":"ParameterList","src":"137:2:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":373,"type":"function (bool) pure","value":"require"},"id":66,"name":"Identifier","src":"147:7:1"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_address","typeString":"address"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"==","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":370,"type":"msg","value":"msg"},"id":67,"name":"Identifier","src":"155:3:1"}],"id":68,"name":"MemberAccess","src":"155:10:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":60,"type":"address","value":"owner"},"id":69,"name":"Identifier","src":"169:5:1"}],"id":70,"name":"BinaryOperation","src":"155:19:1"}],"id":71,"name":"FunctionCall","src":"147:28:1"}],"id":72,"name":"ExpressionStatement","src":"147:28:1"},{"id":73,"name":"PlaceholderStatement","src":"182:1:1"}],"id":74,"name":"Block","src":"140:49:1"}],"id":75,"name":"ModifierDefinition","src":"119:70:1"},{"attributes":{"name":"onlyAdmin","visibility":"internal"},"children":[{"attributes":{"parameters":[null]},"children":[],"id":76,"name":"ParameterList","src":"213:2:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":373,"type":"function (bool) pure","value":"require"},"id":77,"name":"Identifier","src":"223:7:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":64,"type":"mapping(address => bool)","value":"isAdmin"},"id":78,"name":"Identifier","src":"231:7:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":370,"type":"msg","value":"msg"},"id":79,"name":"Identifier","src":"239:3:1"}],"id":80,"name":"MemberAccess","src":"239:10:1"}],"id":81,"name":"IndexAccess","src":"231:19:1"}],"id":82,"name":"FunctionCall","src":"223:28:1"}],"id":83,"name":"ExpressionStatement","src":"223:28:1"},{"id":84,"name":"PlaceholderStatement","src":"258:1:1"}],"id":85,"name":"Block","src":"216:49:1"}],"id":86,"name":"ModifierDefinition","src":"195:70:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":true,"modifiers":[null],"name":"Admin","payable":false,"scope":124,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"attributes":{"parameters":[null]},"children":[],"id":87,"name":"ParameterList","src":"285:2:1"},{"attributes":{"parameters":[null]},"children":[],"id":88,"name":"ParameterList","src":"295:0:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":60,"type":"address","value":"owner"},"id":89,"name":"Identifier","src":"302:5:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":370,"type":"msg","value":"msg"},"id":90,"name":"Identifier","src":"310:3:1"}],"id":91,"name":"MemberAccess","src":"310:10:1"}],"id":92,"name":"Assignment","src":"302:18:1"}],"id":93,"name":"ExpressionStatement","src":"302:18:1"}],"id":94,"name":"Block","src":"295:31:1"}],"id":95,"name":"FunctionDefinition","src":"271:55:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"name":"addAdmin","payable":false,"scope":124,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_admin","scope":109,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":96,"name":"ElementaryTypeName","src":"350:7:1"}],"id":97,"name":"VariableDeclaration","src":"350:14:1"}],"id":98,"name":"ParameterList","src":"349:16:1"},{"attributes":{"parameters":[null]},"children":[],"id":101,"name":"ParameterList","src":"383:0:1"},{"attributes":{"arguments":[null]},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":75,"type":"modifier ()","value":"onlyOwner"},"id":99,"name":"Identifier","src":"373:9:1"}],"id":100,"name":"ModifierInvocation","src":"373:9:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":64,"type":"mapping(address => bool)","value":"isAdmin"},"id":102,"name":"Identifier","src":"390:7:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":97,"type":"address","value":"_admin"},"id":103,"name":"Identifier","src":"398:6:1"}],"id":104,"name":"IndexAccess","src":"390:15:1"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":105,"name":"Literal","src":"408:4:1"}],"id":106,"name":"Assignment","src":"390:22:1"}],"id":107,"name":"ExpressionStatement","src":"390:22:1"}],"id":108,"name":"Block","src":"383:35:1"}],"id":109,"name":"FunctionDefinition","src":"332:86:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"name":"removeAdmin","payable":false,"scope":124,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_admin","scope":123,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":110,"name":"ElementaryTypeName","src":"445:7:1"}],"id":111,"name":"VariableDeclaration","src":"445:14:1"}],"id":112,"name":"ParameterList","src":"444:16:1"},{"attributes":{"parameters":[null]},"children":[],"id":115,"name":"ParameterList","src":"478:0:1"},{"attributes":{"arguments":[null]},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":75,"type":"modifier ()","value":"onlyOwner"},"id":113,"name":"Identifier","src":"468:9:1"}],"id":114,"name":"ModifierInvocation","src":"468:9:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":64,"type":"mapping(address => bool)","value":"isAdmin"},"id":116,"name":"Identifier","src":"485:7:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":111,"type":"address","value":"_admin"},"id":117,"name":"Identifier","src":"493:6:1"}],"id":118,"name":"IndexAccess","src":"485:15:1"},{"attributes":{"argumentTypes":null,"hexvalue":"66616c7365","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"false"},"id":119,"name":"Literal","src":"503:5:1"}],"id":120,"name":"Assignment","src":"485:23:1"}],"id":121,"name":"ExpressionStatement","src":"485:23:1"}],"id":122,"name":"Block","src":"478:36:1"}],"id":123,"name":"FunctionDefinition","src":"424:90:1"}],"id":124,"name":"ContractDefinition","src":"28:489:1"},{"attributes":{"contractDependencies":[124],"contractKind":"contract","documentation":null,"fullyImplemented":true,"linearizedBaseContracts":[358,124],"name":"Trees","scope":359},"children":[{"attributes":{"arguments":[null]},"children":[{"attributes":{"contractScope":null,"name":"Admin","referencedDeclaration":124,"type":"contract Admin"},"id":125,"name":"UserDefinedTypeName","src":"711:5:1"}],"id":126,"name":"InheritanceSpecifier","src":"711:5:1"},{"attributes":{"constant":false,"name":"treeBalances","scope":358,"stateVariable":true,"storageLocation":"default","type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":null,"visibility":"public"},"children":[{"attributes":{"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)"},"children":[{"attributes":{"name":"address","type":"address"},"id":127,"name":"ElementaryTypeName","src":"764:7:1"},{"attributes":{"length":null,"type":"struct Trees.Tree storage ref[] storage pointer"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":146,"type":"struct Trees.Tree storage pointer"},"id":128,"name":"UserDefinedTypeName","src":"775:4:1"}],"id":129,"name":"ArrayTypeName","src":"775:6:1"}],"id":130,"name":"Mapping","src":"756:26:1"}],"id":131,"name":"VariableDeclaration","src":"756:46:1"},{"attributes":{"constant":false,"name":"treeOwner","scope":358,"stateVariable":true,"storageLocation":"default","type":"mapping(uint256 => address)","value":null,"visibility":"public"},"children":[{"attributes":{"type":"mapping(uint256 => address)"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":132,"name":"ElementaryTypeName","src":"843:7:1"},{"attributes":{"name":"address","type":"address"},"id":133,"name":"ElementaryTypeName","src":"854:7:1"}],"id":134,"name":"Mapping","src":"835:27:1"}],"id":135,"name":"VariableDeclaration","src":"835:44:1"},{"attributes":{"canonicalName":"Trees.Tree","name":"Tree","scope":358,"visibility":"public"},"children":[{"attributes":{"constant":false,"name":"ID","scope":146,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":136,"name":"ElementaryTypeName","src":"905:7:1"}],"id":137,"name":"VariableDeclaration","src":"905:10:1"},{"attributes":{"constant":false,"name":"owner","scope":146,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":138,"name":"ElementaryTypeName","src":"922:7:1"}],"id":139,"name":"VariableDeclaration","src":"922:13:1"},{"attributes":{"constant":false,"name":"treeValue","scope":146,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":140,"name":"ElementaryTypeName","src":"942:7:1"}],"id":141,"name":"VariableDeclaration","src":"942:17:1"},{"attributes":{"constant":false,"name":"treePower","scope":146,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":142,"name":"ElementaryTypeName","src":"966:7:1"}],"id":143,"name":"VariableDeclaration","src":"966:17:1"},{"attributes":{"constant":false,"name":"onSale","scope":146,"stateVariable":false,"storageLocation":"default","type":"bool","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"bool","type":"bool"},"id":144,"name":"ElementaryTypeName","src":"1101:4:1"}],"id":145,"name":"VariableDeclaration","src":"1101:11:1"}],"id":146,"name":"StructDefinition","src":"886:232:1"},{"attributes":{"constant":false,"name":"trees","scope":358,"stateVariable":true,"storageLocation":"default","type":"uint256[] storage ref","value":null,"visibility":"public"},"children":[{"attributes":{"length":null,"type":"uint256[] storage pointer"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":147,"name":"ElementaryTypeName","src":"1124:7:1"}],"id":148,"name":"ArrayTypeName","src":"1124:9:1"}],"id":149,"name":"VariableDeclaration","src":"1124:22:1"},{"attributes":{"constant":false,"name":"treesOnSale","scope":358,"stateVariable":true,"storageLocation":"default","type":"uint256[] storage ref","value":null,"visibility":"public"},"children":[{"attributes":{"length":null,"type":"uint256[] storage pointer"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":150,"name":"ElementaryTypeName","src":"1151:7:1"}],"id":151,"name":"ArrayTypeName","src":"1151:9:1"}],"id":152,"name":"VariableDeclaration","src":"1151:28:1"},{"attributes":{"constant":false,"name":"lastTreeId","scope":358,"stateVariable":true,"storageLocation":"default","type":"uint256","value":null,"visibility":"public"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":153,"name":"ElementaryTypeName","src":"1184:7:1"}],"id":154,"name":"VariableDeclaration","src":"1184:25:1"},{"attributes":{"constant":false,"name":"defaultTreesOwner","scope":358,"stateVariable":true,"storageLocation":"default","type":"address","visibility":"public"},"children":[{"attributes":{"name":"address","type":"address"},"id":155,"name":"ElementaryTypeName","src":"1214:7:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":60,"type":"address","value":"owner"},"id":156,"name":"Identifier","src":"1249:5:1"}],"id":157,"name":"VariableDeclaration","src":"1214:40:1"},{"attributes":{"constant":false,"name":"defaultTreesValue","scope":358,"stateVariable":true,"storageLocation":"default","type":"uint256","visibility":"public"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":158,"name":"ElementaryTypeName","src":"1259:7:1"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":159,"name":"Literal","src":"1294:1:1"}],"id":160,"name":"VariableDeclaration","src":"1259:36:1"},{"attributes":{"constant":false,"name":"defaultTreesPower","scope":358,"stateVariable":true,"storageLocation":"default","type":"uint256","visibility":"public"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":161,"name":"ElementaryTypeName","src":"1332:7:1"},{"attributes":{"argumentTypes":null,"hexvalue":"3130","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 10","value":"10"},"id":162,"name":"Literal","src":"1367:2:1"}],"id":163,"name":"VariableDeclaration","src":"1332:37:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"getTreeById","payable":false,"scope":358,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_id","scope":179,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":164,"name":"ElementaryTypeName","src":"1479:7:1"}],"id":165,"name":"VariableDeclaration","src":"1479:11:1"}],"id":166,"name":"ParameterList","src":"1478:13:1"},{"children":[{"attributes":{"constant":false,"name":"","scope":179,"stateVariable":false,"storageLocation":"default","type":"struct Trees.Tree memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":146,"type":"struct Trees.Tree storage pointer"},"id":167,"name":"UserDefinedTypeName","src":"1507:4:1"}],"id":168,"name":"VariableDeclaration","src":"1507:4:1"}],"id":169,"name":"ParameterList","src":"1506:6:1"},{"children":[{"attributes":{"functionReturnParameters":169},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":170,"name":"Identifier","src":"1527:12:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":135,"type":"mapping(uint256 => address)","value":"treeOwner"},"id":171,"name":"Identifier","src":"1540:9:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":165,"type":"uint256","value":"_id"},"id":172,"name":"Identifier","src":"1550:3:1"}],"id":173,"name":"IndexAccess","src":"1540:14:1"}],"id":174,"name":"IndexAccess","src":"1527:28:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":165,"type":"uint256","value":"_id"},"id":175,"name":"Identifier","src":"1556:3:1"}],"id":176,"name":"IndexAccess","src":"1527:33:1"}],"id":177,"name":"Return","src":"1520:40:1"}],"id":178,"name":"Block","src":"1513:53:1"}],"id":179,"name":"FunctionDefinition","src":"1458:108:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"getTreesByAddress","payable":false,"scope":358,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_user","scope":192,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":180,"name":"ElementaryTypeName","src":"1599:7:1"}],"id":181,"name":"VariableDeclaration","src":"1599:13:1"}],"id":182,"name":"ParameterList","src":"1598:15:1"},{"children":[{"attributes":{"constant":false,"name":"","scope":192,"stateVariable":false,"storageLocation":"default","type":"struct Trees.Tree memory[] memory","value":null,"visibility":"internal"},"children":[{"attributes":{"length":null,"type":"struct Trees.Tree storage ref[] storage pointer"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":146,"type":"struct Trees.Tree storage pointer"},"id":183,"name":"UserDefinedTypeName","src":"1629:4:1"}],"id":184,"name":"ArrayTypeName","src":"1629:6:1"}],"id":185,"name":"VariableDeclaration","src":"1629:6:1"}],"id":186,"name":"ParameterList","src":"1628:8:1"},{"children":[{"attributes":{"functionReturnParameters":186},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":187,"name":"Identifier","src":"1651:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":181,"type":"address","value":"_user"},"id":188,"name":"Identifier","src":"1664:5:1"}],"id":189,"name":"IndexAccess","src":"1651:19:1"}],"id":190,"name":"Return","src":"1644:26:1"}],"id":191,"name":"Block","src":"1637:39:1"}],"id":192,"name":"FunctionDefinition","src":"1572:104:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"getTreeIds","payable":false,"scope":358,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_account","scope":216,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":193,"name":"ElementaryTypeName","src":"1744:7:1"}],"id":194,"name":"VariableDeclaration","src":"1744:16:1"}],"id":195,"name":"ParameterList","src":"1743:18:1"},{"children":[{"attributes":{"constant":false,"name":"","scope":216,"stateVariable":false,"storageLocation":"default","type":"struct Trees.Tree memory[] memory","value":null,"visibility":"internal"},"children":[{"attributes":{"length":null,"type":"struct Trees.Tree storage ref[] storage pointer"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":146,"type":"struct Trees.Tree storage pointer"},"id":196,"name":"UserDefinedTypeName","src":"1777:4:1"}],"id":197,"name":"ArrayTypeName","src":"1777:6:1"}],"id":198,"name":"VariableDeclaration","src":"1777:6:1"}],"id":199,"name":"ParameterList","src":"1776:8:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_address","typeString":"address"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":194,"type":"address","value":"_account"},"id":200,"name":"Identifier","src":"1795:8:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":true,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"address","type_conversion":true},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_rational_0_by_1","typeString":"int_const 0"}],"isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"type":"type(address)","value":"address"},"id":201,"name":"ElementaryTypeNameExpression","src":"1807:7:1"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":202,"name":"Literal","src":"1815:1:1"}],"id":203,"name":"FunctionCall","src":"1807:10:1"}],"id":204,"name":"BinaryOperation","src":"1795:22:1"},{"attributes":{"functionReturnParameters":199},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":205,"name":"Identifier","src":"1826:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":194,"type":"address","value":"_account"},"id":206,"name":"Identifier","src":"1839:8:1"}],"id":207,"name":"IndexAccess","src":"1826:22:1"}],"id":208,"name":"Return","src":"1819:29:1"},{"attributes":{"functionReturnParameters":199},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":209,"name":"Identifier","src":"1867:12:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":370,"type":"msg","value":"msg"},"id":210,"name":"Identifier","src":"1880:3:1"}],"id":211,"name":"MemberAccess","src":"1880:10:1"}],"id":212,"name":"IndexAccess","src":"1867:24:1"}],"id":213,"name":"Return","src":"1860:31:1"}],"id":214,"name":"IfStatement","src":"1792:99:1"}],"id":215,"name":"Block","src":"1785:112:1"}],"id":216,"name":"FunctionDefinition","src":"1724:173:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"name":"generateTree","payable":false,"scope":358,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"attributes":{"parameters":[null]},"children":[],"id":217,"name":"ParameterList","src":"2032:2:1"},{"attributes":{"parameters":[null]},"children":[],"id":220,"name":"ParameterList","src":"2052:0:1"},{"attributes":{"arguments":[null]},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":86,"type":"modifier ()","value":"onlyAdmin"},"id":218,"name":"Identifier","src":"2042:9:1"}],"id":219,"name":"ModifierInvocation","src":"2042:9:1"},{"children":[{"attributes":{"assignments":[222]},"children":[{"attributes":{"constant":false,"name":"newTreeId","scope":256,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":221,"name":"ElementaryTypeName","src":"2059:7:1"}],"id":222,"name":"VariableDeclaration","src":"2059:17:1"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":154,"type":"uint256","value":"lastTreeId"},"id":223,"name":"Identifier","src":"2079:10:1"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":224,"name":"Literal","src":"2092:1:1"}],"id":225,"name":"BinaryOperation","src":"2079:14:1"}],"id":226,"name":"VariableDeclarationStatement","src":"2059:34:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+=","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":154,"type":"uint256","value":"lastTreeId"},"id":227,"name":"Identifier","src":"2100:10:1"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":228,"name":"Literal","src":"2114:1:1"}],"id":229,"name":"Assignment","src":"2100:15:1"}],"id":230,"name":"ExpressionStatement","src":"2100:15:1"},{"attributes":{"assignments":[232]},"children":[{"attributes":{"constant":false,"name":"newTree","scope":256,"stateVariable":false,"storageLocation":"memory","type":"struct Trees.Tree memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":146,"type":"struct Trees.Tree storage pointer"},"id":231,"name":"UserDefinedTypeName","src":"2122:4:1"}],"id":232,"name":"VariableDeclaration","src":"2122:19:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":true,"lValueRequested":false,"names":[null],"type":"struct Trees.Tree memory","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_address","typeString":"address"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":146,"type":"type(struct Trees.Tree storage pointer)","value":"Tree"},"id":233,"name":"Identifier","src":"2144:4:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":222,"type":"uint256","value":"newTreeId"},"id":234,"name":"Identifier","src":"2149:9:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":157,"type":"address","value":"defaultTreesOwner"},"id":235,"name":"Identifier","src":"2160:17:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":160,"type":"uint256","value":"defaultTreesValue"},"id":236,"name":"Identifier","src":"2179:17:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":163,"type":"uint256","value":"defaultTreesPower"},"id":237,"name":"Identifier","src":"2198:17:1"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":238,"name":"Literal","src":"2217:4:1"}],"id":239,"name":"FunctionCall","src":"2144:78:1"}],"id":240,"name":"VariableDeclarationStatement","src":"2122:100:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":135,"type":"mapping(uint256 => address)","value":"treeOwner"},"id":241,"name":"Identifier","src":"2355:9:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":222,"type":"uint256","value":"newTreeId"},"id":242,"name":"Identifier","src":"2365:9:1"}],"id":243,"name":"IndexAccess","src":"2355:20:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":157,"type":"address","value":"defaultTreesOwner"},"id":244,"name":"Identifier","src":"2378:17:1"}],"id":245,"name":"Assignment","src":"2355:40:1"}],"id":246,"name":"ExpressionStatement","src":"2355:40:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":247,"name":"Identifier","src":"2402:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":157,"type":"address","value":"defaultTreesOwner"},"id":248,"name":"Identifier","src":"2415:17:1"}],"id":250,"name":"IndexAccess","src":"2402:31:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":222,"type":"uint256","value":"newTreeId"},"id":249,"name":"Identifier","src":"2434:9:1"}],"id":251,"name":"IndexAccess","src":"2402:42:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":232,"type":"struct Trees.Tree memory","value":"newTree"},"id":252,"name":"Identifier","src":"2447:7:1"}],"id":253,"name":"Assignment","src":"2402:52:1"}],"id":254,"name":"ExpressionStatement","src":"2402:52:1"}],"id":255,"name":"Block","src":"2052:408:1"}],"id":256,"name":"FunctionDefinition","src":"2011:449:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"putTreeOnSale","payable":true,"scope":358,"stateMutability":"payable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_treeNumber","scope":287,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":257,"name":"ElementaryTypeName","src":"2712:7:1"}],"id":258,"name":"VariableDeclaration","src":"2712:19:1"},{"attributes":{"constant":false,"name":"_receiver","scope":287,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":259,"name":"ElementaryTypeName","src":"2733:7:1"}],"id":260,"name":"VariableDeclaration","src":"2733:17:1"}],"id":261,"name":"ParameterList","src":"2711:40:1"},{"attributes":{"parameters":[null]},"children":[],"id":262,"name":"ParameterList","src":"2767:0:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":373,"type":"function (bool) pure","value":"require"},"id":263,"name":"Identifier","src":"2774:7:1"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":152,"type":"uint256[] storage ref","value":"treesOnSale"},"id":264,"name":"Identifier","src":"2782:11:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":258,"type":"uint256","value":"_treeNumber"},"id":265,"name":"Identifier","src":"2794:11:1"}],"id":266,"name":"IndexAccess","src":"2782:24:1"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":267,"name":"Literal","src":"2810:1:1"}],"id":268,"name":"BinaryOperation","src":"2782:29:1"}],"id":269,"name":"FunctionCall","src":"2774:38:1"}],"id":270,"name":"ExpressionStatement","src":"2774:38:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":152,"type":"uint256[] storage ref","value":"treesOnSale"},"id":271,"name":"Identifier","src":"2819:11:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":258,"type":"uint256","value":"_treeNumber"},"id":272,"name":"Identifier","src":"2831:11:1"}],"id":273,"name":"IndexAccess","src":"2819:24:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":258,"type":"uint256","value":"_treeNumber"},"id":274,"name":"Identifier","src":"2846:11:1"}],"id":275,"name":"Assignment","src":"2819:38:1"}],"id":276,"name":"ExpressionStatement","src":"2819:38:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"onSale","referencedDeclaration":145,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":277,"name":"Identifier","src":"2864:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":260,"type":"address","value":"_receiver"},"id":278,"name":"Identifier","src":"2877:9:1"}],"id":280,"name":"IndexAccess","src":"2864:23:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":258,"type":"uint256","value":"_treeNumber"},"id":279,"name":"Identifier","src":"2888:11:1"}],"id":281,"name":"IndexAccess","src":"2864:36:1"}],"id":282,"name":"MemberAccess","src":"2864:43:1"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":283,"name":"Literal","src":"2910:4:1"}],"id":284,"name":"Assignment","src":"2864:50:1"}],"id":285,"name":"ExpressionStatement","src":"2864:50:1"}],"id":286,"name":"Block","src":"2767:153:1"}],"id":287,"name":"FunctionDefinition","src":"2689:231:1"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"buyTree","payable":true,"scope":358,"stateMutability":"payable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_treeNumber","scope":357,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":288,"name":"ElementaryTypeName","src":"2943:7:1"}],"id":289,"name":"VariableDeclaration","src":"2943:19:1"},{"attributes":{"constant":false,"name":"_originalOwner","scope":357,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":290,"name":"ElementaryTypeName","src":"2964:7:1"}],"id":291,"name":"VariableDeclaration","src":"2964:22:1"}],"id":292,"name":"ParameterList","src":"2942:45:1"},{"attributes":{"parameters":[null]},"children":[],"id":293,"name":"ParameterList","src":"3003:0:1"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":373,"type":"function (bool) pure","value":"require"},"id":294,"name":"Identifier","src":"3010:7:1"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":152,"type":"uint256[] storage ref","value":"treesOnSale"},"id":295,"name":"Identifier","src":"3018:11:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":289,"type":"uint256","value":"_treeNumber"},"id":296,"name":"Identifier","src":"3030:11:1"}],"id":297,"name":"IndexAccess","src":"3018:24:1"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":298,"name":"Literal","src":"3046:1:1"}],"id":299,"name":"BinaryOperation","src":"3018:29:1"}],"id":300,"name":"FunctionCall","src":"3010:38:1"}],"id":301,"name":"ExpressionStatement","src":"3010:38:1"},{"attributes":{"assignments":[303]},"children":[{"attributes":{"constant":false,"name":"newOwner","scope":357,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":302,"name":"ElementaryTypeName","src":"3055:7:1"}],"id":303,"name":"VariableDeclaration","src":"3055:16:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":370,"type":"msg","value":"msg"},"id":304,"name":"Identifier","src":"3074:3:1"}],"id":305,"name":"MemberAccess","src":"3074:10:1"}],"id":306,"name":"VariableDeclarationStatement","src":"3055:29:1"},{"attributes":{"assignments":[308]},"children":[{"attributes":{"constant":false,"name":"treeValueCopy","scope":357,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":307,"name":"ElementaryTypeName","src":"3091:7:1"}],"id":308,"name":"VariableDeclaration","src":"3091:21:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"treeValue","referencedDeclaration":141,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":309,"name":"Identifier","src":"3115:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":291,"type":"address","value":"_originalOwner"},"id":310,"name":"Identifier","src":"3128:14:1"}],"id":311,"name":"IndexAccess","src":"3115:28:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":289,"type":"uint256","value":"_treeNumber"},"id":312,"name":"Identifier","src":"3144:11:1"}],"id":313,"name":"IndexAccess","src":"3115:41:1"}],"id":314,"name":"MemberAccess","src":"3115:51:1"}],"id":315,"name":"VariableDeclarationStatement","src":"3091:75:1"},{"attributes":{"assignments":[317]},"children":[{"attributes":{"constant":false,"name":"treePowerCopy","scope":357,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":316,"name":"ElementaryTypeName","src":"3173:7:1"}],"id":317,"name":"VariableDeclaration","src":"3173:21:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"treePower","referencedDeclaration":143,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":318,"name":"Identifier","src":"3197:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":291,"type":"address","value":"_originalOwner"},"id":319,"name":"Identifier","src":"3210:14:1"}],"id":320,"name":"IndexAccess","src":"3197:28:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":289,"type":"uint256","value":"_treeNumber"},"id":321,"name":"Identifier","src":"3226:11:1"}],"id":322,"name":"IndexAccess","src":"3197:41:1"}],"id":323,"name":"MemberAccess","src":"3197:51:1"}],"id":324,"name":"VariableDeclarationStatement","src":"3173:75:1"},{"attributes":{"assignments":[326]},"children":[{"attributes":{"constant":false,"name":"treeCopy","scope":357,"stateVariable":false,"storageLocation":"memory","type":"struct Trees.Tree memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":146,"type":"struct Trees.Tree storage pointer"},"id":325,"name":"UserDefinedTypeName","src":"3255:4:1"}],"id":326,"name":"VariableDeclaration","src":"3255:20:1"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":true,"lValueRequested":false,"names":[null],"type":"struct Trees.Tree memory","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_address","typeString":"address"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":146,"type":"type(struct Trees.Tree storage pointer)","value":"Tree"},"id":327,"name":"Identifier","src":"3278:4:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":289,"type":"uint256","value":"_treeNumber"},"id":328,"name":"Identifier","src":"3283:11:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":291,"type":"address","value":"_originalOwner"},"id":329,"name":"Identifier","src":"3296:14:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":308,"type":"uint256","value":"treeValueCopy"},"id":330,"name":"Identifier","src":"3312:13:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":317,"type":"uint256","value":"treePowerCopy"},"id":331,"name":"Identifier","src":"3327:13:1"},{"attributes":{"argumentTypes":null,"hexvalue":"66616c7365","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"false"},"id":332,"name":"Literal","src":"3342:5:1"}],"id":333,"name":"FunctionCall","src":"3278:70:1"}],"id":334,"name":"VariableDeclarationStatement","src":"3255:93:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"delete","prefix":true,"type":"tuple()"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":335,"name":"Identifier","src":"3364:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":291,"type":"address","value":"_originalOwner"},"id":336,"name":"Identifier","src":"3377:14:1"}],"id":337,"name":"IndexAccess","src":"3364:28:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":289,"type":"uint256","value":"_treeNumber"},"id":338,"name":"Identifier","src":"3393:11:1"}],"id":339,"name":"IndexAccess","src":"3364:41:1"}],"id":340,"name":"UnaryOperation","src":"3357:48:1"}],"id":341,"name":"ExpressionStatement","src":"3357:48:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":131,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":342,"name":"Identifier","src":"3445:12:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":303,"type":"address","value":"newOwner"},"id":343,"name":"Identifier","src":"3458:8:1"}],"id":345,"name":"IndexAccess","src":"3445:22:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":289,"type":"uint256","value":"_treeNumber"},"id":344,"name":"Identifier","src":"3468:11:1"}],"id":346,"name":"IndexAccess","src":"3445:35:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":326,"type":"struct Trees.Tree memory","value":"treeCopy"},"id":347,"name":"Identifier","src":"3483:8:1"}],"id":348,"name":"Assignment","src":"3445:46:1"}],"id":349,"name":"ExpressionStatement","src":"3445:46:1"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":135,"type":"mapping(uint256 => address)","value":"treeOwner"},"id":350,"name":"Identifier","src":"3498:9:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":289,"type":"uint256","value":"_treeNumber"},"id":351,"name":"Identifier","src":"3508:11:1"}],"id":352,"name":"IndexAccess","src":"3498:22:1"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":303,"type":"address","value":"newOwner"},"id":353,"name":"Identifier","src":"3523:8:1"}],"id":354,"name":"Assignment","src":"3498:33:1"}],"id":355,"name":"ExpressionStatement","src":"3498:33:1"}],"id":356,"name":"Block","src":"3003:534:1"}],"id":357,"name":"FunctionDefinition","src":"2926:611:1"}],"id":358,"name":"ContractDefinition","src":"693:2847:1"}],"id":359,"name":"SourceUnit","src":"0:3542:1"},"compiler":{"name":"solc","version":"0.4.18+commit.9cf6e910.Emscripten.clang"},"networks":{},"schemaVersion":"1.0.1","updatedAt":"2018-01-20T20:25:40.472Z"}
+module.exports = {"contractName":"Trees","abi":[{"constant":true,"inputs":[{"name":"_account","type":"address"}],"name":"getTreeIds","outputs":[{"components":[{"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"name":"","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_admin","type":"address"}],"name":"removeAdmin","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"isAdmin","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_treeNumber","type":"uint256"},{"name":"_originalOwner","type":"address"}],"name":"buyTree","outputs":[{"name":"","type":"bool"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"_treeNumber","type":"uint256"},{"name":"_originalOwner","type":"address"}],"name":"defaultTreesPower","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"generateTree","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"defaultTreesOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"ownerTreesIds","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_treeNumber","type":"uint256"}],"name":"putTreeOnSale","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_admin","type":"address"}],"name":"addAdmin","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"trees","outputs":[{"name":"","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"defaultTreesValue","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastTreeId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"treeDetails","outputs":[{"components":[{"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"treesOnSale","outputs":[{"components":[{"name":"ID","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"name":"","type":"uint256"},{"name":"owner","type":"address"},{"name":"treeValue","type":"uint256"},{"name":"treePower","type":"uint256"},{"name":"onSale","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"treesOnSale","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_treeNumber","type":"uint256"},{"name":"_receiver","type":"address"}],"name":"putTreeOnSale","outputs":[],"payable":true,"stateMutability":"payable","type":"function"}],"bytecode":"0x606060405233600760006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506001600855600a600955336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506100cc6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff166100d164010000000002610d6e176401000000009004565b610186565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561012c57600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b610fd8806101956000396000f3006060604052600436106100e6576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630a425a33146100eb5780631785f53c1461017957806324d7806c146101b25780632ab28ce414610203578063388a15261461023a57806340f555a51461026357806353458f5e1461027857806363aa289b146102cd57806365c501e01461032357806370480275146103465780637a5080221461037f5780638da5cb5b146103b657806395647f451461040b578063b1ae988714610434578063cb14a5cf1461045d578063e5c7bc6c146104e0575b600080fd5b34156100f657600080fd5b610122600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610517565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561016557808201518184015260208101905061014a565b505050509050019250505060405180910390f35b341561018457600080fd5b6101b0600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610680565b005b34156101bd57600080fd5b6101e9600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610736565b604051808215151515815260200191505060405180910390f35b610238600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610756565b005b341561024557600080fd5b61024d610a0a565b6040518082815260200191505060405180910390f35b341561026e57600080fd5b610276610a10565b005b341561028357600080fd5b61028b610c1c565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156102d857600080fd5b61030d600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091908035906020019091905050610c42565b6040518082815260200191505060405180910390f35b341561032e57600080fd5b6103446004808035906020019091905050610c73565b005b341561035157600080fd5b61037d600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610d6e565b005b341561038a57600080fd5b6103a06004808035906020019091905050610e23565b6040518082815260200191505060405180910390f35b34156103c157600080fd5b6103c9610e47565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561041657600080fd5b61041e610e6c565b6040518082815260200191505060405180910390f35b341561043f57600080fd5b610447610e72565b6040518082815260200191505060405180910390f35b341561046857600080fd5b61047e6004808035906020019091905050610e78565b604051808681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001848152602001838152602001821515151581526020019550505050505060405180910390f35b34156104eb57600080fd5b6105016004808035906020019091905050610edb565b6040518082815260200191505060405180910390f35b61051f610eff565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff161415156105ea57600360008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208054806020026020016040519081016040528092919081815260200182805480156105de57602002820191906000526020600020905b8154815260200190600101908083116105ca575b5050505050905061067b565b600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002080548060200260200160405190810160405280929190818152602001828054801561067357602002820191906000526020600020905b81548152602001906001019080831161065f575b505050505090505b919050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156106db57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b60008060006002600086815260200190815260200160002060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515156107cc57600080fd5b6002600086815260200190815260200160002060040160009054906101000a900460ff161515156107fc57600080fd5b339250600091505b600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208054905082101561091957600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208281548110151561089a57fe5b90600052602060002090015490508481141561090c57600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020828154811015156108fc57fe5b9060005260206000209001600090555b8180600101925050610804565b600360008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480600101828161096a9190610f13565b916000526020600020900160008790919091505550826002600087815260200190815260200160002060010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060006002600087815260200190815260200160002060040160006101000a81548160ff0219169083151502179055505050505050565b60095481565b6000610a1a610f3f565b600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff161515610a7257600080fd5b6001600654019150600160066000828254019250508190555060a060405190810160405280838152602001600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020016008548152602001600954815260200160011515815250905060036000600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208054806001018281610b679190610f13565b91600052602060002090016000849091909150555080600260008481526020019081526020016000206000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550604082015181600201556060820151816003015560808201518160040160006101000a81548160ff0219169083151502179055509050505050565b600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600360205281600052604060002081815481101515610c5d57fe5b9060005260206000209001600091509150505481565b6002600082815260200190815260200160002060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610ce357600080fd5b6002600082815260200190815260200160002060040160009054906101000a900460ff16151515610d1357600080fd5b60058054806001018281610d279190610f13565b91600052602060002090016000839091909150555060016002600083815260200190815260200160002060040160006101000a81548160ff02191690831515021790555050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610dc957600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b600481815481101515610e3257fe5b90600052602060002090016000915090505481565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60085481565b60065481565b60026020528060005260406000206000915090508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060020154908060030154908060040160009054906101000a900460ff16905085565b600581815481101515610eea57fe5b90600052602060002090016000915090505481565b602060405190810160405280600081525090565b815481835581811511610f3a57818360005260206000209182019101610f399190610f87565b5b505050565b60a06040519081016040528060008152602001600073ffffffffffffffffffffffffffffffffffffffff16815260200160008152602001600081526020016000151581525090565b610fa991905b80821115610fa5576000816000905550600101610f8d565b5090565b905600a165627a7a7230582099e5a9a25a6676f3e62c54b7fbb92fadd1587458045f29a7e8222d3e9734dfc70029","deployedBytecode":"0x6060604052600436106100e6576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630a425a33146100eb5780631785f53c1461017957806324d7806c146101b25780632ab28ce414610203578063388a15261461023a57806340f555a51461026357806353458f5e1461027857806363aa289b146102cd57806365c501e01461032357806370480275146103465780637a5080221461037f5780638da5cb5b146103b657806395647f451461040b578063b1ae988714610434578063cb14a5cf1461045d578063e5c7bc6c146104e0575b600080fd5b34156100f657600080fd5b610122600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610517565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561016557808201518184015260208101905061014a565b505050509050019250505060405180910390f35b341561018457600080fd5b6101b0600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610680565b005b34156101bd57600080fd5b6101e9600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610736565b604051808215151515815260200191505060405180910390f35b610238600480803590602001909190803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610756565b005b341561024557600080fd5b61024d610a0a565b6040518082815260200191505060405180910390f35b341561026e57600080fd5b610276610a10565b005b341561028357600080fd5b61028b610c1c565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156102d857600080fd5b61030d600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091908035906020019091905050610c42565b6040518082815260200191505060405180910390f35b341561032e57600080fd5b6103446004808035906020019091905050610c73565b005b341561035157600080fd5b61037d600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610d6e565b005b341561038a57600080fd5b6103a06004808035906020019091905050610e23565b6040518082815260200191505060405180910390f35b34156103c157600080fd5b6103c9610e47565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561041657600080fd5b61041e610e6c565b6040518082815260200191505060405180910390f35b341561043f57600080fd5b610447610e72565b6040518082815260200191505060405180910390f35b341561046857600080fd5b61047e6004808035906020019091905050610e78565b604051808681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001848152602001838152602001821515151581526020019550505050505060405180910390f35b34156104eb57600080fd5b6105016004808035906020019091905050610edb565b6040518082815260200191505060405180910390f35b61051f610eff565b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff161415156105ea57600360008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208054806020026020016040519081016040528092919081815260200182805480156105de57602002820191906000526020600020905b8154815260200190600101908083116105ca575b5050505050905061067b565b600360003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002080548060200260200160405190810160405280929190818152602001828054801561067357602002820191906000526020600020905b81548152602001906001019080831161065f575b505050505090505b919050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156106db57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b60008060006002600086815260200190815260200160002060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515156107cc57600080fd5b6002600086815260200190815260200160002060040160009054906101000a900460ff161515156107fc57600080fd5b339250600091505b600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208054905082101561091957600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208281548110151561089a57fe5b90600052602060002090015490508481141561090c57600360008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020828154811015156108fc57fe5b9060005260206000209001600090555b8180600101925050610804565b600360008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020805480600101828161096a9190610f13565b916000526020600020900160008790919091505550826002600087815260200190815260200160002060010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555060006002600087815260200190815260200160002060040160006101000a81548160ff0219169083151502179055505050505050565b60095481565b6000610a1a610f3f565b600160003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff161515610a7257600080fd5b6001600654019150600160066000828254019250508190555060a060405190810160405280838152602001600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020016008548152602001600954815260200160011515815250905060036000600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208054806001018281610b679190610f13565b91600052602060002090016000849091909150555080600260008481526020019081526020016000206000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550604082015181600201556060820151816003015560808201518160040160006101000a81548160ff0219169083151502179055509050505050565b600760009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600360205281600052604060002081815481101515610c5d57fe5b9060005260206000209001600091509150505481565b6002600082815260200190815260200160002060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610ce357600080fd5b6002600082815260200190815260200160002060040160009054906101000a900460ff16151515610d1357600080fd5b60058054806001018281610d279190610f13565b91600052602060002090016000839091909150555060016002600083815260200190815260200160002060040160006101000a81548160ff02191690831515021790555050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16141515610dc957600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b600481815481101515610e3257fe5b90600052602060002090016000915090505481565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60085481565b60065481565b60026020528060005260406000206000915090508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16908060020154908060030154908060040160009054906101000a900460ff16905085565b600581815481101515610eea57fe5b90600052602060002090016000915090505481565b602060405190810160405280600081525090565b815481835581811511610f3a57818360005260206000209182019101610f399190610f87565b5b505050565b60a06040519081016040528060008152602001600073ffffffffffffffffffffffffffffffffffffffff16815260200160008152602001600081526020016000151581525090565b610fa991905b80821115610fa5576000816000905550600101610f8d565b5090565b905600a165627a7a7230582099e5a9a25a6676f3e62c54b7fbb92fadd1587458045f29a7e8222d3e9734dfc70029","sourceMap":"715:2695:0:-;;;1308:10;1273:45;;;;;;;;;;;;;;;;;;;;1358:1;1323:36;;1431:2;1396:37;;310:10;302:5;;:18;;;;;;;;;;;;;;;;;;327:15;336:5;;;;;;;;;;;327:8;;;;;:15;;;:::i;:::-;715:2695;;354:86;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;430:4;412:7;:15;420:6;412:15;;;;;;;;;;;;;;;;:22;;;;;;;;;;;;;;;;;;354:86;:::o;715:2695::-;;;;;;;","deployedSourceMap":"715:2695:0:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1508:187;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:2;8:100;;;99:1;94:3;90;84:5;80:1;75:3;71;64:6;52:2;49:1;45:3;40:15;;8:100;;;12:14;3:109;;;;;;;;;;;;;;;;;446:90:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;73:39;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2729:678;;;;;;;;;;;;;;;;;;;;;;;;;;;;1396:37;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1809:437;;;;;;;;;;;;;;1273:45;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;888:50;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2475:248;;;;;;;;;;;;;;;;;;;;;;;;;;354:86;;;;;;;;;;;;;;;;;;;;;;;;;;;;1183:22;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;48:20;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1323:36;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1243:25;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;788:43;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1210:28;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1508:187;1570:9;;:::i;:::-;1611:1;1591:22;;:8;:22;;;;1588:101;;;1622:13;:23;1636:8;1622:23;;;;;;;;;;;;;;;1615:30;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1588:101;1664:13;:25;1678:10;1664:25;;;;;;;;;;;;;;;1657:32;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1508:187;;;;:::o;446:90::-;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;525:5;507:7;:15;515:6;507:15;;;;;;;;;;;;;;;;:23;;;;;;;;;;;;;;;;;;446:90;:::o;73:39::-;;;;;;;;;;;;;;;;;;;;;;:::o;2729:678::-;2923:16;3052:9;3125:14;2835:11;:24;2847:11;2835:24;;;;;;;;;;;:30;;;;;;;;;;;;2821:44;;:10;:44;;;;2813:53;;;;;;;;2882:11;:24;2894:11;2882:24;;;;;;;;;;;:31;;;;;;;;;;;;2881:32;2873:41;;;;;;;;2942:10;2923:29;;3064:1;3052:13;;3048:210;3071:13;:29;3085:14;3071:29;;;;;;;;;;;;;;;:36;;;;3067:1;:40;3048:210;;;3142:13;:29;3156:14;3142:29;;;;;;;;;;;;;;;3172:1;3142:32;;;;;;;;;;;;;;;;;;;3125:49;;3198:11;3188:6;:21;3185:65;;;3218:13;:29;3232:14;3218:29;;;;;;;;;;;;;;;3248:1;3218:32;;;;;;;;;;;;;;;;;;3211:39;;;3185:65;3109:3;;;;;;;3048:210;;;3266:13;:23;3280:8;3266:23;;;;;;;;;;;;;;;:41;;;;;;;;;;;:::i;:::-;;;;;;;;;;3295:11;3266:41;;;;;;;3347:8;3314:11;:24;3326:11;3314:24;;;;;;;;;;;:30;;;:41;;;;;;;;;;;;;;;;;;3396:5;3362:11;:24;3374:11;3362:24;;;;;;;;;;;:31;;;:39;;;;;;;;;;;;;;;;;;2729:678;;;;;:::o;1396:37::-;;;;:::o;1809:437::-;1857:17;1920:19;;:::i;:::-;231:7;:19;239:10;231:19;;;;;;;;;;;;;;;;;;;;;;;;;223:28;;;;;;;;1890:1;1877:10;;:14;1857:34;;1912:1;1898:10;;:15;;;;;;;;;;;1942:78;;;;;;;;;1947:9;1942:78;;;;1958:17;;;;;;;;;;;1942:78;;;;;;1977:17;;1942:78;;;;1996:17;;1942:78;;;;2015:4;1942:78;;;;;1920:100;;2153:13;:32;2167:17;;;;;;;;;;;2153:32;;;;;;;;;;;;;;;:48;;;;;;;;;;;:::i;:::-;;;;;;;;;;2191:9;2153:48;;;;;;;2233:7;2208:11;:22;2220:9;2208:22;;;;;;;;;;;:32;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1809:437;;:::o;1273:45::-;;;;;;;;;;;;;:::o;888:50::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;2475:248::-;2555:11;:24;2567:11;2555:24;;;;;;;;;;;:30;;;;;;;;;;;;2541:44;;:10;:44;;;2533:53;;;;;;;;2602:11;:24;2614:11;2602:24;;;;;;;;;;;:31;;;;;;;;;;;;2601:32;2593:41;;;;;;;;2643:11;:29;;;;;;;;;;;:::i;:::-;;;;;;;;;;2660:11;2643:29;;;;;;;2713:4;2679:11;:24;2691:11;2679:24;;;;;;;;;;;:31;;;:38;;;;;;;;;;;;;;;;;;2475:248;:::o;354:86::-;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;430:4;412:7;:15;420:6;412:15;;;;;;;;;;;;;;;;:22;;;;;;;;;;;;;;;;;;354:86;:::o;1183:22::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;48:20::-;;;;;;;;;;;;;:::o;1323:36::-;;;;:::o;1243:25::-;;;;:::o;788:43::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;1210:28::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;715:2695::-;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o","source":"pragma solidity ^0.4.18;\r\n\r\ncontract Admin {\r\n  address public owner;\r\n  mapping(address => bool) public isAdmin;\r\n\r\n  modifier onlyOwner() {\r\n    require(msg.sender == owner);\r\n    _;\r\n  }\r\n\r\n  modifier onlyAdmin() {\r\n    require(isAdmin[msg.sender]);\r\n    _;\r\n  }\r\n\r\n  function Admin() public {\r\n    owner = msg.sender;\r\n    addAdmin(owner);\r\n  }\r\n\r\n  function addAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = true;\r\n  }\r\n\r\n  function removeAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = false;\r\n  }\r\n}\r\n\r\n// To add a tree do the following:\r\n// - Create a new Tree with the ID, owner, treeValue and power to generate fruits\r\n// - Update the treeBalances and treeOwner mappings\r\ncontract Trees is Admin {\r\n  // Get the tree information given the id\r\n  mapping(uint256 => Tree) public treeDetails;\r\n  // A mapping with all the tree IDs of that owner\r\n  mapping(address => uint256[]) public ownerTreesIds;\r\n\r\n  struct Tree {\r\n    uint256 ID;\r\n    address owner;\r\n    uint256 treeValue;\r\n    uint256 treePower; // How much ether that tree is generating from 0 to 100 where 100 is the total power combined of all the trees\r\n    bool onSale;\r\n  }\r\n\r\n  uint256[] public trees;\r\n  uint256[] public treesOnSale;\r\n  uint256 public lastTreeId;\r\n  address public defaultTreesOwner = msg.sender;\r\n  uint256 public defaultTreesValue = 1; // 1 ether is the default value\r\n  uint256 public defaultTreesPower = 10; // 10% of the total power\r\n\r\n  // To get all the tree IDs of one user\r\n  function getTreeIds(address _account) public constant returns(uint256[]) {\r\n    if(_account != address(0)) return ownerTreesIds[_account];\r\n    else return ownerTreesIds[msg.sender];\r\n  }\r\n\r\n  // This will be called automatically by the server\r\n  // The contract itself will hold the initial trees\r\n  function generateTree() public onlyAdmin {\r\n    uint256 newTreeId = lastTreeId + 1;\r\n    lastTreeId += 1;\r\n    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, defaultTreesValue, defaultTreesPower, true);\r\n\r\n    // Update the treeBalances and treeOwner mappings\r\n    // We add the tree to the same array position to find it easier\r\n    ownerTreesIds[defaultTreesOwner].push(newTreeId);\r\n    treeDetails[newTreeId] = newTree;\r\n  }\r\n\r\n  // This is payable, the user will send the payment here\r\n  // We delete the tree from the owner first and we add that to the receiver\r\n  // When you sell you're actually putting the tree on the market, not losing it yet\r\n  function putTreeOnSale(uint256 _treeNumber) public {\r\n    require(msg.sender == treeDetails[_treeNumber].owner);\r\n    require(!treeDetails[_treeNumber].onSale);\r\n\r\n    treesOnSale.push(_treeNumber);\r\n    treeDetails[_treeNumber].onSale = true;\r\n  }\r\n\r\n  function buyTree(uint256 _treeNumber, address _originalOwner) public payable {\r\n    require(msg.sender != treeDetails[_treeNumber].owner);\r\n    require(!treeDetails[_treeNumber].onSale);\r\n\r\n    address newOwner = msg.sender;\r\n\r\n    // Move id from old to new owner\r\n    // Find the tree of that user and delete it\r\n    for(uint256 i = 0; i < ownerTreesIds[_originalOwner].length; i++) {\r\n        uint256 treeId = ownerTreesIds[_originalOwner][i];\r\n        if(treeId == _treeNumber) delete ownerTreesIds[_originalOwner][i];\r\n    }\r\n\r\n    ownerTreesIds[newOwner].push(_treeNumber);\r\n    treeDetails[_treeNumber].owner = newOwner;\r\n    treeDetails[_treeNumber].onSale = false;\r\n  }\r\n}\r\n","sourcePath":"C:\\Users\\merunas\\Desktop\\money-trees\\contracts\\Trees.sol","ast":{"attributes":{"absolutePath":"/C/Users/merunas/Desktop/money-trees/contracts/Trees.sol","exportedSymbols":{"Admin":[71],"Trees":[298]}},"children":[{"attributes":{"literals":["solidity","^","0.4",".18"]},"id":1,"name":"PragmaDirective","src":"0:24:0"},{"attributes":{"baseContracts":[null],"contractDependencies":[null],"contractKind":"contract","documentation":null,"fullyImplemented":true,"linearizedBaseContracts":[71],"name":"Admin","scope":299},"children":[{"attributes":{"constant":false,"name":"owner","scope":71,"stateVariable":true,"storageLocation":"default","type":"address","value":null,"visibility":"public"},"children":[{"attributes":{"name":"address","type":"address"},"id":2,"name":"ElementaryTypeName","src":"48:7:0"}],"id":3,"name":"VariableDeclaration","src":"48:20:0"},{"attributes":{"constant":false,"name":"isAdmin","scope":71,"stateVariable":true,"storageLocation":"default","type":"mapping(address => bool)","value":null,"visibility":"public"},"children":[{"attributes":{"type":"mapping(address => bool)"},"children":[{"attributes":{"name":"address","type":"address"},"id":4,"name":"ElementaryTypeName","src":"81:7:0"},{"attributes":{"name":"bool","type":"bool"},"id":5,"name":"ElementaryTypeName","src":"92:4:0"}],"id":6,"name":"Mapping","src":"73:24:0"}],"id":7,"name":"VariableDeclaration","src":"73:39:0"},{"attributes":{"name":"onlyOwner","visibility":"internal"},"children":[{"attributes":{"parameters":[null]},"children":[],"id":8,"name":"ParameterList","src":"137:2:0"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":313,"type":"function (bool) pure","value":"require"},"id":9,"name":"Identifier","src":"147:7:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_address","typeString":"address"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"==","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":10,"name":"Identifier","src":"155:3:0"}],"id":11,"name":"MemberAccess","src":"155:10:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":3,"type":"address","value":"owner"},"id":12,"name":"Identifier","src":"169:5:0"}],"id":13,"name":"BinaryOperation","src":"155:19:0"}],"id":14,"name":"FunctionCall","src":"147:28:0"}],"id":15,"name":"ExpressionStatement","src":"147:28:0"},{"id":16,"name":"PlaceholderStatement","src":"182:1:0"}],"id":17,"name":"Block","src":"140:49:0"}],"id":18,"name":"ModifierDefinition","src":"119:70:0"},{"attributes":{"name":"onlyAdmin","visibility":"internal"},"children":[{"attributes":{"parameters":[null]},"children":[],"id":19,"name":"ParameterList","src":"213:2:0"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":313,"type":"function (bool) pure","value":"require"},"id":20,"name":"Identifier","src":"223:7:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":7,"type":"mapping(address => bool)","value":"isAdmin"},"id":21,"name":"Identifier","src":"231:7:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":22,"name":"Identifier","src":"239:3:0"}],"id":23,"name":"MemberAccess","src":"239:10:0"}],"id":24,"name":"IndexAccess","src":"231:19:0"}],"id":25,"name":"FunctionCall","src":"223:28:0"}],"id":26,"name":"ExpressionStatement","src":"223:28:0"},{"id":27,"name":"PlaceholderStatement","src":"258:1:0"}],"id":28,"name":"Block","src":"216:49:0"}],"id":29,"name":"ModifierDefinition","src":"195:70:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":true,"modifiers":[null],"name":"Admin","payable":false,"scope":71,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"attributes":{"parameters":[null]},"children":[],"id":30,"name":"ParameterList","src":"285:2:0"},{"attributes":{"parameters":[null]},"children":[],"id":31,"name":"ParameterList","src":"295:0:0"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":3,"type":"address","value":"owner"},"id":32,"name":"Identifier","src":"302:5:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":33,"name":"Identifier","src":"310:3:0"}],"id":34,"name":"MemberAccess","src":"310:10:0"}],"id":35,"name":"Assignment","src":"302:18:0"}],"id":36,"name":"ExpressionStatement","src":"302:18:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_address","typeString":"address"}],"overloadedDeclarations":[null],"referencedDeclaration":56,"type":"function (address)","value":"addAdmin"},"id":37,"name":"Identifier","src":"327:8:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":3,"type":"address","value":"owner"},"id":38,"name":"Identifier","src":"336:5:0"}],"id":39,"name":"FunctionCall","src":"327:15:0"}],"id":40,"name":"ExpressionStatement","src":"327:15:0"}],"id":41,"name":"Block","src":"295:53:0"}],"id":42,"name":"FunctionDefinition","src":"271:77:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"name":"addAdmin","payable":false,"scope":71,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_admin","scope":56,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":43,"name":"ElementaryTypeName","src":"372:7:0"}],"id":44,"name":"VariableDeclaration","src":"372:14:0"}],"id":45,"name":"ParameterList","src":"371:16:0"},{"attributes":{"parameters":[null]},"children":[],"id":48,"name":"ParameterList","src":"405:0:0"},{"attributes":{"arguments":[null]},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":18,"type":"modifier ()","value":"onlyOwner"},"id":46,"name":"Identifier","src":"395:9:0"}],"id":47,"name":"ModifierInvocation","src":"395:9:0"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":7,"type":"mapping(address => bool)","value":"isAdmin"},"id":49,"name":"Identifier","src":"412:7:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":44,"type":"address","value":"_admin"},"id":50,"name":"Identifier","src":"420:6:0"}],"id":51,"name":"IndexAccess","src":"412:15:0"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":52,"name":"Literal","src":"430:4:0"}],"id":53,"name":"Assignment","src":"412:22:0"}],"id":54,"name":"ExpressionStatement","src":"412:22:0"}],"id":55,"name":"Block","src":"405:35:0"}],"id":56,"name":"FunctionDefinition","src":"354:86:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"name":"removeAdmin","payable":false,"scope":71,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_admin","scope":70,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":57,"name":"ElementaryTypeName","src":"467:7:0"}],"id":58,"name":"VariableDeclaration","src":"467:14:0"}],"id":59,"name":"ParameterList","src":"466:16:0"},{"attributes":{"parameters":[null]},"children":[],"id":62,"name":"ParameterList","src":"500:0:0"},{"attributes":{"arguments":[null]},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":18,"type":"modifier ()","value":"onlyOwner"},"id":60,"name":"Identifier","src":"490:9:0"}],"id":61,"name":"ModifierInvocation","src":"490:9:0"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":7,"type":"mapping(address => bool)","value":"isAdmin"},"id":63,"name":"Identifier","src":"507:7:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":58,"type":"address","value":"_admin"},"id":64,"name":"Identifier","src":"515:6:0"}],"id":65,"name":"IndexAccess","src":"507:15:0"},{"attributes":{"argumentTypes":null,"hexvalue":"66616c7365","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"false"},"id":66,"name":"Literal","src":"525:5:0"}],"id":67,"name":"Assignment","src":"507:23:0"}],"id":68,"name":"ExpressionStatement","src":"507:23:0"}],"id":69,"name":"Block","src":"500:36:0"}],"id":70,"name":"FunctionDefinition","src":"446:90:0"}],"id":71,"name":"ContractDefinition","src":"28:511:0"},{"attributes":{"contractDependencies":[71],"contractKind":"contract","documentation":null,"fullyImplemented":true,"linearizedBaseContracts":[298,71],"name":"Trees","scope":299},"children":[{"attributes":{"arguments":[null]},"children":[{"attributes":{"contractScope":null,"name":"Admin","referencedDeclaration":71,"type":"contract Admin"},"id":72,"name":"UserDefinedTypeName","src":"733:5:0"}],"id":73,"name":"InheritanceSpecifier","src":"733:5:0"},{"attributes":{"constant":false,"name":"treeDetails","scope":298,"stateVariable":true,"storageLocation":"default","type":"mapping(uint256 => struct Trees.Tree storage ref)","value":null,"visibility":"public"},"children":[{"attributes":{"type":"mapping(uint256 => struct Trees.Tree storage ref)"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":74,"name":"ElementaryTypeName","src":"796:7:0"},{"attributes":{"length":null,"type":"struct Trees.Tree storage pointer","contractScope":null,"name":"Tree","referencedDeclaration":93},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":93,"type":"struct Trees.Tree storage pointer"},"id":75,"name":"UserDefinedTypeName","src":"797:4:0"}],"id":75,"name":"UserDefinedTypeName","src":"807:4:0"}],"id":76,"name":"Mapping","src":"788:24:0"}],"id":77,"name":"VariableDeclaration","src":"788:43:0"},{"attributes":{"constant":false,"name":"ownerTreesIds","scope":298,"stateVariable":true,"storageLocation":"default","type":"mapping(address => uint256[] storage ref)","value":null,"visibility":"public"},"children":[{"attributes":{"type":"mapping(address => uint256[] storage ref)"},"children":[{"attributes":{"name":"address","type":"address"},"id":78,"name":"ElementaryTypeName","src":"896:7:0"},{"attributes":{"name":"address","type":"uint256[] storage pointer","length":null},"id":80,"name":"ArrayTypeName","src":"907:9:0","children":[{"attributes":{"name":"uint256","type":"uint256"},"id":79,"name":"ElementaryTypeName","src":"907:7:0"}]}],"id":81,"name":"Mapping","src":"888:29:0"}],"id":82,"name":"VariableDeclaration","src":"888:50:0"},{"attributes":{"canonicalName":"Trees.Tree","name":"Tree","scope":298,"visibility":"public"},"children":[{"attributes":{"constant":false,"name":"ID","scope":93,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":83,"name":"ElementaryTypeName","src":"964:7:0"}],"id":84,"name":"VariableDeclaration","src":"964:10:0"},{"attributes":{"constant":false,"name":"owner","scope":93,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":85,"name":"ElementaryTypeName","src":"981:7:0"}],"id":86,"name":"VariableDeclaration","src":"981:13:0"},{"attributes":{"constant":false,"name":"treeValue","scope":93,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":87,"name":"ElementaryTypeName","src":"1001:7:0"}],"id":88,"name":"VariableDeclaration","src":"1001:17:0"},{"attributes":{"constant":false,"name":"treePower","scope":93,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":89,"name":"ElementaryTypeName","src":"1025:7:0"}],"id":90,"name":"VariableDeclaration","src":"1025:17:0"},{"attributes":{"constant":false,"name":"onSale","scope":93,"stateVariable":false,"storageLocation":"default","type":"bool","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"bool","type":"bool"},"id":91,"name":"ElementaryTypeName","src":"1160:4:0"}],"id":92,"name":"VariableDeclaration","src":"1160:11:0"}],"id":93,"name":"StructDefinition","src":"945:232:0"},{"attributes":{"constant":false,"name":"trees","scope":298,"stateVariable":true,"storageLocation":"default","type":"uint256[] storage ref","value":null,"visibility":"public"},"children":[{"attributes":{"length":null,"type":"uint256[] storage pointer"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":94,"name":"ElementaryTypeName","src":"1183:7:0"}],"id":95,"name":"ArrayTypeName","src":"1183:9:0"}],"id":96,"name":"VariableDeclaration","src":"1183:22:0"},{"attributes":{"constant":false,"name":"treesOnSale","scope":298,"stateVariable":true,"storageLocation":"default","type":"uint256[] storage ref","value":null,"visibility":"public"},"children":[{"attributes":{"length":null,"type":"uint256[] storage pointer"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":97,"name":"ElementaryTypeName","src":"1210:7:0"}],"id":98,"name":"ArrayTypeName","src":"1210:9:0"}],"id":99,"name":"VariableDeclaration","src":"1210:28:0"},{"attributes":{"constant":false,"name":"lastTreeId","scope":298,"stateVariable":true,"storageLocation":"default","type":"uint256","value":null,"visibility":"public"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":100,"name":"ElementaryTypeName","src":"1243:7:0"}],"id":101,"name":"VariableDeclaration","src":"1243:25:0"},{"attributes":{"constant":false,"name":"defaultTreesOwner","scope":298,"stateVariable":true,"storageLocation":"default","type":"address","visibility":"public"},"children":[{"attributes":{"name":"address","type":"address"},"id":102,"name":"ElementaryTypeName","src":"1273:7:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":null,"type":"address","value":"owner","isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender"},"id":104,"name":"MemberAccess","src":"1308:10:0","children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":103,"name":"Identifier","src":"1308:3:0"}]}],"id":105,"name":"VariableDeclaration","src":"1273:45:0"},{"attributes":{"constant":false,"name":"defaultTreesValue","scope":298,"stateVariable":true,"storageLocation":"default","type":"uint256","visibility":"public"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":106,"name":"ElementaryTypeName","src":"1323:7:0"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":107,"name":"Literal","src":"1358:1:0"}],"id":108,"name":"VariableDeclaration","src":"1323:36:0"},{"attributes":{"constant":false,"name":"defaultTreesPower","scope":298,"stateVariable":true,"storageLocation":"default","type":"uint256","visibility":"public"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":109,"name":"ElementaryTypeName","src":"1396:7:0"},{"attributes":{"argumentTypes":null,"hexvalue":"3130","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 10","value":"10"},"id":110,"name":"Literal","src":"1431:2:0"}],"id":111,"name":"VariableDeclaration","src":"1396:37:0"},{"attributes":{"constant":true,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"getTreeIds","payable":false,"scope":298,"stateMutability":"view","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_account","scope":135,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":112,"name":"ElementaryTypeName","src":"1528:7:0"}],"id":113,"name":"VariableDeclaration","src":"1528:16:0"}],"id":114,"name":"ParameterList","src":"1527:18:0"},{"children":[{"attributes":{"constant":false,"name":"","scope":135,"stateVariable":false,"storageLocation":"default","type":"uint256[] memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":93,"type":"uint256[] storage pointer","length":null},"id":116,"name":"ArrayTypeName","src":"1570:9:0","children":[{"attributes":{"name":"uint256","type":"uint256"},"id":115,"name":"ElementaryTypeName","src":"1570:7:0"}]}],"id":117,"name":"VariableDeclaration","src":"1570:9:0"}],"id":118,"name":"ParameterList","src":"1569:11:0"},{"children":[{"attributes":{"functionReturnParameters":117},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"type":"bool","commonType":{"typeIdentifier":"t_address","typeString":"address"},"operator":"!="},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"address","overloadedDeclarations":[null],"referencedDeclaration":113,"value":"_account"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":118,"name":"Identifier","src":"1554:12:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(uint256 => address)","value":"treeOwner"},"id":119,"name":"Identifier","src":"1567:9:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":113,"type":"uint256","value":"_id"},"id":120,"name":"Identifier","src":"1577:3:0"}],"id":121,"name":"IndexAccess","src":"1567:14:0"}],"id":119,"name":"Identifier","src":"1591:8:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":113,"type":"address","value":"_id","isConstant":false,"isLValue":false,"isPure":true,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type_conversion":true},"id":122,"name":"FunctionCall","src":"1603:10:0","children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_rational_0_by_1","typeString":"int_const 0"}],"isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"type":"type(address)","value":"address"},"id":120,"name":"ElementaryTypeNameExpression","src":"1603:7:0"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":121,"name":"Literal","src":"1611:1:0"}]}],"id":123,"name":"BinaryOperation","src":"1591:22:0"},{"attributes":{"functionReturnParameters":118},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":124,"name":"Identifier","src":"1622:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":113,"type":"address","value":"_account"},"id":125,"name":"Identifier","src":"1636:8:0"}],"id":126,"name":"IndexAccess","src":"1622:23:0"}],"id":127,"name":"Return","src":"1615:30:0"},{"attributes":{"functionReturnParameters":118},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":128,"name":"Identifier","src":"1664:13:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":129,"name":"Identifier","src":"1678:3:0"}],"id":130,"name":"MemberAccess","src":"1678:10:0"}],"id":131,"name":"IndexAccess","src":"1664:25:0"}],"id":132,"name":"Return","src":"1657:32:0"}],"id":133,"name":"IfStatement","src":"1588:101:0"}],"id":134,"name":"Block","src":"1581:114:0"}],"id":135,"name":"FunctionDefinition","src":"1508:187:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"generateTree","payable":false,"scope":298,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_account","scope":147,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":124,"name":"ElementaryTypeName","src":"1690:7:0"}],"id":125,"name":"VariableDeclaration","src":"1690:16:0"}],"id":136,"name":"ParameterList","src":"1830:2:0","attributes":{"parameters":[null]}},{"children":[{"attributes":{"constant":false,"name":"","scope":147,"stateVariable":false,"storageLocation":"default","type":"uint256[] memory","value":null,"visibility":"internal"},"children":[{"attributes":{"length":null,"type":"uint256[] storage pointer"},"children":[{"attributes":{"contractScope":null,"name":"uint256","referencedDeclaration":93,"type":"uint256"},"id":127,"name":"ElementaryTypeName","src":"1732:7:0"}],"id":128,"name":"ArrayTypeName","src":"1732:9:0"}],"id":129,"name":"VariableDeclaration","src":"1732:9:0"}],"id":139,"name":"ParameterList","src":"1850:0:0","attributes":{"parameters":[null]}},{"children":[{"attributes":{"functionReturnParameters":134,"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":29,"type":"modifier ()","value":"onlyAdmin"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"type":"bool","commonType":{"typeIdentifier":"t_address","typeString":"address"},"operator":"!="},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":125,"type":"address","value":"_account"},"id":131,"name":"Identifier","src":"1753:8:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":129,"type":"address","value":"_user","isConstant":false,"isLValue":false,"isPure":true,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type_conversion":true},"id":134,"name":"FunctionCall","src":"1765:10:0","children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_rational_0_by_1","typeString":"int_const 0"}],"isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"type":"type(address)","value":"address"},"id":132,"name":"ElementaryTypeNameExpression","src":"1765:7:0"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":133,"name":"Literal","src":"1773:1:0"}]}],"id":135,"name":"BinaryOperation","src":"1753:22:0"},{"attributes":{"functionReturnParameters":130},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":136,"name":"Identifier","src":"1784:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":125,"type":"address","value":"_account"},"id":137,"name":"Identifier","src":"1798:8:0"}],"id":138,"name":"IndexAccess","src":"1784:23:0"}],"id":139,"name":"Return","src":"1777:30:0"},{"attributes":{"functionReturnParameters":130},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":140,"name":"Identifier","src":"1826:13:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":322,"type":"msg","value":"msg"},"id":141,"name":"Identifier","src":"1840:3:0"}],"id":142,"name":"MemberAccess","src":"1840:10:0"}],"id":143,"name":"IndexAccess","src":"1826:25:0"}],"id":144,"name":"Return","src":"1819:32:0"}],"id":137,"name":"Identifier","src":"1840:9:0"}],"id":138,"name":"ModifierInvocation","src":"1840:9:0","attributes":{"arguments":[null]}},{"children":[{"attributes":{"assignments":[141]},"children":[{"attributes":{"constant":false,"name":"newTreeId","scope":174,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":140,"name":"ElementaryTypeName","src":"1857:7:0"}],"id":141,"name":"VariableDeclaration","src":"1857:17:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":101,"type":"uint256","value":"lastTreeId"},"id":142,"name":"Identifier","src":"1877:10:0"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":143,"name":"Literal","src":"1890:1:0"}],"id":144,"name":"BinaryOperation","src":"1877:14:0"}],"id":145,"name":"VariableDeclarationStatement","src":"1857:34:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+=","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":101,"type":"uint256","value":"lastTreeId"},"id":146,"name":"Identifier","src":"1898:10:0"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":147,"name":"Literal","src":"1912:1:0"}],"id":148,"name":"Assignment","src":"1898:15:0"}],"id":149,"name":"ExpressionStatement","src":"1898:15:0"},{"attributes":{"assignments":[151]},"children":[{"attributes":{"constant":false,"name":"newTree","scope":174,"stateVariable":false,"storageLocation":"memory","type":"struct Trees.Tree memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":93,"type":"struct Trees.Tree storage pointer"},"id":150,"name":"UserDefinedTypeName","src":"1920:4:0"}],"id":151,"name":"VariableDeclaration","src":"1920:19:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":true,"lValueRequested":false,"names":[null],"type":"struct Trees.Tree memory","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_address","typeString":"address"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":93,"type":"type(struct Trees.Tree storage pointer)","value":"Tree"},"id":152,"name":"Identifier","src":"1942:4:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":141,"type":"uint256","value":"newTreeId"},"id":153,"name":"Identifier","src":"1947:9:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":105,"type":"address","value":"defaultTreesOwner"},"id":154,"name":"Identifier","src":"1958:17:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":108,"type":"uint256","value":"defaultTreesValue"},"id":155,"name":"Identifier","src":"1977:17:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":111,"type":"uint256","value":"defaultTreesPower"},"id":156,"name":"Identifier","src":"1996:17:0"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":157,"name":"Literal","src":"2015:4:0"}],"id":158,"name":"FunctionCall","src":"1942:78:0"}],"id":159,"name":"VariableDeclarationStatement","src":"1920:100:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"uint256","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"}],"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"push","referencedDeclaration":null,"type":"function (uint256) returns (uint256)"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":160,"name":"Identifier","src":"2153:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":105,"type":"address","value":"defaultTreesOwner"},"id":161,"name":"Identifier","src":"2167:17:0"}],"id":162,"name":"IndexAccess","src":"2153:32:0"}],"id":163,"name":"MemberAccess","src":"2153:37:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":141,"type":"uint256","value":"newTreeId"},"id":164,"name":"Identifier","src":"2191:9:0"}],"id":165,"name":"FunctionCall","src":"2153:48:0"}],"id":166,"name":"ExpressionStatement","src":"2153:48:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":167,"name":"Identifier","src":"2208:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":141,"type":"uint256","value":"newTreeId"},"id":168,"name":"Identifier","src":"2220:9:0"}],"id":169,"name":"IndexAccess","src":"2208:22:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":151,"type":"struct Trees.Tree memory","value":"newTree"},"id":170,"name":"Identifier","src":"2233:7:0"}],"id":171,"name":"Assignment","src":"2208:32:0"}],"id":172,"name":"ExpressionStatement","src":"2208:32:0"}],"id":173,"name":"Block","src":"1850:396:0"}],"id":174,"name":"FunctionDefinition","src":"1809:437:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"putTreeOnSale","payable":false,"scope":298,"stateMutability":"nonpayable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_treeNumber","scope":211,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":175,"name":"ElementaryTypeName","src":"2498:7:0"}],"id":176,"name":"VariableDeclaration","src":"2498:19:0"}],"id":177,"name":"ParameterList","src":"2497:21:0","attributes":{"parameters":[null]}},{"children":[{"attributes":{"constant":false,"name":"","scope":164,"stateVariable":false,"storageLocation":"default","type":"struct Trees.Tree memory[] memory","value":null,"visibility":"internal"},"children":[{"attributes":{"length":null,"type":"struct Trees.Tree storage ref[] storage pointer"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":93,"type":"struct Trees.Tree storage pointer"},"id":144,"name":"UserDefinedTypeName","src":"1804:4:0"}],"id":145,"name":"ArrayTypeName","src":"1804:6:0"}],"id":146,"name":"VariableDeclaration","src":"1804:6:0"}],"id":178,"name":"ParameterList","src":"2526:0:0","attributes":{"parameters":[null]}},{"children":[{"children":[{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_address","typeString":"address"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!=","type":"tuple()","isStructConstructorCall":false,"names":[null],"type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":313,"type":"function (bool) pure","value":"require"},"id":179,"name":"Identifier","src":"2533:7:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"bool","type_conversion":true,"commonType":{"typeIdentifier":"t_address","typeString":"address"},"operator":"=="},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"type":"address","value":"address","member_name":"sender","referencedDeclaration":null},"id":181,"name":"MemberAccess","src":"2541:10:0","children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":180,"name":"Identifier","src":"2541:3:0"}]},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"subdenomination":null,"token":"number","type":"address","value":"0","member_name":"owner","referencedDeclaration":86},"id":185,"name":"MemberAccess","src":"2555:30:0","children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":182,"name":"Identifier","src":"2555:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":176,"type":"uint256","value":"_treeNumber"},"id":183,"name":"Identifier","src":"2567:11:0"}],"id":184,"name":"IndexAccess","src":"2555:24:0"}]}],"id":186,"name":"BinaryOperation","src":"2541:44:0"}],"id":187,"name":"FunctionCall","src":"2533:53:0"},{"attributes":{"functionReturnParameters":147},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":153,"name":"Identifier","src":"1853:12:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":142,"type":"address","value":"_account"},"id":154,"name":"Identifier","src":"1866:8:0"}],"id":155,"name":"IndexAccess","src":"1853:22:0"}],"id":156,"name":"Return","src":"1846:29:0"},{"attributes":{"functionReturnParameters":147},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":157,"name":"Identifier","src":"1894:12:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":318,"type":"msg","value":"msg"},"id":158,"name":"Identifier","src":"1907:3:0"}],"id":159,"name":"MemberAccess","src":"1907:10:0"}],"id":160,"name":"IndexAccess","src":"1894:24:0"}],"id":161,"name":"Return","src":"1887:31:0"}],"id":188,"name":"ExpressionStatement","src":"2533:53:0","attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":29,"type":"modifier ()","value":"onlyAdmin"}},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":313,"type":"function (bool) pure","value":"require"},"id":189,"name":"Identifier","src":"2593:7:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!","prefix":true,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"onSale","referencedDeclaration":92,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":190,"name":"Identifier","src":"2602:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":176,"type":"uint256","value":"_treeNumber"},"id":191,"name":"Identifier","src":"2614:11:0"}],"id":192,"name":"IndexAccess","src":"2602:24:0"}],"id":193,"name":"MemberAccess","src":"2602:31:0"}],"id":194,"name":"UnaryOperation","src":"2601:32:0"}],"id":195,"name":"FunctionCall","src":"2593:41:0"}],"id":196,"name":"ExpressionStatement","src":"2593:41:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"uint256","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"}],"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"push","referencedDeclaration":null,"type":"function (uint256) returns (uint256)"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":99,"type":"uint256[] storage ref","value":"treesOnSale"},"id":197,"name":"Identifier","src":"2643:11:0"}],"id":199,"name":"MemberAccess","src":"2643:16:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":176,"type":"uint256","value":"_treeNumber"},"id":200,"name":"Identifier","src":"2660:11:0"}],"id":201,"name":"FunctionCall","src":"2643:29:0"}],"id":202,"name":"ExpressionStatement","src":"2643:29:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"onSale","referencedDeclaration":92,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":203,"name":"Identifier","src":"2679:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":176,"type":"uint256","value":"_treeNumber"},"id":204,"name":"Identifier","src":"2691:11:0"}],"id":205,"name":"IndexAccess","src":"2679:24:0"}],"id":206,"name":"MemberAccess","src":"2679:31:0"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":207,"name":"Literal","src":"2713:4:0"}],"id":208,"name":"Assignment","src":"2679:38:0"}],"id":209,"name":"ExpressionStatement","src":"2679:38:0"}],"id":210,"name":"Block","src":"2526:197:0","attributes":{"arguments":[null]}},{"children":[{"attributes":{"assignments":[153]},"children":[{"attributes":{"constant":false,"name":"newTreeId","scope":186,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":152,"name":"ElementaryTypeName","src":"2019:7:0"}],"id":153,"name":"VariableDeclaration","src":"2019:17:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":101,"type":"uint256","value":"lastTreeId"},"id":154,"name":"Identifier","src":"2039:10:0"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":155,"name":"Literal","src":"2052:1:0"}],"id":156,"name":"BinaryOperation","src":"2039:14:0"}],"id":157,"name":"VariableDeclarationStatement","src":"2019:34:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+=","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":101,"type":"uint256","value":"lastTreeId"},"id":158,"name":"Identifier","src":"2060:10:0"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":159,"name":"Literal","src":"2074:1:0"}],"id":160,"name":"Assignment","src":"2060:15:0"}],"id":161,"name":"ExpressionStatement","src":"2060:15:0"},{"attributes":{"assignments":[163]},"children":[{"attributes":{"constant":false,"name":"newTree","scope":186,"stateVariable":false,"storageLocation":"memory","type":"struct Trees.Tree memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":93,"type":"struct Trees.Tree storage pointer"},"id":162,"name":"UserDefinedTypeName","src":"2082:4:0"}],"id":163,"name":"VariableDeclaration","src":"2082:19:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":true,"lValueRequested":false,"names":[null],"type":"struct Trees.Tree memory","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_address","typeString":"address"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":93,"type":"type(struct Trees.Tree storage pointer)","value":"Tree"},"id":164,"name":"Identifier","src":"2104:4:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":153,"type":"uint256","value":"newTreeId"},"id":165,"name":"Identifier","src":"2109:9:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":105,"type":"address","value":"defaultTreesOwner"},"id":166,"name":"Identifier","src":"2120:17:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":108,"type":"uint256","value":"defaultTreesValue"},"id":167,"name":"Identifier","src":"2139:17:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":111,"type":"uint256","value":"defaultTreesPower"},"id":168,"name":"Identifier","src":"2158:17:0"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":169,"name":"Literal","src":"2177:4:0"}],"id":170,"name":"FunctionCall","src":"2104:78:0"}],"id":171,"name":"VariableDeclarationStatement","src":"2082:100:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"uint256","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"}],"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"push","referencedDeclaration":null,"type":"function (uint256) returns (uint256)"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":172,"name":"Identifier","src":"2315:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":105,"type":"address","value":"defaultTreesOwner"},"id":173,"name":"Identifier","src":"2329:17:0"}],"id":174,"name":"IndexAccess","src":"2315:32:0"}],"id":175,"name":"MemberAccess","src":"2315:37:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":153,"type":"uint256","value":"newTreeId"},"id":176,"name":"Identifier","src":"2353:9:0"}],"id":177,"name":"FunctionCall","src":"2315:48:0"}],"id":178,"name":"ExpressionStatement","src":"2315:48:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":179,"name":"Identifier","src":"2370:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":153,"type":"uint256","value":"newTreeId"},"id":180,"name":"Identifier","src":"2382:9:0"}],"id":181,"name":"IndexAccess","src":"2370:22:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":163,"type":"struct Trees.Tree memory","value":"newTree"},"id":182,"name":"Identifier","src":"2395:7:0"}],"id":183,"name":"Assignment","src":"2370:32:0"}],"id":184,"name":"ExpressionStatement","src":"2370:32:0"}],"id":185,"name":"Block","src":"2012:396:0"}],"id":211,"name":"FunctionDefinition","src":"2475:248:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"name":"buyTree","payable":true,"scope":298,"stateMutability":"payable","superFunction":null,"visibility":"public","modifiers":[null]},"children":[{"attributes":{"parameters":[null]},"children":[{"attributes":{"constant":false,"name":"_treeNumber","scope":297,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":212,"name":"ElementaryTypeName","src":"2746:7:0"}],"id":213,"name":"VariableDeclaration","src":"2746:19:0"},{"attributes":{"constant":false,"name":"_originalOwner","scope":297,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":214,"name":"ElementaryTypeName","src":"2767:7:0"}],"id":215,"name":"VariableDeclaration","src":"2767:22:0"}],"id":216,"name":"ParameterList","src":"2745:45:0"},{"attributes":{"parameters":[null]},"children":[],"id":217,"name":"ParameterList","src":"2806:0:0"},{"attributes":{"arguments":[null]},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":29,"type":"modifier ()","value":"onlyAdmin"},"id":227,"name":"ExpressionStatement","src":"2813:53:0","children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":313,"type":"function (bool) pure","value":"require"},"id":218,"name":"Identifier","src":"2813:7:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_address","typeString":"address"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":219,"name":"Identifier","src":"2821:3:0"}],"id":220,"name":"MemberAccess","src":"2821:10:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"owner","referencedDeclaration":86,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":221,"name":"Identifier","src":"2835:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":213,"type":"uint256","value":"_treeNumber"},"id":222,"name":"Identifier","src":"2847:11:0"}],"id":223,"name":"IndexAccess","src":"2835:24:0"}],"id":224,"name":"MemberAccess","src":"2835:30:0"}],"id":225,"name":"BinaryOperation","src":"2821:44:0"}],"id":226,"name":"FunctionCall","src":"2813:53:0"}]},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":313,"type":"function (bool) pure","value":"require"},"id":228,"name":"Identifier","src":"2873:7:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!","prefix":true,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"onSale","referencedDeclaration":92,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":229,"name":"Identifier","src":"2882:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":213,"type":"uint256","value":"_treeNumber"},"id":230,"name":"Identifier","src":"2894:11:0"}],"id":231,"name":"IndexAccess","src":"2882:24:0"}],"id":232,"name":"MemberAccess","src":"2882:31:0"}],"id":233,"name":"UnaryOperation","src":"2881:32:0"}],"id":234,"name":"FunctionCall","src":"2873:41:0"}],"id":235,"name":"ExpressionStatement","src":"2873:41:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"address","type_conversion":false,"constant":false,"name":"newOwner","scope":297,"stateVariable":false,"storageLocation":"default","value":null,"visibility":"internal"},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"}],"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"push","referencedDeclaration":null,"type":"address","name":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":99,"type":"uint256[] storage ref","value":"treesOnSale"},"id":209,"name":"Identifier","src":"2805:11:0"}],"id":236,"name":"ElementaryTypeName","src":"2923:7:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":188,"type":"uint256","value":"_treeNumber"},"id":212,"name":"Identifier","src":"2822:11:0"}],"id":237,"name":"VariableDeclaration","src":"2923:16:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":310,"type":"msg","value":"msg"},"id":238,"name":"Identifier","src":"2942:3:0"}],"id":239,"name":"MemberAccess","src":"2942:10:0"}],"id":240,"name":"VariableDeclarationStatement","src":"2923:29:0","attributes":{"assignments":[237]}},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool","assignments":[242]},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"onSale","referencedDeclaration":92,"type":"uint256","constant":false,"name":"i","scope":297,"stateVariable":false,"storageLocation":"default","value":null,"visibility":"internal"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256","name":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":215,"name":"Identifier","src":"2841:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":188,"type":"uint256","value":"_treeNumber"},"id":216,"name":"Identifier","src":"2853:11:0"}],"id":241,"name":"ElementaryTypeName","src":"3052:7:0"}],"id":242,"name":"VariableDeclaration","src":"3052:9:0"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":243,"name":"Literal","src":"3064:1:0"}],"id":244,"name":"VariableDeclarationStatement","src":"3052:13:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"<","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":242,"type":"uint256","value":"i"},"id":245,"name":"Identifier","src":"3067:1:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"length","referencedDeclaration":null,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":246,"name":"Identifier","src":"3071:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":215,"type":"address","value":"_originalOwner"},"id":247,"name":"Identifier","src":"3085:14:0"}],"id":248,"name":"IndexAccess","src":"3071:29:0"}],"id":249,"name":"MemberAccess","src":"3071:36:0"}],"id":250,"name":"BinaryOperation","src":"3067:40:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"++","prefix":false,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":242,"type":"uint256","value":"i"},"id":251,"name":"Identifier","src":"3109:1:0"}],"id":252,"name":"UnaryOperation","src":"3109:3:0"}],"id":253,"name":"ExpressionStatement","src":"3109:3:0"},{"children":[{"attributes":{"assignments":[255]},"children":[{"attributes":{"constant":false,"name":"treeId","scope":297,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":254,"name":"ElementaryTypeName","src":"3125:7:0"}],"id":255,"name":"VariableDeclaration","src":"3125:14:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":256,"name":"Identifier","src":"3142:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":215,"type":"address","value":"_originalOwner"},"id":257,"name":"Identifier","src":"3156:14:0"}],"id":258,"name":"IndexAccess","src":"3142:29:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":242,"type":"uint256","value":"i"},"id":259,"name":"Identifier","src":"3172:1:0"}],"id":260,"name":"IndexAccess","src":"3142:32:0"}],"id":261,"name":"VariableDeclarationStatement","src":"3125:49:0"},{"attributes":{"falseBody":null},"children":[{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"==","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":255,"type":"uint256","value":"treeId"},"id":262,"name":"Identifier","src":"3188:6:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":213,"type":"uint256","value":"_treeNumber"},"id":263,"name":"Identifier","src":"3198:11:0"}],"id":264,"name":"BinaryOperation","src":"3188:21:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"delete","prefix":true,"type":"tuple()"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":265,"name":"Identifier","src":"3218:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":215,"type":"address","value":"_originalOwner"},"id":266,"name":"Identifier","src":"3232:14:0"}],"id":267,"name":"IndexAccess","src":"3218:29:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":242,"type":"uint256","value":"i"},"id":268,"name":"Identifier","src":"3248:1:0"}],"id":269,"name":"IndexAccess","src":"3218:32:0"}],"id":270,"name":"UnaryOperation","src":"3211:39:0"}],"id":271,"name":"ExpressionStatement","src":"3211:39:0"}],"id":272,"name":"IfStatement","src":"3185:65:0"}],"id":273,"name":"Block","src":"3114:144:0"}],"id":274,"name":"ForStatement","src":"3048:210:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"uint256","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"}],"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"push","referencedDeclaration":null,"type":"function (uint256) returns (uint256)"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":275,"name":"Identifier","src":"3266:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"address","value":"newOwner"},"id":276,"name":"Identifier","src":"3280:8:0"}],"id":277,"name":"IndexAccess","src":"3266:23:0"}],"id":278,"name":"MemberAccess","src":"3266:28:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":213,"type":"uint256","value":"_treeNumber"},"id":279,"name":"Identifier","src":"3295:11:0"}],"id":280,"name":"FunctionCall","src":"3266:41:0"}],"id":281,"name":"ExpressionStatement","src":"3266:41:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"owner","referencedDeclaration":86,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":282,"name":"Identifier","src":"3314:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":213,"type":"uint256","value":"_treeNumber"},"id":283,"name":"Identifier","src":"3326:11:0"}],"id":284,"name":"IndexAccess","src":"3314:24:0"}],"id":285,"name":"MemberAccess","src":"3314:30:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"address","value":"newOwner"},"id":286,"name":"Identifier","src":"3347:8:0"}],"id":287,"name":"Assignment","src":"3314:41:0"}],"id":288,"name":"ExpressionStatement","src":"3314:41:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"onSale","referencedDeclaration":92,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":289,"name":"Identifier","src":"3362:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":213,"type":"uint256","value":"_treeNumber"},"id":290,"name":"Identifier","src":"3374:11:0"}],"id":291,"name":"IndexAccess","src":"3362:24:0"}],"id":292,"name":"MemberAccess","src":"3362:31:0"},{"attributes":{"argumentTypes":null,"hexvalue":"66616c7365","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"false"},"id":293,"name":"Literal","src":"3396:5:0"}],"id":294,"name":"Assignment","src":"3362:39:0"}],"id":295,"name":"ExpressionStatement","src":"3362:39:0"}],"id":296,"name":"Block","src":"2806:601:0"},{"children":[{"attributes":{"assignments":[170]},"children":[{"attributes":{"constant":false,"name":"newTreeId","scope":204,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":169,"name":"ElementaryTypeName","src":"2086:7:0"}],"id":170,"name":"VariableDeclaration","src":"2086:17:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":101,"type":"uint256","value":"lastTreeId"},"id":171,"name":"Identifier","src":"2106:10:0"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":172,"name":"Literal","src":"2119:1:0"}],"id":173,"name":"BinaryOperation","src":"2106:14:0"}],"id":174,"name":"VariableDeclarationStatement","src":"2086:34:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"+=","type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":101,"type":"uint256","value":"lastTreeId"},"id":175,"name":"Identifier","src":"2127:10:0"},{"attributes":{"argumentTypes":null,"hexvalue":"31","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 1","value":"1"},"id":176,"name":"Literal","src":"2141:1:0"}],"id":177,"name":"Assignment","src":"2127:15:0"}],"id":178,"name":"ExpressionStatement","src":"2127:15:0"},{"attributes":{"assignments":[180]},"children":[{"attributes":{"constant":false,"name":"newTree","scope":204,"stateVariable":false,"storageLocation":"memory","type":"struct Trees.Tree memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":93,"type":"struct Trees.Tree storage pointer"},"id":179,"name":"UserDefinedTypeName","src":"2149:4:0"}],"id":180,"name":"VariableDeclaration","src":"2149:19:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":true,"lValueRequested":false,"names":[null],"type":"struct Trees.Tree memory","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_address","typeString":"address"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":93,"type":"type(struct Trees.Tree storage pointer)","value":"Tree"},"id":181,"name":"Identifier","src":"2171:4:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":170,"type":"uint256","value":"newTreeId"},"id":182,"name":"Identifier","src":"2176:9:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":105,"type":"address","value":"defaultTreesOwner"},"id":183,"name":"Identifier","src":"2187:17:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":108,"type":"uint256","value":"defaultTreesValue"},"id":184,"name":"Identifier","src":"2206:17:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":111,"type":"uint256","value":"defaultTreesPower"},"id":185,"name":"Identifier","src":"2225:17:0"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":186,"name":"Literal","src":"2244:4:0"}],"id":187,"name":"FunctionCall","src":"2171:78:0"}],"id":188,"name":"VariableDeclarationStatement","src":"2149:100:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(uint256 => address)","value":"treeOwner"},"id":189,"name":"Identifier","src":"2382:9:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":170,"type":"uint256","value":"newTreeId"},"id":190,"name":"Identifier","src":"2392:9:0"}],"id":191,"name":"IndexAccess","src":"2382:20:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":105,"type":"address","value":"defaultTreesOwner"},"id":192,"name":"Identifier","src":"2405:17:0"}],"id":193,"name":"Assignment","src":"2382:40:0"}],"id":194,"name":"ExpressionStatement","src":"2382:40:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":195,"name":"Identifier","src":"2429:12:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":105,"type":"address","value":"defaultTreesOwner"},"id":196,"name":"Identifier","src":"2442:17:0"}],"id":198,"name":"IndexAccess","src":"2429:31:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":170,"type":"uint256","value":"newTreeId"},"id":197,"name":"Identifier","src":"2461:9:0"}],"id":199,"name":"IndexAccess","src":"2429:42:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":180,"type":"struct Trees.Tree memory","value":"newTree"},"id":200,"name":"Identifier","src":"2474:7:0"}],"id":201,"name":"Assignment","src":"2429:52:0"}],"id":202,"name":"ExpressionStatement","src":"2429:52:0"}],"id":203,"name":"Block","src":"2079:408:0"}],"id":297,"name":"FunctionDefinition","src":"2729:678:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"buyTree","payable":true,"scope":310,"stateMutability":"payable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_treeNumber","scope":309,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":224,"name":"ElementaryTypeName","src":"2908:7:0"}],"id":225,"name":"VariableDeclaration","src":"2908:19:0"},{"attributes":{"constant":false,"name":"_originalOwner","scope":309,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":226,"name":"ElementaryTypeName","src":"2929:7:0"}],"id":227,"name":"VariableDeclaration","src":"2929:22:0"}],"id":228,"name":"ParameterList","src":"2907:45:0"},{"attributes":{"parameters":[null]},"children":[],"id":229,"name":"ParameterList","src":"2968:0:0"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":325,"type":"function (bool) pure","value":"require"},"id":230,"name":"Identifier","src":"2975:7:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_address","typeString":"address"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"type":"address","member_name":"sender","referencedDeclaration":null},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":322,"type":"msg","value":"msg"},"id":231,"name":"Identifier","src":"2983:3:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":206,"type":"uint256","value":"_treeNumber"},"id":213,"name":"Identifier","src":"2821:11:0"}],"id":232,"name":"MemberAccess","src":"2983:10:0"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"subdenomination":null,"token":"number","type":"address","value":"0","member_name":"owner","referencedDeclaration":86},"id":236,"name":"MemberAccess","src":"2997:30:0","children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":233,"name":"Identifier","src":"2997:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":225,"type":"uint256","value":"_treeNumber"},"id":234,"name":"Identifier","src":"3009:11:0"}],"id":235,"name":"IndexAccess","src":"2997:24:0"}]}],"id":237,"name":"BinaryOperation","src":"2983:44:0"}],"id":238,"name":"FunctionCall","src":"2975:53:0"}],"id":239,"name":"ExpressionStatement","src":"2975:53:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"tuple()","isStructConstructorCall":false,"names":[null],"type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"function (bool) pure","overloadedDeclarations":[null],"referencedDeclaration":325,"value":"require"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":99,"type":"uint256[] storage ref","value":"treesOnSale"},"id":219,"name":"Identifier","src":"2846:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":206,"type":"uint256","value":"_treeNumber"},"id":220,"name":"Identifier","src":"2858:11:0"}],"id":240,"name":"Identifier","src":"3035:7:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":206,"type":"bool","value":"_treeNumber","isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!","prefix":true},"id":245,"name":"UnaryOperation","src":"3043:32:0","children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"onSale","referencedDeclaration":92,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":241,"name":"Identifier","src":"3044:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":225,"type":"uint256","value":"_treeNumber"},"id":242,"name":"Identifier","src":"3056:11:0"}],"id":243,"name":"IndexAccess","src":"3044:24:0"}],"id":244,"name":"MemberAccess","src":"3044:31:0"}]}],"id":246,"name":"FunctionCall","src":"3035:41:0"}],"id":247,"name":"ExpressionStatement","src":"3035:41:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address","constant":false,"name":"newOwner","scope":309,"stateVariable":false,"storageLocation":"default","value":null,"visibility":"internal"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"onSale","referencedDeclaration":92,"type":"address","name":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":225,"name":"Identifier","src":"2891:12:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":208,"type":"address","value":"_receiver"},"id":226,"name":"Identifier","src":"2904:9:0"}],"id":228,"name":"IndexAccess","src":"2891:23:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":206,"type":"uint256","value":"_treeNumber"},"id":227,"name":"Identifier","src":"2915:11:0"}],"id":229,"name":"IndexAccess","src":"2891:36:0"}],"id":248,"name":"ElementaryTypeName","src":"3085:7:0"},{"attributes":{"argumentTypes":null,"hexvalue":"74727565","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"true"},"id":231,"name":"Literal","src":"2937:4:0"}],"id":249,"name":"VariableDeclaration","src":"3085:16:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":322,"type":"msg","value":"msg"},"id":250,"name":"Identifier","src":"3104:3:0"}],"id":251,"name":"MemberAccess","src":"3104:10:0"}],"id":252,"name":"VariableDeclarationStatement","src":"3085:29:0","attributes":{"assignments":[249]}},{"children":[{"attributes":{"assignments":[254]},"children":[{"attributes":{"constant":false,"name":"i","scope":309,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":253,"name":"ElementaryTypeName","src":"3214:7:0"}],"id":254,"name":"VariableDeclaration","src":"3214:9:0"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":255,"name":"Literal","src":"3226:1:0"}],"id":256,"name":"VariableDeclarationStatement","src":"3214:13:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"<","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":254,"type":"uint256","value":"i"},"id":257,"name":"Identifier","src":"3229:1:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"length","referencedDeclaration":null,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":258,"name":"Identifier","src":"3233:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":227,"type":"address","value":"_originalOwner"},"id":259,"name":"Identifier","src":"3247:14:0"}],"id":260,"name":"IndexAccess","src":"3233:29:0"}],"id":261,"name":"MemberAccess","src":"3233:36:0"}],"id":262,"name":"BinaryOperation","src":"3229:40:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"++","prefix":false,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":254,"type":"uint256","value":"i"},"id":263,"name":"Identifier","src":"3271:1:0"}],"id":264,"name":"UnaryOperation","src":"3271:3:0"}],"id":265,"name":"ExpressionStatement","src":"3271:3:0"},{"children":[{"attributes":{"assignments":[267]},"children":[{"attributes":{"constant":false,"name":"treeId","scope":309,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":266,"name":"ElementaryTypeName","src":"3287:7:0"}],"id":267,"name":"VariableDeclaration","src":"3287:14:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":268,"name":"Identifier","src":"3304:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":227,"type":"address","value":"_originalOwner"},"id":269,"name":"Identifier","src":"3318:14:0"}],"id":270,"name":"IndexAccess","src":"3304:29:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":254,"type":"uint256","value":"i"},"id":271,"name":"Identifier","src":"3334:1:0"}],"id":272,"name":"IndexAccess","src":"3304:32:0"}],"id":273,"name":"VariableDeclarationStatement","src":"3287:49:0"},{"attributes":{"falseBody":null},"children":[{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"==","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":267,"type":"uint256","value":"treeId"},"id":274,"name":"Identifier","src":"3350:6:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":225,"type":"uint256","value":"_treeNumber"},"id":275,"name":"Identifier","src":"3360:11:0"}],"id":276,"name":"BinaryOperation","src":"3350:21:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"delete","prefix":true,"type":"tuple()"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":277,"name":"Identifier","src":"3380:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":227,"type":"address","value":"_originalOwner"},"id":278,"name":"Identifier","src":"3394:14:0"}],"id":279,"name":"IndexAccess","src":"3380:29:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":254,"type":"uint256","value":"i"},"id":280,"name":"Identifier","src":"3410:1:0"}],"id":281,"name":"IndexAccess","src":"3380:32:0"}],"id":282,"name":"UnaryOperation","src":"3373:39:0"}],"id":283,"name":"ExpressionStatement","src":"3373:39:0"}],"id":284,"name":"IfStatement","src":"3347:65:0"}],"id":285,"name":"Block","src":"3276:144:0"}],"id":286,"name":"ForStatement","src":"3210:210:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"uint256","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"}],"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"push","referencedDeclaration":null,"type":"function (uint256) returns (uint256)"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(address => uint256[] storage ref)","value":"ownerTreesIds"},"id":287,"name":"Identifier","src":"3428:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":249,"type":"address","value":"newOwner"},"id":288,"name":"Identifier","src":"3442:8:0"}],"id":289,"name":"IndexAccess","src":"3428:23:0"}],"id":290,"name":"MemberAccess","src":"3428:28:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":225,"type":"uint256","value":"_treeNumber"},"id":291,"name":"Identifier","src":"3457:11:0"}],"id":292,"name":"FunctionCall","src":"3428:41:0"}],"id":293,"name":"ExpressionStatement","src":"3428:41:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"owner","referencedDeclaration":86,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":294,"name":"Identifier","src":"3476:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":225,"type":"uint256","value":"_treeNumber"},"id":295,"name":"Identifier","src":"3488:11:0"}],"id":296,"name":"IndexAccess","src":"3476:24:0"}],"id":297,"name":"MemberAccess","src":"3476:30:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":249,"type":"address","value":"newOwner"},"id":298,"name":"Identifier","src":"3509:8:0"}],"id":299,"name":"Assignment","src":"3476:41:0"}],"id":300,"name":"ExpressionStatement","src":"3476:41:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"member_name":"onSale","referencedDeclaration":92,"type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":77,"type":"mapping(uint256 => struct Trees.Tree storage ref)","value":"treeDetails"},"id":301,"name":"Identifier","src":"3524:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":225,"type":"uint256","value":"_treeNumber"},"id":302,"name":"Identifier","src":"3536:11:0"}],"id":303,"name":"IndexAccess","src":"3524:24:0"}],"id":304,"name":"MemberAccess","src":"3524:31:0"},{"attributes":{"argumentTypes":null,"hexvalue":"66616c7365","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"false"},"id":305,"name":"Literal","src":"3558:5:0"}],"id":306,"name":"Assignment","src":"3524:39:0"}],"id":307,"name":"ExpressionStatement","src":"3524:39:0"}],"id":308,"name":"Block","src":"2968:601:0"}],"id":309,"name":"FunctionDefinition","src":"2891:678:0"},{"attributes":{"constant":false,"implemented":true,"isConstructor":false,"modifiers":[null],"name":"buyTree","payable":true,"scope":306,"stateMutability":"payable","superFunction":null,"visibility":"public"},"children":[{"children":[{"attributes":{"constant":false,"name":"_treeNumber","scope":305,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":236,"name":"ElementaryTypeName","src":"2970:7:0"}],"id":237,"name":"VariableDeclaration","src":"2970:19:0"},{"attributes":{"constant":false,"name":"_originalOwner","scope":305,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":238,"name":"ElementaryTypeName","src":"2991:7:0"}],"id":239,"name":"VariableDeclaration","src":"2991:22:0"}],"id":240,"name":"ParameterList","src":"2969:45:0"},{"attributes":{"parameters":[null]},"children":[],"id":241,"name":"ParameterList","src":"3030:0:0"},{"children":[{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":false,"lValueRequested":false,"names":[null],"type":"tuple()","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":321,"type":"function (bool) pure","value":"require"},"id":242,"name":"Identifier","src":"3037:7:0"},{"attributes":{"argumentTypes":null,"commonType":{"typeIdentifier":"t_uint256","typeString":"uint256"},"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"!=","type":"bool"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":99,"type":"uint256[] storage ref","value":"treesOnSale"},"id":243,"name":"Identifier","src":"3045:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"uint256","value":"_treeNumber"},"id":244,"name":"Identifier","src":"3057:11:0"}],"id":245,"name":"IndexAccess","src":"3045:24:0"},{"attributes":{"argumentTypes":null,"hexvalue":"30","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"number","type":"int_const 0","value":"0"},"id":246,"name":"Literal","src":"3073:1:0"}],"id":247,"name":"BinaryOperation","src":"3045:29:0"}],"id":248,"name":"FunctionCall","src":"3037:38:0"}],"id":249,"name":"ExpressionStatement","src":"3037:38:0"},{"attributes":{"assignments":[251]},"children":[{"attributes":{"constant":false,"name":"newOwner","scope":305,"stateVariable":false,"storageLocation":"default","type":"address","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"address","type":"address"},"id":250,"name":"ElementaryTypeName","src":"3082:7:0"}],"id":251,"name":"VariableDeclaration","src":"3082:16:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"member_name":"sender","referencedDeclaration":null,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":318,"type":"msg","value":"msg"},"id":252,"name":"Identifier","src":"3101:3:0"}],"id":253,"name":"MemberAccess","src":"3101:10:0"}],"id":254,"name":"VariableDeclarationStatement","src":"3082:29:0"},{"attributes":{"assignments":[256]},"children":[{"attributes":{"constant":false,"name":"treeValueCopy","scope":305,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":255,"name":"ElementaryTypeName","src":"3118:7:0"}],"id":256,"name":"VariableDeclaration","src":"3118:21:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"treeValue","referencedDeclaration":88,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":257,"name":"Identifier","src":"3142:12:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":239,"type":"address","value":"_originalOwner"},"id":258,"name":"Identifier","src":"3155:14:0"}],"id":259,"name":"IndexAccess","src":"3142:28:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"uint256","value":"_treeNumber"},"id":260,"name":"Identifier","src":"3171:11:0"}],"id":261,"name":"IndexAccess","src":"3142:41:0"}],"id":262,"name":"MemberAccess","src":"3142:51:0"}],"id":263,"name":"VariableDeclarationStatement","src":"3118:75:0"},{"attributes":{"assignments":[265]},"children":[{"attributes":{"constant":false,"name":"treePowerCopy","scope":305,"stateVariable":false,"storageLocation":"default","type":"uint256","value":null,"visibility":"internal"},"children":[{"attributes":{"name":"uint256","type":"uint256"},"id":264,"name":"ElementaryTypeName","src":"3200:7:0"}],"id":265,"name":"VariableDeclaration","src":"3200:21:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"member_name":"treePower","referencedDeclaration":90,"type":"uint256"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":266,"name":"Identifier","src":"3224:12:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":239,"type":"address","value":"_originalOwner"},"id":267,"name":"Identifier","src":"3237:14:0"}],"id":268,"name":"IndexAccess","src":"3224:28:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"uint256","value":"_treeNumber"},"id":269,"name":"Identifier","src":"3253:11:0"}],"id":270,"name":"IndexAccess","src":"3224:41:0"}],"id":271,"name":"MemberAccess","src":"3224:51:0"}],"id":272,"name":"VariableDeclarationStatement","src":"3200:75:0"},{"attributes":{"assignments":[274]},"children":[{"attributes":{"constant":false,"name":"treeCopy","scope":305,"stateVariable":false,"storageLocation":"memory","type":"struct Trees.Tree memory","value":null,"visibility":"internal"},"children":[{"attributes":{"contractScope":null,"name":"Tree","referencedDeclaration":93,"type":"struct Trees.Tree storage pointer"},"id":273,"name":"UserDefinedTypeName","src":"3282:4:0"}],"id":274,"name":"VariableDeclaration","src":"3282:20:0"},{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"isStructConstructorCall":true,"lValueRequested":false,"names":[null],"type":"struct Trees.Tree memory","type_conversion":false},"children":[{"attributes":{"argumentTypes":[{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_address","typeString":"address"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_uint256","typeString":"uint256"},{"typeIdentifier":"t_bool","typeString":"bool"}],"overloadedDeclarations":[null],"referencedDeclaration":93,"type":"type(struct Trees.Tree storage pointer)","value":"Tree"},"id":275,"name":"Identifier","src":"3305:4:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"uint256","value":"_treeNumber"},"id":276,"name":"Identifier","src":"3310:11:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":239,"type":"address","value":"_originalOwner"},"id":277,"name":"Identifier","src":"3323:14:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":256,"type":"uint256","value":"treeValueCopy"},"id":278,"name":"Identifier","src":"3339:13:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":265,"type":"uint256","value":"treePowerCopy"},"id":279,"name":"Identifier","src":"3354:13:0"},{"attributes":{"argumentTypes":null,"hexvalue":"66616c7365","isConstant":false,"isLValue":false,"isPure":true,"lValueRequested":false,"subdenomination":null,"token":"bool","type":"bool","value":"false"},"id":280,"name":"Literal","src":"3369:5:0"}],"id":281,"name":"FunctionCall","src":"3305:70:0"}],"id":282,"name":"VariableDeclarationStatement","src":"3282:93:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"delete","prefix":true,"type":"tuple()"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":283,"name":"Identifier","src":"3391:12:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":239,"type":"address","value":"_originalOwner"},"id":284,"name":"Identifier","src":"3404:14:0"}],"id":285,"name":"IndexAccess","src":"3391:28:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"uint256","value":"_treeNumber"},"id":286,"name":"Identifier","src":"3420:11:0"}],"id":287,"name":"IndexAccess","src":"3391:41:0"}],"id":288,"name":"UnaryOperation","src":"3384:48:0"}],"id":289,"name":"ExpressionStatement","src":"3384:48:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"struct Trees.Tree storage ref"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":false,"type":"struct Trees.Tree storage ref[] storage ref"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":78,"type":"mapping(address => struct Trees.Tree storage ref[] storage ref)","value":"treeBalances"},"id":290,"name":"Identifier","src":"3472:12:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":251,"type":"address","value":"newOwner"},"id":291,"name":"Identifier","src":"3485:8:0"}],"id":293,"name":"IndexAccess","src":"3472:22:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"uint256","value":"_treeNumber"},"id":292,"name":"Identifier","src":"3495:11:0"}],"id":294,"name":"IndexAccess","src":"3472:35:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":274,"type":"struct Trees.Tree memory","value":"treeCopy"},"id":295,"name":"Identifier","src":"3510:8:0"}],"id":296,"name":"Assignment","src":"3472:46:0"}],"id":297,"name":"ExpressionStatement","src":"3472:46:0"},{"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":false,"isPure":false,"lValueRequested":false,"operator":"=","type":"address"},"children":[{"attributes":{"argumentTypes":null,"isConstant":false,"isLValue":true,"isPure":false,"lValueRequested":true,"type":"address"},"children":[{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":82,"type":"mapping(uint256 => address)","value":"treeOwner"},"id":298,"name":"Identifier","src":"3525:9:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":237,"type":"uint256","value":"_treeNumber"},"id":299,"name":"Identifier","src":"3535:11:0"}],"id":300,"name":"IndexAccess","src":"3525:22:0"},{"attributes":{"argumentTypes":null,"overloadedDeclarations":[null],"referencedDeclaration":251,"type":"address","value":"newOwner"},"id":301,"name":"Identifier","src":"3550:8:0"}],"id":302,"name":"Assignment","src":"3525:33:0"}],"id":303,"name":"ExpressionStatement","src":"3525:33:0"}],"id":304,"name":"Block","src":"3030:534:0"}],"id":305,"name":"FunctionDefinition","src":"2953:611:0"}],"id":298,"name":"ContractDefinition","src":"715:2695:0"}],"id":299,"name":"SourceUnit","src":"0:3412:0"},"compiler":{"name":"solc","version":"0.4.18+commit.9cf6e910.Emscripten.clang"},"networks":{},"schemaVersion":"1.0.1","updatedAt":"2018-01-21T17:02:16.020Z"}
 
 /***/ })
 /******/ ]);
