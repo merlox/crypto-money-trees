@@ -52,12 +52,6 @@ contract Trees is Admin {
   uint256 public defaultTreesValue = 1; // 1 ether is the default value
   uint256 public defaultTreesPower = 10; // 10% of the total power
 
-  // To get all the tree IDs of one user
-  function getTreeIds(address _account) public constant returns(uint256[]) {
-    if(_account != address(0)) return ownerTreesIds[_account];
-    else return ownerTreesIds[msg.sender];
-  }
-
   // This will be called automatically by the server
   // The contract itself will hold the initial trees
   function generateTree() public onlyAdmin {
@@ -69,6 +63,7 @@ contract Trees is Admin {
     // We add the tree to the same array position to find it easier
     ownerTreesIds[defaultTreesOwner].push(newTreeId);
     treeDetails[newTreeId] = newTree;
+    treesOnSale.push(newTreeId);
   }
 
   // This is payable, the user will send the payment here
@@ -98,5 +93,16 @@ contract Trees is Admin {
     ownerTreesIds[newOwner].push(_treeNumber);
     treeDetails[_treeNumber].owner = newOwner;
     treeDetails[_treeNumber].onSale = false;
+  }
+
+  // To get all the tree IDs of one user
+  function getTreeIds(address _account) public constant returns(uint256[]) {
+    if(_account != address(0)) return ownerTreesIds[_account];
+    else return ownerTreesIds[msg.sender];
+  }
+
+  // To get all the trees on sale
+  function getTreesOnSale() public constant returns(uint256[]) {
+      return treesOnSale;
   }
 }

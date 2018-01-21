@@ -4,7 +4,7 @@ import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 
-const contractAddress = '0x07753031ddf11b7981d0615d986eee202233c07f'
+const contractAddress = '0x50cf71ee780ecd92b7a1d392a080a85b7de40be2'
 const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
 
 class App extends React.Component {
@@ -54,6 +54,13 @@ class App extends React.Component {
 		this.show(result)
 	}
 
+	async getTreesOnSale() {
+		const result = await contract.getTreesOnSaleAsync({
+			from: web3.eth.accounts[0]
+		})
+		this.show(result)
+	}
+
 	show(content) {
 		this.setState({
 			output: typeof content === 'object' ? content.join(' - ') : content
@@ -68,6 +75,7 @@ class App extends React.Component {
 				<button onClick={() => this.generateTree()}>generateTree</button>
 				<button onClick={() => this.putTreeOnSale()}>putTreeOnSale</button>
 				<button onClick={() => this.buyTree()}>buyTree</button>
+				<button onClick={() => this.getTreesOnSale()}>getTreesOnSale</button>
 				<div>{this.state.output}</div>
 			</div>
 		)
