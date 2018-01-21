@@ -84,7 +84,7 @@ contract Trees is Admin {
 
   function buyTree(uint256 _treeNumber, address _originalOwner) public payable {
     require(msg.sender != treeDetails[_treeNumber].owner);
-    require(!treeDetails[_treeNumber].onSale);
+    require(treeDetails[_treeNumber].onSale);
 
     address newOwner = msg.sender;
 

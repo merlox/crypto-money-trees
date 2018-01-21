@@ -4,7 +4,7 @@ import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 
-const contractAddress = '0xdf663707454e0d069ecdfd7251d27a032de6221f'
+const contractAddress = '0x07753031ddf11b7981d0615d986eee202233c07f'
 const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
 
 class App extends React.Component {
@@ -14,7 +14,7 @@ class App extends React.Component {
 			output: 'This will be the output'
 		}
 
-		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://rinkeby.infura.io/6GO3REaLghR6wPhNJQcc'))
+		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
 	}
@@ -48,7 +48,7 @@ class App extends React.Component {
 	}
 
 	async buyTree() {
-		const result = await contract.buyTreeAync(1, originalOwner, {
+		const result = await contract.buyTreeAsync(1, originalOwner, {
 			from: web3.eth.accounts[0]
 		})
 		this.show(result)

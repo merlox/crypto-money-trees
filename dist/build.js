@@ -19566,7 +19566,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var contractAddress = '0xdf663707454e0d069ecdfd7251d27a032de6221f';
+var contractAddress = '0x07753031ddf11b7981d0615d986eee202233c07f';
 var originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1';
 
 var App = function (_React$Component) {
@@ -19581,7 +19581,7 @@ var App = function (_React$Component) {
 			output: 'This will be the output'
 		};
 
-		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://rinkeby.infura.io/6GO3REaLghR6wPhNJQcc'));
+		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
 		window.contract = web3.eth.contract(_Trees.abi).at(contractAddress);
 		(0, _bluebird.promisifyAll)(contract);
 		return _this;
@@ -19729,7 +19729,7 @@ var App = function (_React$Component) {
 						switch (_context5.prev = _context5.next) {
 							case 0:
 								_context5.next = 2;
-								return contract.buyTreeAync(1, originalOwner, {
+								return contract.buyTreeAsync(1, originalOwner, {
 									from: web3.eth.accounts[0]
 								});
 
