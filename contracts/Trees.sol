@@ -16,6 +16,7 @@ contract Admin {
 
   function Admin() public {
     owner = msg.sender;
+    addAdmin(owner);
   }
 
   function addAdmin(address _admin) public onlyOwner {
@@ -47,7 +48,7 @@ contract Trees is Admin {
   uint256[] public trees;
   uint256[] public treesOnSale;
   uint256 public lastTreeId;
-  address public defaultTreesOwner = owner;
+  address public defaultTreesOwner = msg.sender;
   uint256 public defaultTreesValue = 1; // 1 ether is the default value
   uint256 public defaultTreesPower = 10; // 10% of the total power
 

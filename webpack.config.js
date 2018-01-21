@@ -16,6 +16,10 @@ module.exports = {
             presets: ['env', 'react']
          }
       }, {
+				loader: 'json-loader',
+				test: /\.json$/,
+				exclude: /node_modules/
+			}, {
          test: /\.styl$/,
          exclude: /node_modules/,
          use: ['style-loader', {
