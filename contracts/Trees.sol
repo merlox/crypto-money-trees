@@ -40,7 +40,7 @@ contract Trees is Admin {
   struct Tree {
     uint256 ID;
     address owner;
-    uint256 treeValue;
+    uint256 purchaseDate;
     uint256 treePower; // How much ether that tree is generating from 0 to 100 where 100 is the total power combined of all the trees
     bool onSale;
   }
@@ -49,7 +49,6 @@ contract Trees is Admin {
   uint256[] public treesOnSale;
   uint256 public lastTreeId;
   address public defaultTreesOwner = msg.sender;
-  uint256 public defaultTreesValue = 1; // 1 ether is the default value
   uint256 public defaultTreesPower = 10; // 10% of the total power
 
   // This will be called automatically by the server
@@ -57,7 +56,7 @@ contract Trees is Admin {
   function generateTree() public onlyAdmin {
     uint256 newTreeId = lastTreeId + 1;
     lastTreeId += 1;
-    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, defaultTreesValue, defaultTreesPower, true);
+    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, true);
 
     // Update the treeBalances and treeOwner mappings
     // We add the tree to the same array position to find it easier

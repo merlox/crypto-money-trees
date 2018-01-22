@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom'
 import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
+import './index.styl'
 
-const contractAddress = '0x50cf71ee780ecd92b7a1d392a080a85b7de40be2'
+const contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77'
 const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
 
 class App extends React.Component {
@@ -70,28 +71,20 @@ class App extends React.Component {
 	render () {
 		return (
 			<div>
-				<nav className="navbar navbar-expand-lg navbar-light">
-					<a className="navbar-brand" href="#">
-						<img src="forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
-						Crypto Trees
-					</a>
-					<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-						<span className="navbar-toggler-icon"></span>
-					</button>
-					<div className="collapse navbar-collapse" id="navbarText">
-						<ul className="navbar-nav ml-auto">
-							<li className="nav-item active">
-								<a className="nav-link" href="#">First element</a>
-							</li>
-							<li className="nav-item">
-								<a className="nav-link" href="#">Second element</a>
-							</li>
-							<li className="nav-item">
-								<a className="nav-link" href="#">Third element</a>
-							</li>
-						</ul>
+				<NavBar />
+
+				<div className="container">
+					<div className="row">
+						<TreeBox id="1" daysPassed="26" treePower="0.173%"/>
+						<TreeBox id="2" daysPassed="24" treePower="0.22%"/>
+						<TreeBox id="5" daysPassed="16" treePower="0.48%"/>
+						<TreeBox id="6" daysPassed="12" treePower="0.92%"/>
+						<TreeBox id="7" daysPassed="8" treePower="0.112%"/>
+						<TreeBox id="9" daysPassed="6" treePower="0.324%"/>
+						<TreeBox id="14" daysPassed="3" treePower="0.024%"/>
+						<TreeBox id="23" daysPassed="2" treePower="0.075%"/>
 					</div>
-				</nav>
+				</div>
 
 				<button onClick={() => this.getTreeById()}>getTreeById 1</button>
 				<button onClick={() => this.getTreeIds()}>getTreeIds</button>
@@ -105,7 +98,56 @@ class App extends React.Component {
 	}
 }
 
+class NavBar extends React.Component {
+	render() {
+		return (
+			<nav className="navbar navbar-expand-lg navbar-light">
+				<a className="navbar-brand" href="#">
+					<img src="forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
+					Crypto Trees
+				</a>
+				<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+					<span className="navbar-toggler-icon"></span>
+				</button>
+				<div className="collapse navbar-collapse" id="navbarText">
+					<ul className="navbar-nav ml-auto">
+						<li className="nav-item active">
+							<a className="nav-link" href="#">My Trees</a>
+						</li>
+						<li className="nav-item">
+							<a className="nav-link" href="#">Market</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		)
+	}
+}
+
+class TreeBox extends React.Component {
+	// Image of the tree
+	// Id
+	// Tree power
+	// Days passed
+	// Fruit available?
+	// Pick fruit reward
+	// Water the tree
+	render() {
+		return (
+			<div className="col-3">
+				<img src="imgs/tree.png" className="tree-image"/>
+				<h4>Id {this.props.id}</h4>
+				<p>Tree power {this.props.treePower}</p>
+				<p>{this.props.daysPassed} after planting</p>
+				<p>Fruits not available</p>
+				<button>Pick Fruits</button>
+				<button>Water Tree</button>
+			</div>
+		)
+	}
+}
+
 ReactDOM.render(
-	<App />,
+	<App/>,
 	document.querySelector('#root')
 )
