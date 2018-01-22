@@ -70,6 +70,29 @@ class App extends React.Component {
 	render () {
 		return (
 			<div>
+				<nav className="navbar navbar-expand-lg navbar-light">
+					<a className="navbar-brand" href="#">
+						<img src="forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
+						Crypto Trees
+					</a>
+					<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+						<span className="navbar-toggler-icon"></span>
+					</button>
+					<div className="collapse navbar-collapse" id="navbarText">
+						<ul className="navbar-nav ml-auto">
+							<li className="nav-item active">
+								<a className="nav-link" href="#">First element</a>
+							</li>
+							<li className="nav-item">
+								<a className="nav-link" href="#">Second element</a>
+							</li>
+							<li className="nav-item">
+								<a className="nav-link" href="#">Third element</a>
+							</li>
+						</ul>
+					</div>
+				</nav>
+
 				<button onClick={() => this.getTreeById()}>getTreeById 1</button>
 				<button onClick={() => this.getTreeIds()}>getTreeIds</button>
 				<button onClick={() => this.generateTree()}>generateTree</button>

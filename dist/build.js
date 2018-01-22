@@ -19569,6 +19569,49 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var contractAddress = '0x50cf71ee780ecd92b7a1d392a080a85b7de40be2';
 var originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1';
 
+var _ref7 = _jsx('nav', {
+	className: 'navbar navbar-expand-lg navbar-light'
+}, void 0, _jsx('a', {
+	className: 'navbar-brand',
+	href: '#'
+}, void 0, _jsx('img', {
+	src: 'forest.svg',
+	width: '30',
+	height: '30',
+	className: 'd-inline-block align-top',
+	alt: ''
+}), '\xA0 Crypto Trees'), _jsx('button', {
+	className: 'navbar-toggler',
+	type: 'button',
+	'data-toggle': 'collapse',
+	'data-target': '#navbarText',
+	'aria-controls': 'navbarText',
+	'aria-expanded': 'false',
+	'aria-label': 'Toggle navigation'
+}, void 0, _jsx('span', {
+	className: 'navbar-toggler-icon'
+})), _jsx('div', {
+	className: 'collapse navbar-collapse',
+	id: 'navbarText'
+}, void 0, _jsx('ul', {
+	className: 'navbar-nav ml-auto'
+}, void 0, _jsx('li', {
+	className: 'nav-item active'
+}, void 0, _jsx('a', {
+	className: 'nav-link',
+	href: '#'
+}, void 0, 'First element')), _jsx('li', {
+	className: 'nav-item'
+}, void 0, _jsx('a', {
+	className: 'nav-link',
+	href: '#'
+}, void 0, 'Second element')), _jsx('li', {
+	className: 'nav-item'
+}, void 0, _jsx('a', {
+	className: 'nav-link',
+	href: '#'
+}, void 0, 'Third element')))));
+
 var App = function (_React$Component) {
 	_inherits(App, _React$Component);
 
@@ -19797,7 +19840,7 @@ var App = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			return _jsx('div', {}, void 0, _jsx('button', {
+			return _jsx('div', {}, void 0, _ref7, _jsx('button', {
 				onClick: function onClick() {
 					return _this2.getTreeById();
 				}
