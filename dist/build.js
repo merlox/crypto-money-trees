@@ -19581,17 +19581,39 @@ var App = function (_React$Component) {
 
 		_this.state = {
 			output: 'This will be the output',
-			details: []
+			details: [],
+			inMarket: false
 		};
 
 		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
 		window.contract = web3.eth.contract(_Trees.abi).at(contractAddress);
 		(0, _bluebird.promisifyAll)(contract);
-		if (window.location.pathname === 'market') _this.prepareMarketData();else _this.prepareData();
+
+		if (window.location.pathname === '/market') {
+			_this.prepareMarketData();
+		} else {
+			_this.prepareData();
+		}
 		return _this;
 	}
 
 	_createClass(App, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			if (window.location.pathname === '/market') {
+				this.setState({
+					inMarket: true
+				});
+			}
+		}
+
+		// goToMyTrees() {
+		// 	this.setState({
+		//
+		// 	})
+		// }
+
+	}, {
 		key: 'generateTree',
 		value: function () {
 			var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
@@ -19770,8 +19792,7 @@ var App = function (_React$Component) {
 
 							case 2:
 								result = _context6.sent;
-
-								this.show(result);
+								return _context6.abrupt('return', result);
 
 							case 4:
 							case 'end':
@@ -19862,10 +19883,23 @@ var App = function (_React$Component) {
 		key: 'prepareMarketData',
 		value: function () {
 			var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+				var treesOnSale;
 				return regeneratorRuntime.wrap(function _callee8$(_context8) {
 					while (1) {
 						switch (_context8.prev = _context8.next) {
 							case 0:
+								_context8.next = 2;
+								return this.getTreesOnSale();
+
+							case 2:
+								treesOnSale = _context8.sent;
+
+								treesOnSale = treesOnSale.map(function (element) {
+									return parseFloat(element);
+								});
+								console.log('treesOnSale', treesOnSale);
+
+							case 5:
 							case 'end':
 								return _context8.stop();
 						}
@@ -19889,7 +19923,9 @@ var App = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			return _jsx('div', {}, void 0, _ref9, _jsx('div', {
+			return _jsx('div', {}, void 0, _jsx(NavBar, {
+				inMarket: this.state.inMarket
+			}), _jsx('div', {
 				className: 'container'
 			}, void 0, _jsx('div', {
 				className: 'row'
@@ -19900,9 +19936,7 @@ var App = function (_React$Component) {
 	return App;
 }(_react2.default.Component);
 
-var _ref10 = _jsx('nav', {
-	className: 'navbar navbar-expand-lg navbar-light'
-}, void 0, _jsx('a', {
+var _ref9 = _jsx('a', {
 	className: 'navbar-brand',
 	href: '#'
 }, void 0, _jsx('img', {
@@ -19911,7 +19945,9 @@ var _ref10 = _jsx('nav', {
 	height: '30',
 	className: 'd-inline-block align-top',
 	alt: ''
-}), '\xA0 Crypto Trees'), _jsx('button', {
+}), '\xA0 Crypto Trees');
+
+var _ref10 = _jsx('button', {
 	className: 'navbar-toggler',
 	type: 'button',
 	'data-toggle': 'collapse',
@@ -19921,22 +19957,17 @@ var _ref10 = _jsx('nav', {
 	'aria-label': 'Toggle navigation'
 }, void 0, _jsx('span', {
 	className: 'navbar-toggler-icon'
-})), _jsx('div', {
-	className: 'collapse navbar-collapse',
-	id: 'navbarText'
-}, void 0, _jsx('ul', {
-	className: 'navbar-nav ml-auto'
-}, void 0, _jsx('li', {
-	className: 'nav-item active'
-}, void 0, _jsx('a', {
+}));
+
+var _ref11 = _jsx('a', {
 	className: 'nav-link',
 	href: '#'
-}, void 0, 'My Trees')), _jsx('li', {
-	className: 'nav-item'
-}, void 0, _jsx('a', {
+}, void 0, 'My Trees');
+
+var _ref12 = _jsx('a', {
 	className: 'nav-link',
 	href: '#'
-}, void 0, 'Market')))));
+}, void 0, 'Market');
 
 var NavBar = function (_React$Component2) {
 	_inherits(NavBar, _React$Component2);
@@ -19950,27 +19981,36 @@ var NavBar = function (_React$Component2) {
 	_createClass(NavBar, [{
 		key: 'render',
 		value: function render() {
-			return _ref10;
+			return _jsx('nav', {
+				className: 'navbar navbar-expand-lg navbar-light'
+			}, void 0, _ref9, _ref10, _jsx('div', {
+				className: 'collapse navbar-collapse',
+				id: 'navbarText'
+			}, void 0, _jsx('ul', {
+				className: 'navbar-nav ml-auto'
+			}, void 0, _jsx('li', {
+				className: this.props.inMarket ? "nav-item" : "nav-item active"
+			}, void 0, _ref11), _jsx('li', {
+				className: this.props.inMarket ? "nav-item active" : "nav-item"
+			}, void 0, _ref12))));
 		}
 	}]);
 
 	return NavBar;
 }(_react2.default.Component);
 
-var _ref9 = _jsx(NavBar, {});
-
-var _ref11 = _jsx('img', {
+var _ref13 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
 
-var _ref12 = _jsx('p', {}, void 0, 'Fruits not available');
+var _ref14 = _jsx('p', {}, void 0, 'Fruits not available');
 
-var _ref13 = _jsx('button', {
+var _ref15 = _jsx('button', {
 	className: 'wide-button'
 }, void 0, 'Pick Fruits');
 
-var _ref14 = _jsx('button', {
+var _ref16 = _jsx('button', {
 	className: 'wide-button'
 }, void 0, 'Water Tree');
 
@@ -19988,19 +20028,19 @@ var TreeBox = function (_React$Component3) {
 		value: function render() {
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref11, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref12, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref13, _ref14);
+			}, void 0, _ref13, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref14, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref15, _ref16);
 		}
 	}]);
 
 	return TreeBox;
 }(_react2.default.Component);
 
-var _ref15 = _jsx('img', {
+var _ref17 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
 
-var _ref16 = _jsx('button', {
+var _ref18 = _jsx('button', {
 	className: 'full-button'
 }, void 0, 'Buy Tree');
 
@@ -20018,7 +20058,7 @@ var TreeMarket = function (_React$Component4) {
 		value: function render() {
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref15, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref16);
+			}, void 0, _ref17, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref18);
 		}
 	}]);
 

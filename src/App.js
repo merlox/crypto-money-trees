@@ -13,15 +13,34 @@ class App extends React.Component {
 		super()
 		this.state = {
 			output: 'This will be the output',
-			details: []
+			details: [],
+			inMarket: false
 		}
 
 		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
-		if(window.location.pathname === 'market') this.prepareMarketData()
-		else this.prepareData()
+
+		if(window.location.pathname === '/market'){
+			this.prepareMarketData()
+		} else {
+			this.prepareData()
+		}
 	}
+
+	componentDidMount() {
+		if(window.location.pathname === '/market'){
+			this.setState({
+				inMarket: true
+			})
+		}
+	}
+
+	// goToMyTrees() {
+	// 	this.setState({
+    //
+	// 	})
+	// }
 
 	async generateTree() {
 		const result = await contract.generateTreeAsync({
@@ -62,7 +81,7 @@ class App extends React.Component {
 		const result = await contract.getTreesOnSaleAsync({
 			from: web3.eth.accounts[0]
 		})
-		this.show(result)
+		return result
 	}
 
 	async prepareData() {
@@ -89,6 +108,9 @@ class App extends React.Component {
 	async prepareMarketData() {
 		// Get all the trees on sale except yours
 		// get those details
+		let treesOnSale = await this.getTreesOnSale()
+		treesOnSale = treesOnSale.map(element => parseFloat(element))
+		console.log('treesOnSale', treesOnSale)
 	}
 
 	show(content) {
@@ -100,7 +122,7 @@ class App extends React.Component {
 	render () {
 		return (
 			<div>
-				<NavBar />
+				<NavBar inMarket={this.state.inMarket} />
 				<div className="container">
 					<div className="row">
 						{this.state.details}
@@ -131,10 +153,10 @@ class NavBar extends React.Component {
 				</button>
 				<div className="collapse navbar-collapse" id="navbarText">
 					<ul className="navbar-nav ml-auto">
-						<li className="nav-item active">
+						<li className={this.props.inMarket ? "nav-item" : "nav-item active"}>
 							<a className="nav-link" href="#">My Trees</a>
 						</li>
-						<li className="nav-item">
+						<li className={this.props.inMarket ? "nav-item active" : "nav-item"}>
 							<a className="nav-link" href="#">Market</a>
 						</li>
 					</ul>
