@@ -12,12 +12,15 @@ class App extends React.Component {
 	constructor () {
 		super()
 		this.state = {
-			output: 'This will be the output'
+			output: 'This will be the output',
+			details: []
 		}
 
 		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
+		if(window.location.pathname === 'market') this.prepareMarketData()
+		else this.prepareData()
 	}
 
 	async generateTree() {
@@ -27,18 +30,18 @@ class App extends React.Component {
 		this.show(result)
 	}
 
-	async getTreeById() {
-		const result = await contract.treeDetailsAsync(1, {
+	async getTreeDetails(id) {
+		const result = await contract.treeDetailsAsync(id, {
 			from: web3.eth.accounts[0]
 		})
-		this.show(result)
+		return result
 	}
 
 	async getTreeIds() {
 		const result = await contract.getTreeIdsAsync(web3.eth.accounts[0], {
 			from: web3.eth.accounts[0]
 		})
-		this.show(result)
+		return result
 	}
 
 	async putTreeOnSale() {
@@ -62,6 +65,32 @@ class App extends React.Component {
 		this.show(result)
 	}
 
+	async prepareData() {
+		let allDetails = []
+		let ids = await this.getTreeIds()
+		ids = ids.map(element => parseFloat(element))
+		for(let i = 0; i < ids.length; i++) {
+			let details = await this.getTreeDetails(ids[0])
+			details = details.map(element => {
+				if(typeof element === 'object') return parseFloat(element)
+				else return element
+			})
+			allDetails.push(details)
+		}
+		// Note the ( bracket instead of curly bracket {
+		allDetails = allDetails.map(detail => (
+			<TreeBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]} onSale={detail[4]}/>
+		))
+		this.setState({
+			details: allDetails
+		})
+	}
+
+	async prepareMarketData() {
+		// Get all the trees on sale except yours
+		// get those details
+	}
+
 	show(content) {
 		this.setState({
 			output: typeof content === 'object' ? content.join(' - ') : content
@@ -72,27 +101,18 @@ class App extends React.Component {
 		return (
 			<div>
 				<NavBar />
-
 				<div className="container">
 					<div className="row">
-						<TreeBox id="1" daysPassed="26" treePower="0.173%"/>
-						<TreeBox id="2" daysPassed="24" treePower="0.22%"/>
-						<TreeBox id="5" daysPassed="16" treePower="0.48%"/>
-						<TreeBox id="6" daysPassed="12" treePower="0.92%"/>
-						<TreeBox id="7" daysPassed="8" treePower="0.112%"/>
-						<TreeBox id="9" daysPassed="6" treePower="0.324%"/>
-						<TreeBox id="14" daysPassed="3" treePower="0.024%"/>
-						<TreeBox id="23" daysPassed="2" treePower="0.075%"/>
+						{this.state.details}
 					</div>
 				</div>
-
-				<button onClick={() => this.getTreeById()}>getTreeById 1</button>
-				<button onClick={() => this.getTreeIds()}>getTreeIds</button>
-				<button onClick={() => this.generateTree()}>generateTree</button>
-				<button onClick={() => this.putTreeOnSale()}>putTreeOnSale</button>
-				<button onClick={() => this.buyTree()}>buyTree</button>
-				<button onClick={() => this.getTreesOnSale()}>getTreesOnSale</button>
-				<div>{this.state.output}</div>
+				{/* <button onClick={() => this.getTreeDetails()}>getTreeDetails</button>
+					<button onClick={() => this.getTreeIds()}>getTreeIds</button>
+					<button onClick={() => this.generateTree()}>generateTree</button>
+					<button onClick={() => this.putTreeOnSale()}>putTreeOnSale</button>
+					<button onClick={() => this.buyTree()}>buyTree</button>
+					<button onClick={() => this.getTreesOnSale()}>getTreesOnSale</button>
+				<div>{this.state.output}</div> */}
 			</div>
 		)
 	}
@@ -133,8 +153,23 @@ class TreeBox extends React.Component {
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
 				<p>Fruits not available</p>
+				<p>On sale {this.props.onSale}</p>
 				<button className="wide-button">Pick Fruits</button>
 				<button className="wide-button">Water Tree</button>
+			</div>
+		)
+	}
+}
+
+class TreeMarket extends React.Component {
+	render() {
+		return (
+			<div className="col-6 col-sm-4 tree-container">
+				<img src="imgs/tree.png" className="tree-image"/>
+				<h4>Id {this.props.id}</h4>
+				<p>Tree power {this.props.treePower}</p>
+				<p>{this.props.daysPassed} after planting</p>
+				<button className="full-button">Buy Tree</button>
 			</div>
 		)
 	}

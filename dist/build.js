@@ -19580,12 +19580,14 @@ var App = function (_React$Component) {
 		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
 		_this.state = {
-			output: 'This will be the output'
+			output: 'This will be the output',
+			details: []
 		};
 
 		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
 		window.contract = web3.eth.contract(_Trees.abi).at(contractAddress);
 		(0, _bluebird.promisifyAll)(contract);
+		if (window.location.pathname === 'market') _this.prepareMarketData();else _this.prepareData();
 		return _this;
 	}
 
@@ -19623,23 +19625,22 @@ var App = function (_React$Component) {
 			return generateTree;
 		}()
 	}, {
-		key: 'getTreeById',
+		key: 'getTreeDetails',
 		value: function () {
-			var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+			var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(id) {
 				var result;
 				return regeneratorRuntime.wrap(function _callee2$(_context2) {
 					while (1) {
 						switch (_context2.prev = _context2.next) {
 							case 0:
 								_context2.next = 2;
-								return contract.treeDetailsAsync(1, {
+								return contract.treeDetailsAsync(id, {
 									from: web3.eth.accounts[0]
 								});
 
 							case 2:
 								result = _context2.sent;
-
-								this.show(result);
+								return _context2.abrupt('return', result);
 
 							case 4:
 							case 'end':
@@ -19649,11 +19650,11 @@ var App = function (_React$Component) {
 				}, _callee2, this);
 			}));
 
-			function getTreeById() {
+			function getTreeDetails(_x) {
 				return _ref2.apply(this, arguments);
 			}
 
-			return getTreeById;
+			return getTreeDetails;
 		}()
 	}, {
 		key: 'getTreeIds',
@@ -19671,8 +19672,7 @@ var App = function (_React$Component) {
 
 							case 2:
 								result = _context3.sent;
-
-								this.show(result);
+								return _context3.abrupt('return', result);
 
 							case 4:
 							case 'end':
@@ -19788,6 +19788,98 @@ var App = function (_React$Component) {
 			return getTreesOnSale;
 		}()
 	}, {
+		key: 'prepareData',
+		value: function () {
+			var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+				var allDetails, ids, i, details;
+				return regeneratorRuntime.wrap(function _callee7$(_context7) {
+					while (1) {
+						switch (_context7.prev = _context7.next) {
+							case 0:
+								allDetails = [];
+								_context7.next = 3;
+								return this.getTreeIds();
+
+							case 3:
+								ids = _context7.sent;
+
+								ids = ids.map(function (element) {
+									return parseFloat(element);
+								});
+								i = 0;
+
+							case 6:
+								if (!(i < ids.length)) {
+									_context7.next = 15;
+									break;
+								}
+
+								_context7.next = 9;
+								return this.getTreeDetails(ids[0]);
+
+							case 9:
+								details = _context7.sent;
+
+								details = details.map(function (element) {
+									if ((typeof element === 'undefined' ? 'undefined' : _typeof(element)) === 'object') return parseFloat(element);else return element;
+								});
+								allDetails.push(details);
+
+							case 12:
+								i++;
+								_context7.next = 6;
+								break;
+
+							case 15:
+								// Note the ( bracket instead of curly bracket {
+								allDetails = allDetails.map(function (detail) {
+									return _jsx(TreeBox, {
+										id: detail[0],
+										daysPassed: detail[2],
+										treePower: detail[3],
+										onSale: detail[4]
+									});
+								});
+								this.setState({
+									details: allDetails
+								});
+
+							case 17:
+							case 'end':
+								return _context7.stop();
+						}
+					}
+				}, _callee7, this);
+			}));
+
+			function prepareData() {
+				return _ref7.apply(this, arguments);
+			}
+
+			return prepareData;
+		}()
+	}, {
+		key: 'prepareMarketData',
+		value: function () {
+			var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+				return regeneratorRuntime.wrap(function _callee8$(_context8) {
+					while (1) {
+						switch (_context8.prev = _context8.next) {
+							case 0:
+							case 'end':
+								return _context8.stop();
+						}
+					}
+				}, _callee8, this);
+			}));
+
+			function prepareMarketData() {
+				return _ref8.apply(this, arguments);
+			}
+
+			return prepareMarketData;
+		}()
+	}, {
 		key: 'show',
 		value: function show(content) {
 			this.setState({
@@ -19797,40 +19889,18 @@ var App = function (_React$Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this2 = this;
-
-			return _jsx('div', {}, void 0, _ref7, _ref8, _jsx('button', {
-				onClick: function onClick() {
-					return _this2.getTreeById();
-				}
-			}, void 0, 'getTreeById 1'), _jsx('button', {
-				onClick: function onClick() {
-					return _this2.getTreeIds();
-				}
-			}, void 0, 'getTreeIds'), _jsx('button', {
-				onClick: function onClick() {
-					return _this2.generateTree();
-				}
-			}, void 0, 'generateTree'), _jsx('button', {
-				onClick: function onClick() {
-					return _this2.putTreeOnSale();
-				}
-			}, void 0, 'putTreeOnSale'), _jsx('button', {
-				onClick: function onClick() {
-					return _this2.buyTree();
-				}
-			}, void 0, 'buyTree'), _jsx('button', {
-				onClick: function onClick() {
-					return _this2.getTreesOnSale();
-				}
-			}, void 0, 'getTreesOnSale'), _jsx('div', {}, void 0, this.state.output));
+			return _jsx('div', {}, void 0, _ref9, _jsx('div', {
+				className: 'container'
+			}, void 0, _jsx('div', {
+				className: 'row'
+			}, void 0, this.state.details)));
 		}
 	}]);
 
 	return App;
 }(_react2.default.Component);
 
-var _ref9 = _jsx('nav', {
+var _ref10 = _jsx('nav', {
 	className: 'navbar navbar-expand-lg navbar-light'
 }, void 0, _jsx('a', {
 	className: 'navbar-brand',
@@ -19880,27 +19950,27 @@ var NavBar = function (_React$Component2) {
 	_createClass(NavBar, [{
 		key: 'render',
 		value: function render() {
-			return _ref9;
+			return _ref10;
 		}
 	}]);
 
 	return NavBar;
 }(_react2.default.Component);
 
-var _ref7 = _jsx(NavBar, {});
+var _ref9 = _jsx(NavBar, {});
 
-var _ref10 = _jsx('img', {
+var _ref11 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
 
-var _ref11 = _jsx('p', {}, void 0, 'Fruits not available');
+var _ref12 = _jsx('p', {}, void 0, 'Fruits not available');
 
-var _ref12 = _jsx('button', {
+var _ref13 = _jsx('button', {
 	className: 'wide-button'
 }, void 0, 'Pick Fruits');
 
-var _ref13 = _jsx('button', {
+var _ref14 = _jsx('button', {
 	className: 'wide-button'
 }, void 0, 'Water Tree');
 
@@ -19918,50 +19988,42 @@ var TreeBox = function (_React$Component3) {
 		value: function render() {
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref10, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref11, _ref12, _ref13);
+			}, void 0, _ref11, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref12, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref13, _ref14);
 		}
 	}]);
 
 	return TreeBox;
 }(_react2.default.Component);
 
-var _ref8 = _jsx('div', {
-	className: 'container'
-}, void 0, _jsx('div', {
-	className: 'row'
-}, void 0, _jsx(TreeBox, {
-	id: '1',
-	daysPassed: '26',
-	treePower: '0.173%'
-}), _jsx(TreeBox, {
-	id: '2',
-	daysPassed: '24',
-	treePower: '0.22%'
-}), _jsx(TreeBox, {
-	id: '5',
-	daysPassed: '16',
-	treePower: '0.48%'
-}), _jsx(TreeBox, {
-	id: '6',
-	daysPassed: '12',
-	treePower: '0.92%'
-}), _jsx(TreeBox, {
-	id: '7',
-	daysPassed: '8',
-	treePower: '0.112%'
-}), _jsx(TreeBox, {
-	id: '9',
-	daysPassed: '6',
-	treePower: '0.324%'
-}), _jsx(TreeBox, {
-	id: '14',
-	daysPassed: '3',
-	treePower: '0.024%'
-}), _jsx(TreeBox, {
-	id: '23',
-	daysPassed: '2',
-	treePower: '0.075%'
-})));
+var _ref15 = _jsx('img', {
+	src: 'imgs/tree.png',
+	className: 'tree-image'
+});
+
+var _ref16 = _jsx('button', {
+	className: 'full-button'
+}, void 0, 'Buy Tree');
+
+var TreeMarket = function (_React$Component4) {
+	_inherits(TreeMarket, _React$Component4);
+
+	function TreeMarket() {
+		_classCallCheck(this, TreeMarket);
+
+		return _possibleConstructorReturn(this, (TreeMarket.__proto__ || Object.getPrototypeOf(TreeMarket)).apply(this, arguments));
+	}
+
+	_createClass(TreeMarket, [{
+		key: 'render',
+		value: function render() {
+			return _jsx('div', {
+				className: 'col-6 col-sm-4 tree-container'
+			}, void 0, _ref15, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref16);
+		}
+	}]);
+
+	return TreeMarket;
+}(_react2.default.Component);
 
 _reactDom2.default.render(_jsx(App, {}), document.querySelector('#root'));
 
@@ -51747,7 +51809,7 @@ exports = module.exports = __webpack_require__(453)(false);
 
 
 // module
-exports.push([module.i, ".navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 20px;\n  box-shadow: 0 0 5px 0 #808080;\n  margin-left: 0.5%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 50%;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
+exports.push([module.i, ".navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 20px;\n  box-shadow: 0 0 5px 0 #808080;\n  margin-left: 0.5%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 50%;\n}\n.full-button {\n  width: 100%;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
 
 // exports
 
