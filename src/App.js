@@ -125,23 +125,16 @@ class NavBar extends React.Component {
 }
 
 class TreeBox extends React.Component {
-	// Image of the tree
-	// Id
-	// Tree power
-	// Days passed
-	// Fruit available?
-	// Pick fruit reward
-	// Water the tree
 	render() {
 		return (
-			<div className="col-3">
+			<div className="col-6 col-sm-4 tree-container">
 				<img src="imgs/tree.png" className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
 				<p>Fruits not available</p>
-				<button>Pick Fruits</button>
-				<button>Water Tree</button>
+				<button className="wide-button">Pick Fruits</button>
+				<button className="wide-button">Water Tree</button>
 			</div>
 		)
 	}
