@@ -1,8 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Link } from 'react-router-dom'
-import { renderRoutes } from 'react-router-config'
-import { routes } from './routes'
 import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
@@ -10,14 +8,6 @@ import './index.styl'
 
 const contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77'
 const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
-
-const AppRouter = () => {
-	return (
-		<BrowserRouter>
-			{renderRoutes(routes)}
-		</BrowserRouter>
-	)
-}
 
 class App extends React.Component {
 	constructor () {
@@ -214,7 +204,7 @@ class Market extends React.Component {
 }
 
 ReactDOM.render(
-	<AppRouter/>,
+	<App/>,
 	document.querySelector('#root')
 )
 

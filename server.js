@@ -1,12 +1,3 @@
-require("babel-core").transform("code", {
-  presets: ["es2015"]
-})
-
-import React from 'react'
-import { renderToString } from 'react-dom/server'
-import StaticRouter from 'react-router-dom/StaticRouter'
-import { renderRoutes } from 'react-router-config'
-// import routes from './src/routes.js'
 import { join } from 'path'
 import express from 'express'
 
