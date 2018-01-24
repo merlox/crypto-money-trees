@@ -1,5 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter, Route, Link } from 'react-router-dom'
+import { renderRoutes } from 'react-router-config'
+import { routes } from './routes'
 import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
@@ -8,45 +11,27 @@ import './index.styl'
 const contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77'
 const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
 
+const AppRouter = () => {
+	return (
+		<BrowserRouter>
+			{renderRoutes(routes)}
+		</BrowserRouter>
+	)
+}
+
 class App extends React.Component {
 	constructor () {
 		super()
-		this.state = {
-			output: 'This will be the output',
-			details: [],
-			inMarket: false
-		}
-
 		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
-
-		if(window.location.pathname === '/market'){
-			this.prepareMarketData()
-		} else {
-			this.prepareData()
-		}
 	}
-
-	componentDidMount() {
-		if(window.location.pathname === '/market'){
-			this.setState({
-				inMarket: true
-			})
-		}
-	}
-
-	// goToMyTrees() {
-	// 	this.setState({
-    //
-	// 	})
-	// }
 
 	async generateTree() {
 		const result = await contract.generateTreeAsync({
 			from: web3.eth.accounts[0]
 		})
-		this.show(result)
+		return result
 	}
 
 	async getTreeDetails(id) {
@@ -67,14 +52,14 @@ class App extends React.Component {
 		const result = await contract.putTreeOnSaleAsync(1, {
 			from: web3.eth.accounts[0]
 		})
-		this.show(result)
+		return result
 	}
 
 	async buyTree() {
 		const result = await contract.buyTreeAsync(1, originalOwner, {
 			from: web3.eth.accounts[0]
 		})
-		this.show(result)
+		return result
 	}
 
 	async getTreesOnSale() {
@@ -84,58 +69,24 @@ class App extends React.Component {
 		return result
 	}
 
-	async prepareData() {
-		let allDetails = []
-		let ids = await this.getTreeIds()
-		ids = ids.map(element => parseFloat(element))
-		for(let i = 0; i < ids.length; i++) {
-			let details = await this.getTreeDetails(ids[0])
-			details = details.map(element => {
-				if(typeof element === 'object') return parseFloat(element)
-				else return element
-			})
-			allDetails.push(details)
-		}
-		// Note the ( bracket instead of curly bracket {
-		allDetails = allDetails.map(detail => (
-			<TreeBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]} onSale={detail[4]}/>
-		))
-		this.setState({
-			details: allDetails
-		})
-	}
-
-	async prepareMarketData() {
-		// Get all the trees on sale except yours
-		// get those details
-		let treesOnSale = await this.getTreesOnSale()
-		treesOnSale = treesOnSale.map(element => parseFloat(element))
-		console.log('treesOnSale', treesOnSale)
-	}
-
-	show(content) {
-		this.setState({
-			output: typeof content === 'object' ? content.join(' - ') : content
-		})
-	}
-
 	render () {
 		return (
-			<div>
-				<NavBar inMarket={this.state.inMarket} />
-				<div className="container">
-					<div className="row">
-						{this.state.details}
-					</div>
-				</div>
-				{/* <button onClick={() => this.getTreeDetails()}>getTreeDetails</button>
-					<button onClick={() => this.getTreeIds()}>getTreeIds</button>
-					<button onClick={() => this.generateTree()}>generateTree</button>
-					<button onClick={() => this.putTreeOnSale()}>putTreeOnSale</button>
-					<button onClick={() => this.buyTree()}>buyTree</button>
-					<button onClick={() => this.getTreesOnSale()}>getTreesOnSale</button>
-				<div>{this.state.output}</div> */}
-			</div>
+			<BrowserRouter>
+				<NavBar>
+					<Route path="/market" render={() => (
+						<Market
+							getTreesOnSale={() => this.getTreesOnSale()}
+							getTreeIds={() => this.getTreeIds()}
+						/>
+					)} />
+					<Route path="/" exact render={() => (
+						<MyTrees
+							getTreeIds={() => this.getTreeIds()}
+							getTreeDetails={() => this.getTreeDetails()}
+						/>
+					)} />
+				</NavBar>
+			</BrowserRouter>
 		)
 	}
 }
@@ -183,7 +134,7 @@ class TreeBox extends React.Component {
 	}
 }
 
-class TreeMarket extends React.Component {
+class TreeMarketBox extends React.Component {
 	render() {
 		return (
 			<div className="col-6 col-sm-4 tree-container">
@@ -197,7 +148,74 @@ class TreeMarket extends React.Component {
 	}
 }
 
+class MyTrees extends React.Component {
+	constructor(props) {
+		super()
+		init()
+		this.state = {
+			allTrees: []
+		}
+	}
+
+	async init() {
+		let allTrees = []
+		let ids = await this.props.getTreeIds()
+		ids = ids.map(element => parseFloat(element))
+		for(let i = 0; i < ids.length; i++) {
+			let details = await this.props.getTreeDetails(ids[0])
+			details = details.map(element => {
+				if(typeof element === 'object') return parseFloat(element)
+				else return element
+			})
+			allTrees.push(details)
+		}
+		// Note the ( bracket instead of curly bracket {
+		allTrees = allTrees.map(detail => (
+			<TreeBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]} onSale={detail[4]}/>
+		))
+		this.setState({allTrees})
+	}
+
+	render() {
+		return (
+			<div>
+				{this.state.allTrees}
+			</div>
+		)
+	}
+}
+
+class Market extends React.Component {
+	constructor(props) {
+		super()
+		init()
+		this.state = {
+			allTrees: []
+		}
+	}
+
+	async init() {
+		// Get all the trees on sale except yours
+		// get those details
+		let treesOnSale = await this.props.getTreesOnSale()
+		let myTrees = await this.props.getTreeIds()
+		treesOnSale = treesOnSale.map(element => parseFloat(element))
+		console.log('treesOnSale', treesOnSale)
+		console.log('myTrees', myTrees)
+	}
+
+	render() {
+		return (
+			<div className="col-6 col-sm-4 tree-container">
+				{this.state.allTrees}
+			</div>
+		)
+	}
+}
+
 ReactDOM.render(
-	<App/>,
+	<AppRouter/>,
 	document.querySelector('#root')
 )
+
+export {App, NavBar, TreeBox, TreeMarketBox, MyTrees, Market}
