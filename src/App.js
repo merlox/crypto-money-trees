@@ -1,10 +1,12 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import { BrowserRouter, Route, Link } from 'react-router-dom'
+import { render } from 'react-dom'
+import { BrowserRouter, Route, Link, Switch } from 'react-router-dom'
 import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
+
+console.log('Loaded app')
 
 const contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77'
 const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
@@ -15,6 +17,8 @@ class App extends React.Component {
 		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
+		console.log('Loaded app 2')
+
 	}
 
 	async generateTree() {
@@ -62,19 +66,21 @@ class App extends React.Component {
 	render () {
 		return (
 			<BrowserRouter>
-				<NavBar>
-					<Route path="/market" render={() => (
-						<Market
-							getTreesOnSale={() => this.getTreesOnSale()}
-							getTreeIds={() => this.getTreeIds()}
-						/>
-					)} />
-					<Route path="/" exact render={() => (
-						<MyTrees
-							getTreeIds={() => this.getTreeIds()}
-							getTreeDetails={() => this.getTreeDetails()}
-						/>
-					)} />
+				<NavBar {...this.state}>
+					<Switch>
+						<Route path="/" render={() => (
+							<MyTrees
+								getTreeIds={() => this.getTreeIds()}
+								getTreeDetails={() => this.getTreeDetails()}
+							/>
+						)} />
+						<Route path="/market" render={() => (
+							<Market
+								getTreesOnSale={() => this.getTreesOnSale()}
+								getTreeIds={() => this.getTreeIds()}
+							/>
+						)} />
+					</Switch>
 				</NavBar>
 			</BrowserRouter>
 		)
@@ -145,6 +151,7 @@ class MyTrees extends React.Component {
 		this.state = {
 			allTrees: []
 		}
+		console.log('Trees called')
 	}
 
 	async init() {
@@ -182,6 +189,7 @@ class Market extends React.Component {
 		this.state = {
 			allTrees: []
 		}
+		console.log('Market called')
 	}
 
 	async init() {
@@ -203,9 +211,7 @@ class Market extends React.Component {
 	}
 }
 
-ReactDOM.render(
+render(
 	<App/>,
 	document.querySelector('#root')
 )
-
-export {App, NavBar, TreeBox, TreeMarketBox, MyTrees, Market}

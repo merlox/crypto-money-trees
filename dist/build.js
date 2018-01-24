@@ -20915,11 +20915,6 @@ module.exports = function (regExp, replace) {
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.Market = exports.MyTrees = exports.TreeMarketBox = exports.TreeBox = exports.NavBar = exports.App = undefined;
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _jsx = function () { var REACT_ELEMENT_TYPE = typeof Symbol === "function" && Symbol.for && Symbol.for("react.element") || 0xeac7; return function createRawReactElement(type, props, key, children) { var defaultProps = type && type.defaultProps; var childrenLength = arguments.length - 3; if (!props && childrenLength !== 0) { props = {}; } if (props && defaultProps) { for (var propName in defaultProps) { if (props[propName] === void 0) { props[propName] = defaultProps[propName]; } } } else if (!props) { props = defaultProps || {}; } if (childrenLength === 1) { props.children = children; } else if (childrenLength > 1) { var childArray = Array(childrenLength); for (var i = 0; i < childrenLength; i++) { childArray[i] = arguments[i + 3]; } props.children = childArray; } return { $$typeof: REACT_ELEMENT_TYPE, type: type, key: key === undefined ? null : '' + key, ref: null, props: props, _owner: null }; }; }();
@@ -20931,8 +20926,6 @@ var _react = __webpack_require__(15);
 var _react2 = _interopRequireDefault(_react);
 
 var _reactDom = __webpack_require__(393);
-
-var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _reactRouterDom = __webpack_require__(402);
 
@@ -20956,6 +20949,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+console.log('Loaded app');
+
 var contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77';
 var originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1';
 
@@ -20970,6 +20965,8 @@ var App = function (_React$Component) {
 		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
 		window.contract = web3.eth.contract(_Trees.abi).at(contractAddress);
 		(0, _bluebird.promisifyAll)(contract);
+		console.log('Loaded app 2');
+
 		return _this;
 	}
 
@@ -21170,32 +21167,35 @@ var App = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			return _jsx(_reactRouterDom.BrowserRouter, {}, void 0, _jsx(NavBar, {}, void 0, _jsx(_reactRouterDom.Route, {
-				path: '/market',
-				render: function render() {
-					return _jsx(Market, {
-						getTreesOnSale: function getTreesOnSale() {
-							return _this2.getTreesOnSale();
-						},
-						getTreeIds: function getTreeIds() {
-							return _this2.getTreeIds();
-						}
-					});
-				}
-			}), _jsx(_reactRouterDom.Route, {
-				path: '/',
-				exact: true,
-				render: function render() {
-					return _jsx(MyTrees, {
-						getTreeIds: function getTreeIds() {
-							return _this2.getTreeIds();
-						},
-						getTreeDetails: function getTreeDetails() {
-							return _this2.getTreeDetails();
-						}
-					});
-				}
-			})));
+			return _jsx(_reactRouterDom.BrowserRouter, {}, void 0, _react2.default.createElement(
+				NavBar,
+				this.state,
+				_jsx(_reactRouterDom.Switch, {}, void 0, _jsx(_reactRouterDom.Route, {
+					path: '/',
+					render: function render() {
+						return _jsx(MyTrees, {
+							getTreeIds: function getTreeIds() {
+								return _this2.getTreeIds();
+							},
+							getTreeDetails: function getTreeDetails() {
+								return _this2.getTreeDetails();
+							}
+						});
+					}
+				}), _jsx(_reactRouterDom.Route, {
+					path: '/market',
+					render: function render() {
+						return _jsx(Market, {
+							getTreesOnSale: function getTreesOnSale() {
+								return _this2.getTreesOnSale();
+							},
+							getTreeIds: function getTreeIds() {
+								return _this2.getTreeIds();
+							}
+						});
+					}
+				}))
+			));
 		}
 	}]);
 
@@ -21343,6 +21343,7 @@ var MyTrees = function (_React$Component5) {
 		_this6.state = {
 			allTrees: []
 		};
+		console.log('Trees called');
 		return _this6;
 	}
 
@@ -21437,6 +21438,7 @@ var Market = function (_React$Component6) {
 		_this7.state = {
 			allTrees: []
 		};
+		console.log('Market called');
 		return _this7;
 	}
 
@@ -21492,14 +21494,7 @@ var Market = function (_React$Component6) {
 	return Market;
 }(_react2.default.Component);
 
-_reactDom2.default.render(_jsx(App, {}), document.querySelector('#root'));
-
-exports.App = App;
-exports.NavBar = NavBar;
-exports.TreeBox = TreeBox;
-exports.TreeMarketBox = TreeMarketBox;
-exports.MyTrees = MyTrees;
-exports.Market = Market;
+(0, _reactDom.render)(_jsx(App, {}), document.querySelector('#root'));
 
 /***/ }),
 /* 391 */
