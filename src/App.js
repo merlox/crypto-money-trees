@@ -63,7 +63,7 @@ class App extends React.Component {
 		return (
 			<BrowserRouter>
 				<Switch>
-					<Route path="/" render={() => (
+					<Route path="/" exact render={() => (
 						<MyTrees
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={(id) => this.getTreeDetails(id)}
@@ -171,10 +171,10 @@ class NavBar extends React.Component {
 				<div className="collapse navbar-collapse" id="navbarText">
 					<ul className="navbar-nav ml-auto">
 						<li className={this.props.inMarket ? "nav-item" : "nav-item active"}>
-							<a className="nav-link" href="#">My Trees</a>
+							<Link to="/" className="nav-link">My Trees</Link>
 						</li>
 						<li className={this.props.inMarket ? "nav-item active" : "nav-item"}>
-							<a className="nav-link" href="#">Market</a>
+							<Link to="/market" className="nav-link">Market</Link>
 						</li>
 					</ul>
 				</div>

@@ -21165,6 +21165,7 @@ var App = function (_React$Component) {
 
 			return _jsx(_reactRouterDom.BrowserRouter, {}, void 0, _jsx(_reactRouterDom.Switch, {}, void 0, _jsx(_reactRouterDom.Route, {
 				path: '/',
+				exact: true,
 				render: function render() {
 					return _jsx(MyTrees, {
 						getTreeIds: function getTreeIds() {
@@ -21385,14 +21386,14 @@ var _ref12 = _jsx('button', {
 	className: 'navbar-toggler-icon'
 }));
 
-var _ref13 = _jsx('a', {
-	className: 'nav-link',
-	href: '#'
+var _ref13 = _jsx(_reactRouterDom.Link, {
+	to: '/',
+	className: 'nav-link'
 }, void 0, 'My Trees');
 
-var _ref14 = _jsx('a', {
-	className: 'nav-link',
-	href: '#'
+var _ref14 = _jsx(_reactRouterDom.Link, {
+	to: '/market',
+	className: 'nav-link'
 }, void 0, 'Market');
 
 var NavBar = function (_React$Component4) {
