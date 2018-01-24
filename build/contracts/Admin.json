@@ -69,11 +69,11 @@
       "type": "constructor"
     }
   ],
-  "bytecode": "0x6060604052341561000f57600080fd5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555061008c6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1661009164010000000002610255176401000000009004565b610146565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156100ec57600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b61035b806101556000396000f300606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631785f53c1461006757806324d7806c146100a057806370480275146100f15780638da5cb5b1461012a575b600080fd5b341561007257600080fd5b61009e600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061017f565b005b34156100ab57600080fd5b6100d7600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610235565b604051808215151515815260200191505060405180910390f35b34156100fc57600080fd5b610128600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610255565b005b341561013557600080fd5b61013d61030a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156101da57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156102b057600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a723058208d1938fc62ac832864a23c35d36c0da7efb9b7e3891f2c4c40bc67643dd148280029",
-  "deployedBytecode": "0x606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631785f53c1461006757806324d7806c146100a057806370480275146100f15780638da5cb5b1461012a575b600080fd5b341561007257600080fd5b61009e600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061017f565b005b34156100ab57600080fd5b6100d7600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610235565b604051808215151515815260200191505060405180910390f35b34156100fc57600080fd5b610128600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610255565b005b341561013557600080fd5b61013d61030a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156101da57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156102b057600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a723058208d1938fc62ac832864a23c35d36c0da7efb9b7e3891f2c4c40bc67643dd148280029",
+  "bytecode": "0x6060604052341561000f57600080fd5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555061008c6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1661009164010000000002610255176401000000009004565b610146565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156100ec57600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b61035b806101556000396000f300606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631785f53c1461006757806324d7806c146100a057806370480275146100f15780638da5cb5b1461012a575b600080fd5b341561007257600080fd5b61009e600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061017f565b005b34156100ab57600080fd5b6100d7600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610235565b604051808215151515815260200191505060405180910390f35b34156100fc57600080fd5b610128600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610255565b005b341561013557600080fd5b61013d61030a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156101da57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156102b057600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a72305820afe78c29d7e929abcb5df75e75e77083e0b4fa35654a9502bc7f37dff08076dd0029",
+  "deployedBytecode": "0x606060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631785f53c1461006757806324d7806c146100a057806370480275146100f15780638da5cb5b1461012a575b600080fd5b341561007257600080fd5b61009e600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061017f565b005b34156100ab57600080fd5b6100d7600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610235565b604051808215151515815260200191505060405180910390f35b34156100fc57600080fd5b610128600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610255565b005b341561013557600080fd5b61013d61030a565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156101da57600080fd5b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b60016020528060005260406000206000915054906101000a900460ff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156102b057600080fd5b60018060008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548160ff02191690831515021790555050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff16815600a165627a7a72305820afe78c29d7e929abcb5df75e75e77083e0b4fa35654a9502bc7f37dff08076dd0029",
   "sourceMap": "28:511:0:-;;;271:77;;;;;;;;310:10;302:5;;:18;;;;;;;;;;;;;;;;;;327:15;336:5;;;;;;;;;;;327:8;;;;;:15;;;:::i;:::-;28:511;;354:86;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;430:4;412:7;:15;420:6;412:15;;;;;;;;;;;;;;;;:22;;;;;;;;;;;;;;;;;;354:86;:::o;28:511::-;;;;;;;",
   "deployedSourceMap": "28:511:0:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;446:90;;;;;;;;;;;;;;;;;;;;;;;;;;;;73:39;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;354:86;;;;;;;;;;;;;;;;;;;;;;;;;;;;48:20;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;446:90;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;525:5;507:7;:15;515:6;507:15;;;;;;;;;;;;;;;;:23;;;;;;;;;;;;;;;;;;446:90;:::o;73:39::-;;;;;;;;;;;;;;;;;;;;;;:::o;354:86::-;169:5;;;;;;;;;;;155:19;;:10;:19;;;147:28;;;;;;;;430:4;412:7;:15;420:6;412:15;;;;;;;;;;;;;;;;:22;;;;;;;;;;;;;;;;;;354:86;:::o;48:20::-;;;;;;;;;;;;;:::o",
-  "source": "pragma solidity ^0.4.18;\r\n\r\ncontract Admin {\r\n  address public owner;\r\n  mapping(address => bool) public isAdmin;\r\n\r\n  modifier onlyOwner() {\r\n    require(msg.sender == owner);\r\n    _;\r\n  }\r\n\r\n  modifier onlyAdmin() {\r\n    require(isAdmin[msg.sender]);\r\n    _;\r\n  }\r\n\r\n  function Admin() public {\r\n    owner = msg.sender;\r\n    addAdmin(owner);\r\n  }\r\n\r\n  function addAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = true;\r\n  }\r\n\r\n  function removeAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = false;\r\n  }\r\n}\r\n\r\n// To add a tree do the following:\r\n// - Create a new Tree with the ID, owner, treeValue and power to generate fruits\r\n// - Update the treeBalances and treeOwner mappings\r\ncontract Trees is Admin {\r\n  // Get the tree information given the id\r\n  mapping(uint256 => Tree) public treeDetails;\r\n  // A mapping with all the tree IDs of that owner\r\n  mapping(address => uint256[]) public ownerTreesIds;\r\n\r\n  struct Tree {\r\n    uint256 ID;\r\n    address owner;\r\n    uint256 purchaseDate;\r\n    uint256 treePower; // How much ether that tree is generating from 0 to 100 where 100 is the total power combined of all the trees\r\n    bool onSale;\r\n  }\r\n\r\n  uint256[] public trees;\r\n  uint256[] public treesOnSale;\r\n  uint256 public lastTreeId;\r\n  address public defaultTreesOwner = msg.sender;\r\n  uint256 public defaultTreesPower = 10; // 10% of the total power\r\n\r\n  // This will be called automatically by the server\r\n  // The contract itself will hold the initial trees\r\n  function generateTree() public onlyAdmin {\r\n    uint256 newTreeId = lastTreeId + 1;\r\n    lastTreeId += 1;\r\n    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, true);\r\n\r\n    // Update the treeBalances and treeOwner mappings\r\n    // We add the tree to the same array position to find it easier\r\n    ownerTreesIds[defaultTreesOwner].push(newTreeId);\r\n    treeDetails[newTreeId] = newTree;\r\n    treesOnSale.push(newTreeId);\r\n  }\r\n\r\n  // This is payable, the user will send the payment here\r\n  // We delete the tree from the owner first and we add that to the receiver\r\n  // When you sell you're actually putting the tree on the market, not losing it yet\r\n  function putTreeOnSale(uint256 _treeNumber) public {\r\n    require(msg.sender == treeDetails[_treeNumber].owner);\r\n    require(!treeDetails[_treeNumber].onSale);\r\n\r\n    treesOnSale.push(_treeNumber);\r\n    treeDetails[_treeNumber].onSale = true;\r\n  }\r\n\r\n  function buyTree(uint256 _treeNumber, address _originalOwner) public payable {\r\n    require(msg.sender != treeDetails[_treeNumber].owner);\r\n    require(treeDetails[_treeNumber].onSale);\r\n\r\n    address newOwner = msg.sender;\r\n\r\n    // Move id from old to new owner\r\n    // Find the tree of that user and delete it\r\n    for(uint256 i = 0; i < ownerTreesIds[_originalOwner].length; i++) {\r\n        uint256 treeId = ownerTreesIds[_originalOwner][i];\r\n        if(treeId == _treeNumber) delete ownerTreesIds[_originalOwner][i];\r\n    }\r\n\r\n    ownerTreesIds[newOwner].push(_treeNumber);\r\n    treeDetails[_treeNumber].owner = newOwner;\r\n    treeDetails[_treeNumber].onSale = false;\r\n  }\r\n\r\n  // To get all the tree IDs of one user\r\n  function getTreeIds(address _account) public constant returns(uint256[]) {\r\n    if(_account != address(0)) return ownerTreesIds[_account];\r\n    else return ownerTreesIds[msg.sender];\r\n  }\r\n\r\n  // To get all the trees on sale\r\n  function getTreesOnSale() public constant returns(uint256[]) {\r\n      return treesOnSale;\r\n  }\r\n}\r\n",
+  "source": "pragma solidity ^0.4.18;\r\n\r\ncontract Admin {\r\n  address public owner;\r\n  mapping(address => bool) public isAdmin;\r\n\r\n  modifier onlyOwner() {\r\n    require(msg.sender == owner);\r\n    _;\r\n  }\r\n\r\n  modifier onlyAdmin() {\r\n    require(isAdmin[msg.sender]);\r\n    _;\r\n  }\r\n\r\n  function Admin() public {\r\n    owner = msg.sender;\r\n    addAdmin(owner);\r\n  }\r\n\r\n  function addAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = true;\r\n  }\r\n\r\n  function removeAdmin(address _admin) public onlyOwner {\r\n    isAdmin[_admin] = false;\r\n  }\r\n}\r\n\r\n// To add a tree do the following:\r\n// - Create a new Tree with the ID, owner, treeValue and power to generate fruits\r\n// - Update the treeBalances and treeOwner mappings\r\ncontract Trees is Admin {\r\n  // Get the tree information given the id\r\n  mapping(uint256 => Tree) public treeDetails;\r\n  // A mapping with all the tree IDs of that owner\r\n  mapping(address => uint256[]) public ownerTreesIds;\r\n\r\n  struct Tree {\r\n    uint256 ID;\r\n    address owner;\r\n    uint256 purchaseDate;\r\n    uint256 treePower; // How much ether that tree is generating from 0 to 100 where 100 is the total power combined of all the trees\r\n    bool onSale;\r\n  }\r\n\r\n  uint256[] public trees;\r\n  uint256[] public treesOnSale;\r\n  uint256 public lastTreeId;\r\n  address public defaultTreesOwner = msg.sender;\r\n  uint256 public defaultTreesPower = 10; // 10% of the total power\r\n\r\n  // This will be called automatically by the server\r\n  // The contract itself will hold the initial trees\r\n  function generateTree() public onlyAdmin {\r\n    uint256 newTreeId = lastTreeId + 1;\r\n    lastTreeId += 1;\r\n    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, true);\r\n\r\n    // Update the treeBalances and treeOwner mappings\r\n    // We add the tree to the same array position to find it easier\r\n    ownerTreesIds[defaultTreesOwner].push(newTreeId);\r\n    treeDetails[newTreeId] = newTree;\r\n    treesOnSale.push(newTreeId);\r\n  }\r\n\r\n  // This is payable, the user will send the payment here\r\n  // We delete the tree from the owner first and we add that to the receiver\r\n  // When you sell you're actually putting the tree on the market, not losing it yet\r\n  function putTreeOnSale(uint256 _treeNumber) public {\r\n    require(msg.sender == treeDetails[_treeNumber].owner);\r\n    require(!treeDetails[_treeNumber].onSale);\r\n\r\n    treesOnSale.push(_treeNumber);\r\n    treeDetails[_treeNumber].onSale = true;\r\n  }\r\n\r\n  function buyTree(uint256 _treeNumber, address _originalOwner) public payable {\r\n    require(msg.sender != treeDetails[_treeNumber].owner);\r\n    require(treeDetails[_treeNumber].onSale);\r\n\r\n    address newOwner = msg.sender;\r\n\r\n    // Move id from old to new owner\r\n    // Find the tree of that user and delete it\r\n    for(uint256 i = 0; i < ownerTreesIds[_originalOwner].length; i++) {\r\n        uint256 treeId = ownerTreesIds[_originalOwner][i];\r\n        if(treeId == _treeNumber) delete ownerTreesIds[_originalOwner][i];\r\n    }\r\n\r\n    // Remove the tree from the array of trees on sale\r\n    for(uint256 a = 0; a < treesOnSale.length; a++) {\r\n        if(treesOnSale[a] == _treeNumber) {\r\n            delete treesOnSale[a];\r\n            break;\r\n        }\r\n    }\r\n\r\n    ownerTreesIds[newOwner].push(_treeNumber);\r\n    treeDetails[_treeNumber].owner = newOwner;\r\n    treeDetails[_treeNumber].onSale = false;\r\n  }\r\n\r\n  // To get all the tree IDs of one user\r\n  function getTreeIds(address _account) public constant returns(uint256[]) {\r\n    if(_account != address(0)) return ownerTreesIds[_account];\r\n    else return ownerTreesIds[msg.sender];\r\n  }\r\n\r\n  // To get all the trees on sale\r\n  function getTreesOnSale() public constant returns(uint256[]) {\r\n      return treesOnSale;\r\n  }\r\n}\r\n",
   "sourcePath": "C:\\Users\\merunas\\Desktop\\money-trees\\contracts\\Trees.sol",
   "ast": {
     "attributes": {
@@ -83,7 +83,7 @@
           71
         ],
         "Trees": [
-          309
+          335
         ]
       }
     },
@@ -116,7 +116,7 @@
             71
           ],
           "name": "Admin",
-          "scope": 310
+          "scope": 336
         },
         "children": [
           {
@@ -237,7 +237,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 324,
+                              "referencedDeclaration": 350,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -278,7 +278,7 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 321,
+                                      "referencedDeclaration": 347,
                                       "type": "msg",
                                       "value": "msg"
                                     },
@@ -382,7 +382,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 324,
+                              "referencedDeclaration": 350,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -432,7 +432,7 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 321,
+                                      "referencedDeclaration": 347,
                                       "type": "msg",
                                       "value": "msg"
                                     },
@@ -560,7 +560,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 321,
+                                  "referencedDeclaration": 347,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -1023,11 +1023,11 @@
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            309,
+            335,
             71
           ],
           "name": "Trees",
-          "scope": 310
+          "scope": 336
         },
         "children": [
           {
@@ -1057,7 +1057,7 @@
             "attributes": {
               "constant": false,
               "name": "treeDetails",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "mapping(uint256 => struct Trees.Tree storage ref)",
@@ -1118,7 +1118,7 @@
             "attributes": {
               "constant": false,
               "name": "ownerTreesIds",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "mapping(address => uint256[] storage ref)",
@@ -1175,7 +1175,7 @@
             "attributes": {
               "canonicalName": "Trees.Tree",
               "name": "Tree",
-              "scope": 309,
+              "scope": 335,
               "visibility": "public"
             },
             "children": [
@@ -1318,7 +1318,7 @@
             "attributes": {
               "constant": false,
               "name": "trees",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256[] storage ref",
@@ -1355,7 +1355,7 @@
             "attributes": {
               "constant": false,
               "name": "treesOnSale",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256[] storage ref",
@@ -1392,7 +1392,7 @@
             "attributes": {
               "constant": false,
               "name": "lastTreeId",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256",
@@ -1418,7 +1418,7 @@
             "attributes": {
               "constant": false,
               "name": "defaultTreesOwner",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "address",
@@ -1459,7 +1459,7 @@
                       "overloadedDeclarations": [
                         null
                       ],
-                      "referencedDeclaration": 321,
+                      "referencedDeclaration": 347,
                       "type": "msg",
                       "value": "msg"
                     },
@@ -1478,7 +1478,7 @@
             "attributes": {
               "constant": false,
               "name": "defaultTreesPower",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256",
@@ -1520,7 +1520,7 @@
             "attributes": {
               "constant": false,
               "name": "generateTree",
-              "scope": 309,
+              "scope": 335,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "uint256",
@@ -1856,7 +1856,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 323,
+                              "referencedDeclaration": 349,
                               "type": "uint256",
                               "value": "now"
                             },
@@ -2188,7 +2188,7 @@
               ],
               "name": "putTreeOnSale",
               "payable": false,
-              "scope": 309,
+              "scope": 335,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -2334,7 +2334,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 324,
+                              "referencedDeclaration": 350,
                               "value": "require"
                             },
                             "children": [
@@ -2450,7 +2450,7 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 321,
+                                      "referencedDeclaration": 347,
                                       "type": "msg",
                                       "value": "msg"
                                     },
@@ -2687,7 +2687,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 324,
+                              "referencedDeclaration": 350,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -3565,7 +3565,7 @@
               ],
               "name": "buyTree",
               "payable": true,
-              "scope": 309,
+              "scope": 335,
               "stateMutability": "payable",
               "superFunction": null,
               "visibility": "public"
@@ -3577,7 +3577,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "_treeNumber",
-                      "scope": 275,
+                      "scope": 301,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -3603,7 +3603,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "_originalOwner",
-                      "scope": 275,
+                      "scope": 301,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -3731,7 +3731,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 324,
+                              "referencedDeclaration": 350,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -3789,7 +3789,7 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 321,
+                                      "referencedDeclaration": 347,
                                       "type": "msg",
                                       "value": "msg"
                                     },
@@ -4026,7 +4026,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 324,
+                              "referencedDeclaration": 350,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -4159,7 +4159,7 @@
                           "type_conversion": false,
                           "constant": false,
                           "name": "newOwner",
-                          "scope": 275,
+                          "scope": 301,
                           "stateVariable": false,
                           "storageLocation": "default",
                           "value": null,
@@ -4240,7 +4240,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 321,
+                              "referencedDeclaration": 347,
                               "type": "msg",
                               "value": "msg"
                             },
@@ -4291,7 +4291,7 @@
                               "type": "uint256",
                               "constant": false,
                               "name": "i",
-                              "scope": 275,
+                              "scope": 301,
                               "stateVariable": false,
                               "storageLocation": "default",
                               "value": null,
@@ -4514,7 +4514,7 @@
                                 "attributes": {
                                   "constant": false,
                                   "name": "treeId",
-                                  "scope": 275,
+                                  "scope": 301,
                                   "stateVariable": false,
                                   "storageLocation": "default",
                                   "type": "uint256",
@@ -4791,6 +4791,407 @@
                             null
                           ],
                           "type": "uint256",
+                          "type_conversion": false,
+                          "assignments": [
+                            254
+                          ]
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": [
+                                {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              ],
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "push",
+                              "referencedDeclaration": null,
+                              "type": "uint256",
+                              "constant": false,
+                              "name": "a",
+                              "scope": 301,
+                              "stateVariable": false,
+                              "storageLocation": "default",
+                              "value": null,
+                              "visibility": "internal"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "type": "uint256",
+                                  "name": "uint256"
+                                },
+                                "children": [
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "overloadedDeclarations": [
+                                        null
+                                      ],
+                                      "referencedDeclaration": 82,
+                                      "type": "mapping(address => uint256[] storage ref)",
+                                      "value": "ownerTreesIds"
+                                    },
+                                    "id": 253,
+                                    "name": "Identifier",
+                                    "src": "2980:13:0"
+                                  },
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "overloadedDeclarations": [
+                                        null
+                                      ],
+                                      "referencedDeclaration": 215,
+                                      "type": "address",
+                                      "value": "newOwner"
+                                    },
+                                    "id": 254,
+                                    "name": "Identifier",
+                                    "src": "2994:8:0"
+                                  }
+                                ],
+                                "id": 253,
+                                "name": "ElementaryTypeName",
+                                "src": "3040:7:0"
+                              }
+                            ],
+                            "id": 254,
+                            "name": "VariableDeclaration",
+                            "src": "3040:9:0"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 192,
+                              "type": "int_const 0",
+                              "value": "0",
+                              "hexvalue": "30",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number"
+                            },
+                            "id": 255,
+                            "name": "Literal",
+                            "src": "3052:1:0"
+                          }
+                        ],
+                        "id": 256,
+                        "name": "VariableDeclarationStatement",
+                        "src": "3040:13:0"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "commonType": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "<",
+                          "type": "bool"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 254,
+                              "type": "uint256",
+                              "value": "a"
+                            },
+                            "id": 257,
+                            "name": "Identifier",
+                            "src": "3055:1:0"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "length",
+                              "referencedDeclaration": null,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 99,
+                                  "type": "uint256[] storage ref",
+                                  "value": "treesOnSale"
+                                },
+                                "id": 258,
+                                "name": "Identifier",
+                                "src": "3059:11:0"
+                              }
+                            ],
+                            "id": 259,
+                            "name": "MemberAccess",
+                            "src": "3059:18:0"
+                          }
+                        ],
+                        "id": 260,
+                        "name": "BinaryOperation",
+                        "src": "3055:22:0"
+                      },
+                      {
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "operator": "++",
+                              "prefix": false,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 254,
+                                  "type": "uint256",
+                                  "value": "a"
+                                },
+                                "id": 261,
+                                "name": "Identifier",
+                                "src": "3079:1:0"
+                              }
+                            ],
+                            "id": 262,
+                            "name": "UnaryOperation",
+                            "src": "3079:3:0"
+                          }
+                        ],
+                        "id": 263,
+                        "name": "ExpressionStatement",
+                        "src": "3079:3:0"
+                      },
+                      {
+                        "children": [
+                          {
+                            "attributes": {
+                              "falseBody": null
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "commonType": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  },
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "operator": "==",
+                                  "type": "bool"
+                                },
+                                "children": [
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "isConstant": false,
+                                      "isLValue": true,
+                                      "isPure": false,
+                                      "lValueRequested": false,
+                                      "type": "uint256"
+                                    },
+                                    "children": [
+                                      {
+                                        "attributes": {
+                                          "argumentTypes": null,
+                                          "overloadedDeclarations": [
+                                            null
+                                          ],
+                                          "referencedDeclaration": 99,
+                                          "type": "uint256[] storage ref",
+                                          "value": "treesOnSale"
+                                        },
+                                        "id": 264,
+                                        "name": "Identifier",
+                                        "src": "3098:11:0"
+                                      },
+                                      {
+                                        "attributes": {
+                                          "argumentTypes": null,
+                                          "overloadedDeclarations": [
+                                            null
+                                          ],
+                                          "referencedDeclaration": 254,
+                                          "type": "uint256",
+                                          "value": "a"
+                                        },
+                                        "id": 265,
+                                        "name": "Identifier",
+                                        "src": "3110:1:0"
+                                      }
+                                    ],
+                                    "id": 266,
+                                    "name": "IndexAccess",
+                                    "src": "3098:14:0"
+                                  },
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "overloadedDeclarations": [
+                                        null
+                                      ],
+                                      "referencedDeclaration": 192,
+                                      "type": "uint256",
+                                      "value": "_treeNumber"
+                                    },
+                                    "id": 267,
+                                    "name": "Identifier",
+                                    "src": "3116:11:0"
+                                  }
+                                ],
+                                "id": 268,
+                                "name": "BinaryOperation",
+                                "src": "3098:29:0"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "children": [
+                                      {
+                                        "attributes": {
+                                          "argumentTypes": null,
+                                          "isConstant": false,
+                                          "isLValue": false,
+                                          "isPure": false,
+                                          "lValueRequested": false,
+                                          "operator": "delete",
+                                          "prefix": true,
+                                          "type": "tuple()"
+                                        },
+                                        "children": [
+                                          {
+                                            "attributes": {
+                                              "argumentTypes": null,
+                                              "isConstant": false,
+                                              "isLValue": true,
+                                              "isPure": false,
+                                              "lValueRequested": true,
+                                              "type": "uint256"
+                                            },
+                                            "children": [
+                                              {
+                                                "attributes": {
+                                                  "argumentTypes": null,
+                                                  "overloadedDeclarations": [
+                                                    null
+                                                  ],
+                                                  "referencedDeclaration": 99,
+                                                  "type": "uint256[] storage ref",
+                                                  "value": "treesOnSale"
+                                                },
+                                                "id": 269,
+                                                "name": "Identifier",
+                                                "src": "3151:11:0"
+                                              },
+                                              {
+                                                "attributes": {
+                                                  "argumentTypes": null,
+                                                  "overloadedDeclarations": [
+                                                    null
+                                                  ],
+                                                  "referencedDeclaration": 254,
+                                                  "type": "uint256",
+                                                  "value": "a"
+                                                },
+                                                "id": 270,
+                                                "name": "Identifier",
+                                                "src": "3163:1:0"
+                                              }
+                                            ],
+                                            "id": 271,
+                                            "name": "IndexAccess",
+                                            "src": "3151:14:0"
+                                          }
+                                        ],
+                                        "id": 272,
+                                        "name": "UnaryOperation",
+                                        "src": "3144:21:0"
+                                      }
+                                    ],
+                                    "id": 273,
+                                    "name": "ExpressionStatement",
+                                    "src": "3144:21:0"
+                                  },
+                                  {
+                                    "id": 274,
+                                    "name": "Break",
+                                    "src": "3180:5:0"
+                                  }
+                                ],
+                                "id": 275,
+                                "name": "Block",
+                                "src": "3129:68:0"
+                              }
+                            ],
+                            "id": 276,
+                            "name": "IfStatement",
+                            "src": "3095:102:0"
+                          }
+                        ],
+                        "id": 277,
+                        "name": "Block",
+                        "src": "3084:120:0"
+                      }
+                    ],
+                    "id": 278,
+                    "name": "ForStatement",
+                    "src": "3036:168:0"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256",
+                          "isStructConstructorCall": false,
+                          "names": [
+                            null
+                          ],
                           "type_conversion": false
                         },
                         "children": [
@@ -4831,9 +5232,9 @@
                                       "type": "mapping(address => uint256[] storage ref)",
                                       "value": "ownerTreesIds"
                                     },
-                                    "id": 253,
+                                    "id": 279,
                                     "name": "Identifier",
-                                    "src": "2980:13:0"
+                                    "src": "3212:13:0"
                                   },
                                   {
                                     "attributes": {
@@ -4845,19 +5246,19 @@
                                       "type": "address",
                                       "value": "newOwner"
                                     },
-                                    "id": 254,
+                                    "id": 280,
                                     "name": "Identifier",
-                                    "src": "2994:8:0"
+                                    "src": "3226:8:0"
                                   }
                                 ],
-                                "id": 255,
+                                "id": 281,
                                 "name": "IndexAccess",
-                                "src": "2980:23:0"
+                                "src": "3212:23:0"
                               }
                             ],
-                            "id": 256,
+                            "id": 282,
                             "name": "MemberAccess",
-                            "src": "2980:28:0"
+                            "src": "3212:28:0"
                           },
                           {
                             "attributes": {
@@ -4869,19 +5270,19 @@
                               "type": "uint256",
                               "value": "_treeNumber"
                             },
-                            "id": 257,
+                            "id": 283,
                             "name": "Identifier",
-                            "src": "3009:11:0"
+                            "src": "3241:11:0"
                           }
                         ],
-                        "id": 258,
+                        "id": 284,
                         "name": "FunctionCall",
-                        "src": "2980:41:0"
+                        "src": "3212:41:0"
                       }
                     ],
-                    "id": 259,
+                    "id": 285,
                     "name": "ExpressionStatement",
-                    "src": "2980:41:0"
+                    "src": "3212:41:0"
                   },
                   {
                     "children": [
@@ -4928,9 +5329,9 @@
                                       "type": "mapping(uint256 => struct Trees.Tree storage ref)",
                                       "value": "treeDetails"
                                     },
-                                    "id": 260,
+                                    "id": 286,
                                     "name": "Identifier",
-                                    "src": "3028:11:0"
+                                    "src": "3260:11:0"
                                   },
                                   {
                                     "attributes": {
@@ -4942,43 +5343,50 @@
                                       "type": "uint256",
                                       "value": "_treeNumber"
                                     },
-                                    "id": 261,
+                                    "id": 287,
                                     "name": "Identifier",
-                                    "src": "3040:11:0"
+                                    "src": "3272:11:0"
                                   }
                                 ],
-                                "id": 262,
+                                "id": 288,
                                 "name": "IndexAccess",
-                                "src": "3028:24:0"
+                                "src": "3260:24:0"
                               }
                             ],
-                            "id": 263,
+                            "id": 289,
                             "name": "MemberAccess",
-                            "src": "3028:30:0"
+                            "src": "3260:30:0"
                           },
                           {
                             "attributes": {
                               "argumentTypes": null,
+                              "hexvalue": "66616c7365",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "bool",
+                              "type": "address",
+                              "value": "newOwner",
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 215,
-                              "type": "address",
-                              "value": "newOwner"
+                              "referencedDeclaration": 215
                             },
-                            "id": 264,
+                            "id": 290,
                             "name": "Identifier",
-                            "src": "3061:8:0"
+                            "src": "3293:8:0"
                           }
                         ],
-                        "id": 265,
+                        "id": 291,
                         "name": "Assignment",
-                        "src": "3028:41:0"
+                        "src": "3260:41:0"
                       }
                     ],
-                    "id": 266,
+                    "id": 292,
                     "name": "ExpressionStatement",
-                    "src": "3028:41:0"
+                    "src": "3260:41:0"
                   },
                   {
                     "children": [
@@ -5025,9 +5433,9 @@
                                       "type": "mapping(uint256 => struct Trees.Tree storage ref)",
                                       "value": "treeDetails"
                                     },
-                                    "id": 267,
+                                    "id": 293,
                                     "name": "Identifier",
-                                    "src": "3076:11:0"
+                                    "src": "3308:11:0"
                                   },
                                   {
                                     "attributes": {
@@ -5039,19 +5447,19 @@
                                       "type": "uint256",
                                       "value": "_treeNumber"
                                     },
-                                    "id": 268,
+                                    "id": 294,
                                     "name": "Identifier",
-                                    "src": "3088:11:0"
+                                    "src": "3320:11:0"
                                   }
                                 ],
-                                "id": 269,
+                                "id": 295,
                                 "name": "IndexAccess",
-                                "src": "3076:24:0"
+                                "src": "3308:24:0"
                               }
                             ],
-                            "id": 270,
+                            "id": 296,
                             "name": "MemberAccess",
-                            "src": "3076:31:0"
+                            "src": "3308:31:0"
                           },
                           {
                             "attributes": {
@@ -5066,24 +5474,24 @@
                               "type": "bool",
                               "value": "false"
                             },
-                            "id": 271,
+                            "id": 297,
                             "name": "Literal",
-                            "src": "3110:5:0"
+                            "src": "3342:5:0"
                           }
                         ],
-                        "id": 272,
+                        "id": 298,
                         "name": "Assignment",
-                        "src": "3076:39:0"
+                        "src": "3308:39:0"
                       }
                     ],
-                    "id": 273,
+                    "id": 299,
                     "name": "ExpressionStatement",
-                    "src": "3076:39:0"
+                    "src": "3308:39:0"
                   }
                 ],
-                "id": 274,
+                "id": 300,
                 "name": "Block",
-                "src": "2521:600:0",
+                "src": "2521:832:0",
                 "attributes": {
                   "arguments": [
                     null
@@ -5595,9 +6003,9 @@
                 "src": "1850:396:0"
               }
             ],
-            "id": 275,
+            "id": 301,
             "name": "FunctionDefinition",
-            "src": "2444:677:0"
+            "src": "2444:909:0"
           },
           {
             "attributes": {
@@ -5609,7 +6017,7 @@
               ],
               "name": "getTreeIds",
               "payable": false,
-              "scope": 309,
+              "scope": 335,
               "stateMutability": "view",
               "superFunction": null,
               "visibility": "public"
@@ -5621,7 +6029,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "_account",
-                      "scope": 299,
+                      "scope": 325,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -5634,14 +6042,14 @@
                           "name": "address",
                           "type": "address"
                         },
-                        "id": 276,
+                        "id": 302,
                         "name": "ElementaryTypeName",
-                        "src": "3189:7:0"
+                        "src": "3421:7:0"
                       }
                     ],
-                    "id": 277,
+                    "id": 303,
                     "name": "VariableDeclaration",
-                    "src": "3189:16:0"
+                    "src": "3421:16:0"
                   },
                   {
                     "attributes": {
@@ -5670,9 +6078,9 @@
                     "src": "2566:22:0"
                   }
                 ],
-                "id": 278,
+                "id": 304,
                 "name": "ParameterList",
-                "src": "3188:18:0",
+                "src": "3420:18:0",
                 "attributes": {
                   "parameters": [
                     null
@@ -5685,7 +6093,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 299,
+                      "scope": 325,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256[] memory",
@@ -5706,24 +6114,24 @@
                               "referencedDeclaration": 93,
                               "type": "uint256"
                             },
-                            "id": 279,
+                            "id": 305,
                             "name": "ElementaryTypeName",
-                            "src": "3231:7:0"
+                            "src": "3463:7:0"
                           }
                         ],
-                        "id": 280,
+                        "id": 306,
                         "name": "ArrayTypeName",
-                        "src": "3231:9:0"
+                        "src": "3463:9:0"
                       }
                     ],
-                    "id": 281,
+                    "id": 307,
                     "name": "VariableDeclaration",
-                    "src": "3231:9:0"
+                    "src": "3463:9:0"
                   }
                 ],
-                "id": 282,
+                "id": 308,
                 "name": "ParameterList",
-                "src": "3230:11:0",
+                "src": "3462:11:0",
                 "attributes": {
                   "parameters": [
                     null
@@ -5760,13 +6168,13 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 277,
+                              "referencedDeclaration": 303,
                               "type": "address",
                               "value": "_account"
                             },
-                            "id": 283,
+                            "id": 309,
                             "name": "Identifier",
-                            "src": "3252:8:0"
+                            "src": "3484:8:0"
                           },
                           {
                             "attributes": {
@@ -5805,9 +6213,9 @@
                                   "member_name": "sender",
                                   "referencedDeclaration": null
                                 },
-                                "id": 284,
+                                "id": 310,
                                 "name": "ElementaryTypeNameExpression",
-                                "src": "3264:7:0",
+                                "src": "3496:7:0",
                                 "children": [
                                   {
                                     "attributes": {
@@ -5840,9 +6248,9 @@
                                   "member_name": "owner",
                                   "referencedDeclaration": 86
                                 },
-                                "id": 285,
+                                "id": 311,
                                 "name": "Literal",
-                                "src": "3272:1:0",
+                                "src": "3504:1:0",
                                 "children": [
                                   {
                                     "attributes": {
@@ -5890,18 +6298,18 @@
                                 ]
                               }
                             ],
-                            "id": 286,
+                            "id": 312,
                             "name": "FunctionCall",
-                            "src": "3264:10:0"
+                            "src": "3496:10:0"
                           }
                         ],
-                        "id": 287,
+                        "id": 313,
                         "name": "BinaryOperation",
-                        "src": "3252:22:0"
+                        "src": "3484:22:0"
                       },
                       {
                         "attributes": {
-                          "functionReturnParameters": 282
+                          "functionReturnParameters": 308
                         },
                         "children": [
                           {
@@ -5924,9 +6332,9 @@
                                   "type": "mapping(address => uint256[] storage ref)",
                                   "value": "ownerTreesIds"
                                 },
-                                "id": 288,
+                                "id": 314,
                                 "name": "Identifier",
-                                "src": "3283:13:0"
+                                "src": "3515:13:0"
                               },
                               {
                                 "attributes": {
@@ -5934,27 +6342,27 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 277,
+                                  "referencedDeclaration": 303,
                                   "type": "address",
                                   "value": "_account"
                                 },
-                                "id": 289,
+                                "id": 315,
                                 "name": "Identifier",
-                                "src": "3297:8:0"
+                                "src": "3529:8:0"
                               }
                             ],
-                            "id": 290,
+                            "id": 316,
                             "name": "IndexAccess",
-                            "src": "3283:23:0"
+                            "src": "3515:23:0"
                           }
                         ],
-                        "id": 291,
+                        "id": 317,
                         "name": "Return",
-                        "src": "3276:30:0"
+                        "src": "3508:30:0"
                       },
                       {
                         "attributes": {
-                          "functionReturnParameters": 282
+                          "functionReturnParameters": 308
                         },
                         "children": [
                           {
@@ -5977,9 +6385,9 @@
                                   "type": "mapping(address => uint256[] storage ref)",
                                   "value": "ownerTreesIds"
                                 },
-                                "id": 292,
+                                "id": 318,
                                 "name": "Identifier",
-                                "src": "3325:13:0"
+                                "src": "3557:13:0"
                               },
                               {
                                 "attributes": {
@@ -5999,33 +6407,33 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 321,
+                                      "referencedDeclaration": 347,
                                       "type": "msg",
                                       "value": "msg"
                                     },
-                                    "id": 293,
+                                    "id": 319,
                                     "name": "Identifier",
-                                    "src": "3339:3:0"
+                                    "src": "3571:3:0"
                                   }
                                 ],
-                                "id": 294,
+                                "id": 320,
                                 "name": "MemberAccess",
-                                "src": "3339:10:0"
+                                "src": "3571:10:0"
                               }
                             ],
-                            "id": 295,
+                            "id": 321,
                             "name": "IndexAccess",
-                            "src": "3325:25:0"
+                            "src": "3557:25:0"
                           }
                         ],
-                        "id": 296,
+                        "id": 322,
                         "name": "Return",
-                        "src": "3318:32:0"
+                        "src": "3550:32:0"
                       }
                     ],
-                    "id": 297,
+                    "id": 323,
                     "name": "IfStatement",
-                    "src": "3249:101:0",
+                    "src": "3481:101:0",
                     "attributes": {
                       "argumentTypes": null,
                       "overloadedDeclarations": [
@@ -7119,9 +7527,9 @@
                     "src": "3160:39:0"
                   }
                 ],
-                "id": 298,
+                "id": 324,
                 "name": "Block",
-                "src": "3242:114:0",
+                "src": "3474:114:0",
                 "attributes": {
                   "arguments": [
                     null
@@ -7633,9 +8041,9 @@
                 "src": "2012:396:0"
               }
             ],
-            "id": 299,
+            "id": 325,
             "name": "FunctionDefinition",
-            "src": "3169:187:0"
+            "src": "3401:187:0"
           },
           {
             "attributes": {
@@ -7644,7 +8052,7 @@
               "isConstructor": false,
               "name": "getTreesOnSale",
               "payable": false,
-              "scope": 309,
+              "scope": 335,
               "stateMutability": "view",
               "superFunction": null,
               "visibility": "public",
@@ -7713,9 +8121,9 @@
                     "src": "2767:22:0"
                   }
                 ],
-                "id": 300,
+                "id": 326,
                 "name": "ParameterList",
-                "src": "3420:2:0"
+                "src": "3652:2:0"
               },
               {
                 "attributes": {
@@ -7728,7 +8136,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 308,
+                      "scope": 334,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256[] memory",
@@ -7747,24 +8155,24 @@
                               "name": "uint256",
                               "type": "uint256"
                             },
-                            "id": 301,
+                            "id": 327,
                             "name": "ElementaryTypeName",
-                            "src": "3447:7:0"
+                            "src": "3679:7:0"
                           }
                         ],
-                        "id": 302,
+                        "id": 328,
                         "name": "ArrayTypeName",
-                        "src": "3447:9:0"
+                        "src": "3679:9:0"
                       }
                     ],
-                    "id": 303,
+                    "id": 329,
                     "name": "VariableDeclaration",
-                    "src": "3447:9:0"
+                    "src": "3679:9:0"
                   }
                 ],
-                "id": 304,
+                "id": 330,
                 "name": "ParameterList",
-                "src": "3446:11:0"
+                "src": "3678:11:0"
               },
               {
                 "attributes": {
@@ -7782,11 +8190,11 @@
                       "referencedDeclaration": 29,
                       "type": "modifier ()",
                       "value": "onlyAdmin",
-                      "functionReturnParameters": 304
+                      "functionReturnParameters": 330
                     },
-                    "id": 306,
+                    "id": 332,
                     "name": "Return",
-                    "src": "3467:18:0",
+                    "src": "3699:18:0",
                     "children": [
                       {
                         "attributes": {
@@ -7954,9 +8362,9 @@
                             "src": "3348:10:0"
                           }
                         ],
-                        "id": 305,
+                        "id": 331,
                         "name": "Identifier",
-                        "src": "3474:11:0"
+                        "src": "3706:11:0"
                       },
                       {
                         "attributes": {
@@ -9166,9 +9574,9 @@
                     "src": "3361:39:0"
                   }
                 ],
-                "id": 307,
+                "id": 333,
                 "name": "Block",
-                "src": "3458:33:0"
+                "src": "3690:33:0"
               },
               {
                 "children": [
@@ -9678,9 +10086,9 @@
                 "src": "2079:408:0"
               }
             ],
-            "id": 308,
+            "id": 334,
             "name": "FunctionDefinition",
-            "src": "3397:94:0"
+            "src": "3629:94:0"
           },
           {
             "attributes": {
@@ -12111,14 +12519,14 @@
             "src": "2953:611:0"
           }
         ],
-        "id": 309,
+        "id": 335,
         "name": "ContractDefinition",
-        "src": "715:2779:0"
+        "src": "715:3011:0"
       }
     ],
-    "id": 310,
+    "id": 336,
     "name": "SourceUnit",
-    "src": "0:3496:0"
+    "src": "0:3728:0"
   },
   "compiler": {
     "name": "solc",
@@ -12126,5 +12534,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-01-22T22:33:36.573Z"
+  "updatedAt": "2018-01-24T20:58:45.665Z"
 }

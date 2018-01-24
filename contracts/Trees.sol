@@ -89,6 +89,14 @@ contract Trees is Admin {
         if(treeId == _treeNumber) delete ownerTreesIds[_originalOwner][i];
     }
 
+    // Remove the tree from the array of trees on sale
+    for(uint256 a = 0; a < treesOnSale.length; a++) {
+        if(treesOnSale[a] == _treeNumber) {
+            delete treesOnSale[a];
+            break;
+        }
+    }
+
     ownerTreesIds[newOwner].push(_treeNumber);
     treeDetails[_treeNumber].owner = newOwner;
     treeDetails[_treeNumber].onSale = false;

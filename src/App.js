@@ -6,8 +6,7 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-const contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77'
-const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
+const contractAddress = '0x7d619db2918b44237df0f16fa87d7b924a8482b2'
 
 class App extends React.Component {
 	constructor () {
@@ -45,8 +44,8 @@ class App extends React.Component {
 		return result
 	}
 
-	async buyTree() {
-		const result = await contract.buyTreeAsync(1, originalOwner, {
+	async buyTree(id, originalOwner) {
+		const result = await contract.buyTreeAsync(id, originalOwner, {
 			from: web3.eth.accounts[0]
 		})
 		return result
@@ -74,6 +73,7 @@ class App extends React.Component {
 							getTreesOnSale={() => this.getTreesOnSale()}
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={id => this.getTreeDetails(id)}
+							buyTree={(id, owner) => this.buyTree(id, owner)}
 						/>
 					)} />
 				</Switch>
@@ -155,7 +155,13 @@ class Market extends React.Component {
 			}
 			// Note the ( bracket instead of curly bracket {
 			allTrees = allTrees.map(detail => (
-				<TreeMarketBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]}/>
+				<TreeMarketBox
+					id={detail[0]}
+					owner={detail[1]}
+					daysPassed={detail[2]}
+					treePower={detail[3]}
+					buyTree={(id, owner) => this.props.buyTree(id, owner)}
+				/>
 			))
 			this.setState({allTrees})
 		}
@@ -224,9 +230,12 @@ class TreeMarketBox extends React.Component {
 			<div className="col-6 col-sm-4 tree-container">
 				<img src="imgs/tree.png" className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
+				<p>Owner {this.props.owner}</p>
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
-				<button className="full-button">Buy Tree</button>
+				<button className="full-button" onClick={() => {
+					this.props.buyTree(this.props.id, this.props.owner)
+				}}>Buy Tree</button>
 			</div>
 		)
 	}
