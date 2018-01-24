@@ -20949,8 +20949,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-console.log('Loaded app');
-
 var contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77';
 var originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1';
 
@@ -20965,8 +20963,6 @@ var App = function (_React$Component) {
 		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
 		window.contract = web3.eth.contract(_Trees.abi).at(contractAddress);
 		(0, _bluebird.promisifyAll)(contract);
-		console.log('Loaded app 2');
-
 		return _this;
 	}
 
@@ -21167,190 +21163,56 @@ var App = function (_React$Component) {
 		value: function render() {
 			var _this2 = this;
 
-			return _jsx(_reactRouterDom.BrowserRouter, {}, void 0, _react2.default.createElement(
-				NavBar,
-				this.state,
-				_jsx(_reactRouterDom.Switch, {}, void 0, _jsx(_reactRouterDom.Route, {
-					path: '/',
-					render: function render() {
-						return _jsx(MyTrees, {
-							getTreeIds: function getTreeIds() {
-								return _this2.getTreeIds();
-							},
-							getTreeDetails: function getTreeDetails() {
-								return _this2.getTreeDetails();
-							}
-						});
-					}
-				}), _jsx(_reactRouterDom.Route, {
-					path: '/market',
-					render: function render() {
-						return _jsx(Market, {
-							getTreesOnSale: function getTreesOnSale() {
-								return _this2.getTreesOnSale();
-							},
-							getTreeIds: function getTreeIds() {
-								return _this2.getTreeIds();
-							}
-						});
-					}
-				}))
-			));
+			return _jsx(_reactRouterDom.BrowserRouter, {}, void 0, _jsx(_reactRouterDom.Switch, {}, void 0, _jsx(_reactRouterDom.Route, {
+				path: '/',
+				render: function render() {
+					return _jsx(MyTrees, {
+						getTreeIds: function getTreeIds() {
+							return _this2.getTreeIds();
+						},
+						getTreeDetails: function getTreeDetails(id) {
+							return _this2.getTreeDetails(id);
+						}
+					});
+				}
+			}), _jsx(_reactRouterDom.Route, {
+				path: '/market',
+				render: function render() {
+					return _jsx(Market, {
+						getTreesOnSale: function getTreesOnSale() {
+							return _this2.getTreesOnSale();
+						},
+						getTreeIds: function getTreeIds() {
+							return _this2.getTreeIds();
+						}
+					});
+				}
+			})));
 		}
 	}]);
 
 	return App;
 }(_react2.default.Component);
 
-var _ref7 = _jsx('a', {
-	className: 'navbar-brand',
-	href: '#'
-}, void 0, _jsx('img', {
-	src: 'forest.svg',
-	width: '30',
-	height: '30',
-	className: 'd-inline-block align-top',
-	alt: ''
-}), '\xA0 Crypto Trees');
-
-var _ref8 = _jsx('button', {
-	className: 'navbar-toggler',
-	type: 'button',
-	'data-toggle': 'collapse',
-	'data-target': '#navbarText',
-	'aria-controls': 'navbarText',
-	'aria-expanded': 'false',
-	'aria-label': 'Toggle navigation'
-}, void 0, _jsx('span', {
-	className: 'navbar-toggler-icon'
-}));
-
-var _ref9 = _jsx('a', {
-	className: 'nav-link',
-	href: '#'
-}, void 0, 'My Trees');
-
-var _ref10 = _jsx('a', {
-	className: 'nav-link',
-	href: '#'
-}, void 0, 'Market');
-
-var NavBar = function (_React$Component2) {
-	_inherits(NavBar, _React$Component2);
-
-	function NavBar() {
-		_classCallCheck(this, NavBar);
-
-		return _possibleConstructorReturn(this, (NavBar.__proto__ || Object.getPrototypeOf(NavBar)).apply(this, arguments));
-	}
-
-	_createClass(NavBar, [{
-		key: 'render',
-		value: function render() {
-			return _jsx('nav', {
-				className: 'navbar navbar-expand-lg navbar-light'
-			}, void 0, _ref7, _ref8, _jsx('div', {
-				className: 'collapse navbar-collapse',
-				id: 'navbarText'
-			}, void 0, _jsx('ul', {
-				className: 'navbar-nav ml-auto'
-			}, void 0, _jsx('li', {
-				className: this.props.inMarket ? "nav-item" : "nav-item active"
-			}, void 0, _ref9), _jsx('li', {
-				className: this.props.inMarket ? "nav-item active" : "nav-item"
-			}, void 0, _ref10))));
-		}
-	}]);
-
-	return NavBar;
-}(_react2.default.Component);
-
-var _ref11 = _jsx('img', {
-	src: 'imgs/tree.png',
-	className: 'tree-image'
-});
-
-var _ref12 = _jsx('p', {}, void 0, 'Fruits not available');
-
-var _ref13 = _jsx('button', {
-	className: 'wide-button'
-}, void 0, 'Pick Fruits');
-
-var _ref14 = _jsx('button', {
-	className: 'wide-button'
-}, void 0, 'Water Tree');
-
-var TreeBox = function (_React$Component3) {
-	_inherits(TreeBox, _React$Component3);
-
-	function TreeBox() {
-		_classCallCheck(this, TreeBox);
-
-		return _possibleConstructorReturn(this, (TreeBox.__proto__ || Object.getPrototypeOf(TreeBox)).apply(this, arguments));
-	}
-
-	_createClass(TreeBox, [{
-		key: 'render',
-		value: function render() {
-			return _jsx('div', {
-				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref11, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref12, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref13, _ref14);
-		}
-	}]);
-
-	return TreeBox;
-}(_react2.default.Component);
-
-var _ref15 = _jsx('img', {
-	src: 'imgs/tree.png',
-	className: 'tree-image'
-});
-
-var _ref16 = _jsx('button', {
-	className: 'full-button'
-}, void 0, 'Buy Tree');
-
-var TreeMarketBox = function (_React$Component4) {
-	_inherits(TreeMarketBox, _React$Component4);
-
-	function TreeMarketBox() {
-		_classCallCheck(this, TreeMarketBox);
-
-		return _possibleConstructorReturn(this, (TreeMarketBox.__proto__ || Object.getPrototypeOf(TreeMarketBox)).apply(this, arguments));
-	}
-
-	_createClass(TreeMarketBox, [{
-		key: 'render',
-		value: function render() {
-			return _jsx('div', {
-				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref15, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref16);
-		}
-	}]);
-
-	return TreeMarketBox;
-}(_react2.default.Component);
-
-var MyTrees = function (_React$Component5) {
-	_inherits(MyTrees, _React$Component5);
+var MyTrees = function (_React$Component2) {
+	_inherits(MyTrees, _React$Component2);
 
 	function MyTrees(props) {
 		_classCallCheck(this, MyTrees);
 
-		var _this6 = _possibleConstructorReturn(this, (MyTrees.__proto__ || Object.getPrototypeOf(MyTrees)).call(this));
+		var _this3 = _possibleConstructorReturn(this, (MyTrees.__proto__ || Object.getPrototypeOf(MyTrees)).call(this, props));
 
-		init();
-		_this6.state = {
+		_this3.init();
+		_this3.state = {
 			allTrees: []
 		};
-		console.log('Trees called');
-		return _this6;
+		return _this3;
 	}
 
 	_createClass(MyTrees, [{
 		key: 'init',
 		value: function () {
-			var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+			var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
 				var allTrees, ids, i, details;
 				return regeneratorRuntime.wrap(function _callee7$(_context7) {
 					while (1) {
@@ -21411,7 +21273,7 @@ var MyTrees = function (_React$Component5) {
 			}));
 
 			function init() {
-				return _ref17.apply(this, arguments);
+				return _ref7.apply(this, arguments);
 			}
 
 			return init;
@@ -21419,33 +21281,37 @@ var MyTrees = function (_React$Component5) {
 	}, {
 		key: 'render',
 		value: function render() {
-			return _jsx('div', {}, void 0, this.state.allTrees);
+			return _jsx('div', {}, void 0, _ref8, _jsx('div', {
+				className: 'container'
+			}, void 0, _jsx('div', {
+				className: 'row'
+			}, void 0, this.state.allTrees)));
 		}
 	}]);
 
 	return MyTrees;
 }(_react2.default.Component);
 
-var Market = function (_React$Component6) {
-	_inherits(Market, _React$Component6);
+var Market = function (_React$Component3) {
+	_inherits(Market, _React$Component3);
 
 	function Market(props) {
 		_classCallCheck(this, Market);
 
-		var _this7 = _possibleConstructorReturn(this, (Market.__proto__ || Object.getPrototypeOf(Market)).call(this));
+		var _this4 = _possibleConstructorReturn(this, (Market.__proto__ || Object.getPrototypeOf(Market)).call(this, props));
 
-		init();
-		_this7.state = {
+		_this4.init();
+		_this4.state = {
 			allTrees: []
 		};
 		console.log('Market called');
-		return _this7;
+		return _this4;
 	}
 
 	_createClass(Market, [{
 		key: 'init',
 		value: function () {
-			var _ref18 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+			var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
 				var treesOnSale, myTrees;
 				return regeneratorRuntime.wrap(function _callee8$(_context8) {
 					while (1) {
@@ -21477,7 +21343,7 @@ var Market = function (_React$Component6) {
 			}));
 
 			function init() {
-				return _ref18.apply(this, arguments);
+				return _ref9.apply(this, arguments);
 			}
 
 			return init;
@@ -21485,13 +21351,148 @@ var Market = function (_React$Component6) {
 	}, {
 		key: 'render',
 		value: function render() {
-			return _jsx('div', {
-				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, this.state.allTrees);
+			return _jsx('div', {}, void 0, _ref10, _jsx('div', {
+				className: 'container'
+			}, void 0, _jsx('div', {
+				className: 'row'
+			}, void 0, this.state.allTrees)));
 		}
 	}]);
 
 	return Market;
+}(_react2.default.Component);
+
+var _ref11 = _jsx('a', {
+	className: 'navbar-brand',
+	href: '#'
+}, void 0, _jsx('img', {
+	src: 'forest.svg',
+	width: '30',
+	height: '30',
+	className: 'd-inline-block align-top',
+	alt: ''
+}), '\xA0 Crypto Trees');
+
+var _ref12 = _jsx('button', {
+	className: 'navbar-toggler',
+	type: 'button',
+	'data-toggle': 'collapse',
+	'data-target': '#navbarText',
+	'aria-controls': 'navbarText',
+	'aria-expanded': 'false',
+	'aria-label': 'Toggle navigation'
+}, void 0, _jsx('span', {
+	className: 'navbar-toggler-icon'
+}));
+
+var _ref13 = _jsx('a', {
+	className: 'nav-link',
+	href: '#'
+}, void 0, 'My Trees');
+
+var _ref14 = _jsx('a', {
+	className: 'nav-link',
+	href: '#'
+}, void 0, 'Market');
+
+var NavBar = function (_React$Component4) {
+	_inherits(NavBar, _React$Component4);
+
+	function NavBar() {
+		_classCallCheck(this, NavBar);
+
+		return _possibleConstructorReturn(this, (NavBar.__proto__ || Object.getPrototypeOf(NavBar)).apply(this, arguments));
+	}
+
+	_createClass(NavBar, [{
+		key: 'render',
+		value: function render() {
+			return _jsx('nav', {
+				className: 'navbar navbar-expand-lg navbar-light'
+			}, void 0, _ref11, _ref12, _jsx('div', {
+				className: 'collapse navbar-collapse',
+				id: 'navbarText'
+			}, void 0, _jsx('ul', {
+				className: 'navbar-nav ml-auto'
+			}, void 0, _jsx('li', {
+				className: this.props.inMarket ? "nav-item" : "nav-item active"
+			}, void 0, _ref13), _jsx('li', {
+				className: this.props.inMarket ? "nav-item active" : "nav-item"
+			}, void 0, _ref14))));
+		}
+	}]);
+
+	return NavBar;
+}(_react2.default.Component);
+
+var _ref10 = _jsx(NavBar, {});
+
+var _ref8 = _jsx(NavBar, {});
+
+var _ref15 = _jsx('img', {
+	src: 'imgs/tree.png',
+	className: 'tree-image'
+});
+
+var _ref16 = _jsx('p', {}, void 0, 'Fruits not available');
+
+var _ref17 = _jsx('button', {
+	className: 'wide-button'
+}, void 0, 'Pick Fruits');
+
+var _ref18 = _jsx('button', {
+	className: 'wide-button'
+}, void 0, 'Water Tree');
+
+var TreeBox = function (_React$Component5) {
+	_inherits(TreeBox, _React$Component5);
+
+	function TreeBox() {
+		_classCallCheck(this, TreeBox);
+
+		return _possibleConstructorReturn(this, (TreeBox.__proto__ || Object.getPrototypeOf(TreeBox)).apply(this, arguments));
+	}
+
+	_createClass(TreeBox, [{
+		key: 'render',
+		value: function render() {
+			return _jsx('div', {
+				className: 'col-6 col-sm-4 tree-container'
+			}, void 0, _ref15, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref16, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref17, _ref18);
+		}
+	}]);
+
+	return TreeBox;
+}(_react2.default.Component);
+
+var _ref19 = _jsx('img', {
+	src: 'imgs/tree.png',
+	className: 'tree-image'
+});
+
+var _ref20 = _jsx('button', {
+	className: 'full-button'
+}, void 0, 'Buy Tree');
+
+var TreeMarketBox = function (_React$Component6) {
+	_inherits(TreeMarketBox, _React$Component6);
+
+	function TreeMarketBox() {
+		_classCallCheck(this, TreeMarketBox);
+
+		return _possibleConstructorReturn(this, (TreeMarketBox.__proto__ || Object.getPrototypeOf(TreeMarketBox)).apply(this, arguments));
+	}
+
+	_createClass(TreeMarketBox, [{
+		key: 'render',
+		value: function render() {
+			return _jsx('div', {
+				className: 'col-6 col-sm-4 tree-container'
+			}, void 0, _ref19, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref20);
+		}
+	}]);
+
+	return TreeMarketBox;
 }(_react2.default.Component);
 
 (0, _reactDom.render)(_jsx(App, {}), document.querySelector('#root'));

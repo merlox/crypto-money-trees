@@ -6,8 +6,6 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-console.log('Loaded app')
-
 const contractAddress = '0x670e2dd4f6136dfd1ffc16c272d7207b28ee1b77'
 const originalOwner = '0x7461CCF1FD55c069ce13E07D163C65c78c8b48D1'
 
@@ -17,8 +15,6 @@ class App extends React.Component {
 		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
-		console.log('Loaded app 2')
-
 	}
 
 	async generateTree() {
@@ -66,23 +62,97 @@ class App extends React.Component {
 	render () {
 		return (
 			<BrowserRouter>
-				<NavBar {...this.state}>
-					<Switch>
-						<Route path="/" render={() => (
-							<MyTrees
-								getTreeIds={() => this.getTreeIds()}
-								getTreeDetails={() => this.getTreeDetails()}
-							/>
-						)} />
-						<Route path="/market" render={() => (
-							<Market
-								getTreesOnSale={() => this.getTreesOnSale()}
-								getTreeIds={() => this.getTreeIds()}
-							/>
-						)} />
-					</Switch>
-				</NavBar>
+				<Switch>
+					<Route path="/" render={() => (
+						<MyTrees
+							getTreeIds={() => this.getTreeIds()}
+							getTreeDetails={(id) => this.getTreeDetails(id)}
+						/>
+					)} />
+					<Route path="/market" render={() => (
+						<Market
+							getTreesOnSale={() => this.getTreesOnSale()}
+							getTreeIds={() => this.getTreeIds()}
+						/>
+					)} />
+				</Switch>
 			</BrowserRouter>
+		)
+	}
+}
+
+class MyTrees extends React.Component {
+	constructor(props) {
+		super(props)
+		this.init()
+		this.state = {
+			allTrees: []
+		}
+	}
+
+	async init() {
+		let allTrees = []
+		let ids = await this.props.getTreeIds()
+		ids = ids.map(element => parseFloat(element))
+		for(let i = 0; i < ids.length; i++) {
+			let details = await this.props.getTreeDetails(ids[0])
+			details = details.map(element => {
+				if(typeof element === 'object') return parseFloat(element)
+				else return element
+			})
+			allTrees.push(details)
+		}
+		// Note the ( bracket instead of curly bracket {
+		allTrees = allTrees.map(detail => (
+			<TreeBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]} onSale={detail[4]}/>
+		))
+		this.setState({allTrees})
+	}
+
+	render() {
+		return (
+			<div>
+				<NavBar />
+				<div className="container">
+					<div className="row">
+						{this.state.allTrees}
+					</div>
+				</div>
+			</div>
+		)
+	}
+}
+
+class Market extends React.Component {
+	constructor(props) {
+		super(props)
+		this.init()
+		this.state = {
+			allTrees: []
+		}
+		console.log('Market called')
+	}
+
+	async init() {
+		// Get all the trees on sale except yours
+		// get those details
+		let treesOnSale = await this.props.getTreesOnSale()
+		let myTrees = await this.props.getTreeIds()
+		treesOnSale = treesOnSale.map(element => parseFloat(element))
+		console.log('treesOnSale', treesOnSale)
+		console.log('myTrees', myTrees)
+	}
+
+	render() {
+		return (
+			<div>
+				<NavBar />
+				<div className="container">
+					<div className="row">
+						{this.state.allTrees}
+					</div>
+				</div>
+			</div>
 		)
 	}
 }
@@ -139,73 +209,6 @@ class TreeMarketBox extends React.Component {
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
 				<button className="full-button">Buy Tree</button>
-			</div>
-		)
-	}
-}
-
-class MyTrees extends React.Component {
-	constructor(props) {
-		super()
-		init()
-		this.state = {
-			allTrees: []
-		}
-		console.log('Trees called')
-	}
-
-	async init() {
-		let allTrees = []
-		let ids = await this.props.getTreeIds()
-		ids = ids.map(element => parseFloat(element))
-		for(let i = 0; i < ids.length; i++) {
-			let details = await this.props.getTreeDetails(ids[0])
-			details = details.map(element => {
-				if(typeof element === 'object') return parseFloat(element)
-				else return element
-			})
-			allTrees.push(details)
-		}
-		// Note the ( bracket instead of curly bracket {
-		allTrees = allTrees.map(detail => (
-			<TreeBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]} onSale={detail[4]}/>
-		))
-		this.setState({allTrees})
-	}
-
-	render() {
-		return (
-			<div>
-				{this.state.allTrees}
-			</div>
-		)
-	}
-}
-
-class Market extends React.Component {
-	constructor(props) {
-		super()
-		init()
-		this.state = {
-			allTrees: []
-		}
-		console.log('Market called')
-	}
-
-	async init() {
-		// Get all the trees on sale except yours
-		// get those details
-		let treesOnSale = await this.props.getTreesOnSale()
-		let myTrees = await this.props.getTreeIds()
-		treesOnSale = treesOnSale.map(element => parseFloat(element))
-		console.log('treesOnSale', treesOnSale)
-		console.log('myTrees', myTrees)
-	}
-
-	render() {
-		return (
-			<div className="col-6 col-sm-4 tree-container">
-				{this.state.allTrees}
 			</div>
 		)
 	}
