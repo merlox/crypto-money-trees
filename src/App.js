@@ -66,13 +66,14 @@ class App extends React.Component {
 					<Route path="/" exact render={() => (
 						<MyTrees
 							getTreeIds={() => this.getTreeIds()}
-							getTreeDetails={(id) => this.getTreeDetails(id)}
+							getTreeDetails={id => this.getTreeDetails(id)}
 						/>
 					)} />
 					<Route path="/market" render={() => (
 						<Market
 							getTreesOnSale={() => this.getTreesOnSale()}
 							getTreeIds={() => this.getTreeIds()}
+							getTreeDetails={id => this.getTreeDetails(id)}
 						/>
 					)} />
 				</Switch>
@@ -95,7 +96,7 @@ class MyTrees extends React.Component {
 		let ids = await this.props.getTreeIds()
 		ids = ids.map(element => parseFloat(element))
 		for(let i = 0; i < ids.length; i++) {
-			let details = await this.props.getTreeDetails(ids[0])
+			let details = await this.props.getTreeDetails(ids[i])
 			details = details.map(element => {
 				if(typeof element === 'object') return parseFloat(element)
 				else return element
@@ -130,17 +131,34 @@ class Market extends React.Component {
 		this.state = {
 			allTrees: []
 		}
-		console.log('Market called')
 	}
 
 	async init() {
 		// Get all the trees on sale except yours
-		// get those details
 		let treesOnSale = await this.props.getTreesOnSale()
 		let myTrees = await this.props.getTreeIds()
 		treesOnSale = treesOnSale.map(element => parseFloat(element))
-		console.log('treesOnSale', treesOnSale)
-		console.log('myTrees', myTrees)
+		myTrees = myTrees.map(element => parseFloat(element))
+		let treesToShow = treesOnSale.filter((element, index) => {
+			 return element !== myTrees[index]
+		})
+		// If there's at least one tree on sale not yours, get them details and show it
+		if(treesToShow.length > 0) {
+			let allTrees = []
+			for(let i = 0; i < treesToShow.length; i++) {
+				let details = await this.props.getTreeDetails(treesToShow[i])
+				details = details.map(element => {
+					if(typeof element === 'object') return parseFloat(element)
+					else return element
+				})
+				allTrees.push(details)
+			}
+			// Note the ( bracket instead of curly bracket {
+			allTrees = allTrees.map(detail => (
+				<TreeMarketBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]}/>
+			))
+			this.setState({allTrees})
+		}
 	}
 
 	render() {
