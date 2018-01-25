@@ -21064,14 +21064,14 @@ var App = function (_React$Component) {
 	}, {
 		key: 'putTreeOnSale',
 		value: function () {
-			var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+			var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(id) {
 				var result;
 				return regeneratorRuntime.wrap(function _callee4$(_context4) {
 					while (1) {
 						switch (_context4.prev = _context4.next) {
 							case 0:
 								_context4.next = 2;
-								return contract.putTreeOnSaleAsync(1, {
+								return contract.putTreeOnSaleAsync(id, {
 									from: web3.eth.accounts[0]
 								});
 
@@ -21087,7 +21087,7 @@ var App = function (_React$Component) {
 				}, _callee4, this);
 			}));
 
-			function putTreeOnSale() {
+			function putTreeOnSale(_x2) {
 				return _ref4.apply(this, arguments);
 			}
 
@@ -21119,7 +21119,7 @@ var App = function (_React$Component) {
 				}, _callee5, this);
 			}));
 
-			function buyTree(_x2, _x3) {
+			function buyTree(_x3, _x4) {
 				return _ref5.apply(this, arguments);
 			}
 
@@ -21181,6 +21181,9 @@ var App = function (_React$Component) {
 						},
 						getTreeDetails: function getTreeDetails(id) {
 							return _this2.getTreeDetails(id);
+						},
+						sellTree: function sellTree(id) {
+							return _this2.putTreeOnSale(id);
 						}
 					});
 				}
@@ -21244,6 +21247,8 @@ var MyTrees = function (_React$Component2) {
 		key: 'init',
 		value: function () {
 			var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+				var _this4 = this;
+
 				var allTrees, ids, i, details;
 				return regeneratorRuntime.wrap(function _callee7$(_context7) {
 					while (1) {
@@ -21290,8 +21295,11 @@ var MyTrees = function (_React$Component2) {
 										id: detail[0],
 										daysPassed: detail[2],
 										treePower: detail[3],
-										onSale: detail[4]
-									});
+										onSale: detail[4],
+										sellTree: function sellTree(id) {
+											return _this4.props.sellTree(id);
+										}
+									}, detail[0]);
 								});
 								this.setState({ allTrees: allTrees });
 
@@ -21329,22 +21337,22 @@ var Market = function (_React$Component3) {
 	function Market(props) {
 		_classCallCheck(this, Market);
 
-		var _this4 = _possibleConstructorReturn(this, (Market.__proto__ || Object.getPrototypeOf(Market)).call(this, props));
+		var _this5 = _possibleConstructorReturn(this, (Market.__proto__ || Object.getPrototypeOf(Market)).call(this, props));
 
-		_this4.init();
-		_this4.state = {
+		_this5.init();
+		_this5.state = {
 			allTrees: []
 		};
 
-		if (web3.eth.accounts[0] === undefined) _this4.props.redirectTo(_this4.props.history, '/not-connected-metamask');
-		return _this4;
+		if (web3.eth.accounts[0] === undefined) _this5.props.redirectTo(_this5.props.history, '/not-connected-metamask');
+		return _this5;
 	}
 
 	_createClass(Market, [{
 		key: 'init',
 		value: function () {
 			var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
-				var _this5 = this;
+				var _this6 = this;
 
 				var treesOnSale, myTrees, treesToShow, allTrees, i, details;
 				return regeneratorRuntime.wrap(function _callee8$(_context8) {
@@ -21412,9 +21420,9 @@ var Market = function (_React$Component3) {
 										daysPassed: detail[2],
 										treePower: detail[3],
 										buyTree: function buyTree(id, owner) {
-											return _this5.props.buyTree(id, owner);
+											return _this6.props.buyTree(id, owner);
 										}
-									});
+									}, detail[0]);
 								});
 								this.setState({ allTrees: allTrees });
 
@@ -21452,10 +21460,10 @@ var NotConnected = function (_React$Component4) {
 	function NotConnected(props) {
 		_classCallCheck(this, NotConnected);
 
-		var _this6 = _possibleConstructorReturn(this, (NotConnected.__proto__ || Object.getPrototypeOf(NotConnected)).call(this, props));
+		var _this7 = _possibleConstructorReturn(this, (NotConnected.__proto__ || Object.getPrototypeOf(NotConnected)).call(this, props));
 
-		if (web3.eth.accounts[0] !== undefined) _this6.props.redirectTo(_this6.props.history, '/');
-		return _this6;
+		if (web3.eth.accounts[0] !== undefined) _this7.props.redirectTo(_this7.props.history, '/');
+		return _this7;
 	}
 
 	_createClass(NotConnected, [{
@@ -21537,7 +21545,9 @@ var _ref11 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
 	className: 'row'
 }, void 0, _jsx('h4', {}, void 0, 'You have to be connected to metamask to use this application'), _jsx('p', {}, void 0, 'Please connect to the mainnet on metamask with your account and reload the page'))));
 
-var _ref10 = _jsx(NavBar, {});
+var _ref10 = _jsx(NavBar, {
+	inMarket: 'true'
+});
 
 var _ref8 = _jsx(NavBar, {});
 
@@ -21556,28 +21566,65 @@ var _ref19 = _jsx('button', {
 	className: 'wide-button'
 }, void 0, 'Water Tree');
 
+var _ref20 = _jsx('p', {}, void 0, 'At what price do you want to sell your tree in ETH?');
+
 var TreeBox = function (_React$Component6) {
 	_inherits(TreeBox, _React$Component6);
 
-	function TreeBox() {
+	function TreeBox(props) {
 		_classCallCheck(this, TreeBox);
 
-		return _possibleConstructorReturn(this, (TreeBox.__proto__ || Object.getPrototypeOf(TreeBox)).apply(this, arguments));
+		var _this9 = _possibleConstructorReturn(this, (TreeBox.__proto__ || Object.getPrototypeOf(TreeBox)).call(this, props));
+
+		_this9.state = {
+			showSellConfirmation1: false,
+			showSellConfirmation2: false
+		};
+		return _this9;
 	}
 
 	_createClass(TreeBox, [{
 		key: 'render',
 		value: function render() {
+			var _this10 = this;
+
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref16, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref17, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref18, _ref19);
+			}, void 0, _ref16, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref17, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref18, _ref19, _jsx('button', {
+				className: 'full-button',
+				onClick: function onClick() {
+					_this10.setState({ showSellConfirmation1: !_this10.state.showSellConfirmation1 });
+				}
+			}, void 0, this.state.showSellConfirmation1 ? 'Cancel' : 'Sell tree'), _jsx('div', {
+				className: this.state.showSellConfirmation1 ? "full-button" : "hidden"
+			}, void 0, _ref20, _react2.default.createElement('input', { key: this.props.id, ref: 'amount-to-sell', className: 'wide-button', type: 'number', defaultValue: '0.5' }), _jsx('button', {
+				className: 'wide-button',
+				onClick: function onClick() {
+					_this10.setState({ showSellConfirmation2: true });
+				}
+			}, void 0, 'Put Tree On Sale')), _jsx('div', {
+				className: this.state.showSellConfirmation2 ? "full-button" : "hidden"
+			}, void 0, _jsx('p', {}, void 0, 'Are you sure you want to put on sale this tree for ', this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : '', ' ETH now (irreversible)?'), _jsx('button', {
+				className: 'wide-button',
+				onClick: function onClick() {
+					_this10.setState({ showSellConfirmation2: false });
+					_this10.setState({ showSellConfirmation1: false });
+					_this10.props.sellTree(_this10.props.id);
+				}
+			}, void 0, 'Yes'), _jsx('button', {
+				className: 'wide-button',
+				onClick: function onClick() {
+					_this10.setState({ showSellConfirmation2: false });
+					_this10.setState({ showSellConfirmation1: false });
+				}
+			}, void 0, 'No')));
 		}
 	}]);
 
 	return TreeBox;
 }(_react2.default.Component);
 
-var _ref20 = _jsx('img', {
+var _ref21 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
@@ -21594,14 +21641,16 @@ var TreeMarketBox = function (_React$Component7) {
 	_createClass(TreeMarketBox, [{
 		key: 'render',
 		value: function render() {
-			var _this10 = this;
+			var _this12 = this;
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref20, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Owner ', this.props.owner), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _jsx('button', {
+			}, void 0, _ref21, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {
+				className: 'word-wrap'
+			}, void 0, 'Owner ', this.props.owner), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _jsx('button', {
 				className: 'full-button',
 				onClick: function onClick() {
-					_this10.props.buyTree(_this10.props.id, _this10.props.owner);
+					_this12.props.buyTree(_this12.props.id, _this12.props.owner);
 				}
 			}, void 0, 'Buy Tree'));
 		}
@@ -57080,7 +57129,7 @@ exports = module.exports = __webpack_require__(501)(false);
 
 
 // module
-exports.push([module.i, ".navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 20px;\n  box-shadow: 0 0 5px 0 #808080;\n  margin-left: 0.5%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 50%;\n}\n.full-button {\n  width: 100%;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
+exports.push([module.i, ".navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 20px;\n  box-shadow: 0 0 5px 0 #808080;\n  margin-left: 0.5%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 50%;\n}\n.full-button {\n  width: 100%;\n}\n.hidden {\n  display: none;\n}\n.word-wrap {\n  word-wrap: break-word;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
 
 // exports
 

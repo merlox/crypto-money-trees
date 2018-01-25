@@ -37,8 +37,8 @@ class App extends React.Component {
 		return result
 	}
 
-	async putTreeOnSale() {
-		const result = await contract.putTreeOnSaleAsync(1, {
+	async putTreeOnSale(id) {
+		const result = await contract.putTreeOnSaleAsync(id, {
 			from: web3.eth.accounts[0]
 		})
 		return result
@@ -72,6 +72,7 @@ class App extends React.Component {
 							redirectTo={(history, location) => this.redirectTo(history, location)}
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={id => this.getTreeDetails(id)}
+							sellTree={id => this.putTreeOnSale(id)}
 						/>
 					)} />
 					<Route path="/market" render={(context) => (
@@ -121,7 +122,14 @@ class MyTrees extends React.Component {
 		}
 		// Note the ( bracket instead of curly bracket {
 		allTrees = allTrees.map(detail => (
-			<TreeBox id={detail[0]} daysPassed={detail[2]} treePower={detail[3]} onSale={detail[4]}/>
+			<TreeBox
+				id={detail[0]}
+				daysPassed={detail[2]}
+				treePower={detail[3]}
+				onSale={detail[4]}
+				sellTree={id => this.props.sellTree(id)}
+				key={detail[0]}
+			/>
 		))
 		this.setState({allTrees})
 	}
@@ -179,6 +187,7 @@ class Market extends React.Component {
 					daysPassed={detail[2]}
 					treePower={detail[3]}
 					buyTree={(id, owner) => this.props.buyTree(id, owner)}
+					key={detail[0]}
 				/>
 			))
 			this.setState({allTrees})
@@ -188,7 +197,7 @@ class Market extends React.Component {
 	render() {
 		return (
 			<div>
-				<NavBar />
+				<NavBar inMarket="true" />
 				<div className="container">
 					<div className="row">
 						{this.state.allTrees}
@@ -247,6 +256,14 @@ class NavBar extends React.Component {
 }
 
 class TreeBox extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			showSellConfirmation1: false,
+			showSellConfirmation2: false
+		}
+	}
+
 	render() {
 		return (
 			<div className="col-6 col-sm-4 tree-container">
@@ -258,6 +275,30 @@ class TreeBox extends React.Component {
 				<p>On sale {this.props.onSale}</p>
 				<button className="wide-button">Pick Fruits</button>
 				<button className="wide-button">Water Tree</button>
+				<button className="full-button" onClick={() => {
+					this.setState({showSellConfirmation1: !this.state.showSellConfirmation1})
+				}}>{this.state.showSellConfirmation1 ? 'Cancel' : 'Sell tree'}</button>
+
+				<div className={this.state.showSellConfirmation1 ? "full-button" : "hidden"}>
+					<p>At what price do you want to sell your tree in ETH?</p>
+					<input key={this.props.id} ref="amount-to-sell" className="wide-button" type="number" defaultValue="0.5"/>
+					<button className="wide-button" onClick={() => {
+						this.setState({showSellConfirmation2: true})
+					}}>Put Tree On Sale</button>
+				</div>
+
+				<div className={this.state.showSellConfirmation2 ? "full-button" : "hidden"}>
+					<p>Are you sure you want to put on sale this tree for {this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : ''} ETH now (irreversible)?</p>
+					<button className="wide-button" onClick={() => {
+						this.setState({showSellConfirmation2: false})
+						this.setState({showSellConfirmation1: false})
+						this.props.sellTree(this.props.id)
+					}}>Yes</button>
+					<button className="wide-button" onClick={() => {
+						this.setState({showSellConfirmation2: false})
+						this.setState({showSellConfirmation1: false})
+					}}>No</button>
+				</div>
 			</div>
 		)
 	}
@@ -269,7 +310,7 @@ class TreeMarketBox extends React.Component {
 			<div className="col-6 col-sm-4 tree-container">
 				<img src="imgs/tree.png" className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
-				<p>Owner {this.props.owner}</p>
+				<p className="word-wrap">Owner {this.props.owner}</p>
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
 				<button className="full-button" onClick={() => {
