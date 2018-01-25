@@ -58,22 +58,36 @@ class App extends React.Component {
 		return result
 	}
 
+	redirectTo(history, location) {
+		history.push(location)
+	}
+
 	render () {
 		return (
 			<BrowserRouter>
 				<Switch>
-					<Route path="/" exact render={() => (
+					<Route path="/" exact render={(context) => (
 						<MyTrees
+							history={context.history}
+							redirectTo={(history, location) => this.redirectTo(history, location)}
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={id => this.getTreeDetails(id)}
 						/>
 					)} />
-					<Route path="/market" render={() => (
+					<Route path="/market" render={(context) => (
 						<Market
+							history={context.history}
+							redirectTo={(history, location) => this.redirectTo(history, location)}
 							getTreesOnSale={() => this.getTreesOnSale()}
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={id => this.getTreeDetails(id)}
 							buyTree={(id, owner) => this.buyTree(id, owner)}
+						/>
+					)} />
+					<Route path="/not-connected-metamask" render={(context) => (
+						<NotConnected
+							history={context.history}
+							redirectTo={(history, location) => this.redirectTo(history, location)}
 						/>
 					)} />
 				</Switch>
@@ -89,6 +103,8 @@ class MyTrees extends React.Component {
 		this.state = {
 			allTrees: []
 		}
+
+		if(web3.eth.accounts[0] === undefined) this.props.redirectTo(this.props.history, '/not-connected-metamask')
 	}
 
 	async init() {
@@ -131,6 +147,8 @@ class Market extends React.Component {
 		this.state = {
 			allTrees: []
 		}
+
+		if(web3.eth.accounts[0] === undefined) this.props.redirectTo(this.props.history, '/not-connected-metamask')
 	}
 
 	async init() {
@@ -174,6 +192,27 @@ class Market extends React.Component {
 				<div className="container">
 					<div className="row">
 						{this.state.allTrees}
+					</div>
+				</div>
+			</div>
+		)
+	}
+}
+
+class NotConnected extends React.Component {
+	constructor(props) {
+		super(props)
+		if(web3.eth.accounts[0] !== undefined) this.props.redirectTo(this.props.history, '/')
+	}
+
+	render() {
+		return (
+			<div>
+				<NavBar />
+				<div className="container">
+					<div className="row">
+						<h4>You have to be connected to metamask to use this application</h4>
+						<p>Please connect to the mainnet on metamask with your account and reload the page</p>
 					</div>
 				</div>
 			</div>

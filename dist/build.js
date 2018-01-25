@@ -21158,6 +21158,11 @@ var App = function (_React$Component) {
 			return getTreesOnSale;
 		}()
 	}, {
+		key: 'redirectTo',
+		value: function redirectTo(history, location) {
+			history.push(location);
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
@@ -21165,8 +21170,12 @@ var App = function (_React$Component) {
 			return _jsx(_reactRouterDom.BrowserRouter, {}, void 0, _jsx(_reactRouterDom.Switch, {}, void 0, _jsx(_reactRouterDom.Route, {
 				path: '/',
 				exact: true,
-				render: function render() {
+				render: function render(context) {
 					return _jsx(MyTrees, {
+						history: context.history,
+						redirectTo: function redirectTo(history, location) {
+							return _this2.redirectTo(history, location);
+						},
 						getTreeIds: function getTreeIds() {
 							return _this2.getTreeIds();
 						},
@@ -21177,8 +21186,12 @@ var App = function (_React$Component) {
 				}
 			}), _jsx(_reactRouterDom.Route, {
 				path: '/market',
-				render: function render() {
+				render: function render(context) {
 					return _jsx(Market, {
+						history: context.history,
+						redirectTo: function redirectTo(history, location) {
+							return _this2.redirectTo(history, location);
+						},
 						getTreesOnSale: function getTreesOnSale() {
 							return _this2.getTreesOnSale();
 						},
@@ -21190,6 +21203,16 @@ var App = function (_React$Component) {
 						},
 						buyTree: function buyTree(id, owner) {
 							return _this2.buyTree(id, owner);
+						}
+					});
+				}
+			}), _jsx(_reactRouterDom.Route, {
+				path: '/not-connected-metamask',
+				render: function render(context) {
+					return _jsx(NotConnected, {
+						history: context.history,
+						redirectTo: function redirectTo(history, location) {
+							return _this2.redirectTo(history, location);
 						}
 					});
 				}
@@ -21212,6 +21235,8 @@ var MyTrees = function (_React$Component2) {
 		_this3.state = {
 			allTrees: []
 		};
+
+		if (web3.eth.accounts[0] === undefined) _this3.props.redirectTo(_this3.props.history, '/not-connected-metamask');
 		return _this3;
 	}
 
@@ -21310,6 +21335,8 @@ var Market = function (_React$Component3) {
 		_this4.state = {
 			allTrees: []
 		};
+
+		if (web3.eth.accounts[0] === undefined) _this4.props.redirectTo(_this4.props.history, '/not-connected-metamask');
 		return _this4;
 	}
 
@@ -21419,7 +21446,29 @@ var Market = function (_React$Component3) {
 	return Market;
 }(_react2.default.Component);
 
-var _ref11 = _jsx('a', {
+var NotConnected = function (_React$Component4) {
+	_inherits(NotConnected, _React$Component4);
+
+	function NotConnected(props) {
+		_classCallCheck(this, NotConnected);
+
+		var _this6 = _possibleConstructorReturn(this, (NotConnected.__proto__ || Object.getPrototypeOf(NotConnected)).call(this, props));
+
+		if (web3.eth.accounts[0] !== undefined) _this6.props.redirectTo(_this6.props.history, '/');
+		return _this6;
+	}
+
+	_createClass(NotConnected, [{
+		key: 'render',
+		value: function render() {
+			return _ref11;
+		}
+	}]);
+
+	return NotConnected;
+}(_react2.default.Component);
+
+var _ref12 = _jsx('a', {
 	className: 'navbar-brand',
 	href: '#'
 }, void 0, _jsx('img', {
@@ -21430,7 +21479,7 @@ var _ref11 = _jsx('a', {
 	alt: ''
 }), '\xA0 Crypto Trees');
 
-var _ref12 = _jsx('button', {
+var _ref13 = _jsx('button', {
 	className: 'navbar-toggler',
 	type: 'button',
 	'data-toggle': 'collapse',
@@ -21442,18 +21491,18 @@ var _ref12 = _jsx('button', {
 	className: 'navbar-toggler-icon'
 }));
 
-var _ref13 = _jsx(_reactRouterDom.Link, {
+var _ref14 = _jsx(_reactRouterDom.Link, {
 	to: '/',
 	className: 'nav-link'
 }, void 0, 'My Trees');
 
-var _ref14 = _jsx(_reactRouterDom.Link, {
+var _ref15 = _jsx(_reactRouterDom.Link, {
 	to: '/market',
 	className: 'nav-link'
 }, void 0, 'Market');
 
-var NavBar = function (_React$Component4) {
-	_inherits(NavBar, _React$Component4);
+var NavBar = function (_React$Component5) {
+	_inherits(NavBar, _React$Component5);
 
 	function NavBar() {
 		_classCallCheck(this, NavBar);
@@ -21466,43 +21515,49 @@ var NavBar = function (_React$Component4) {
 		value: function render() {
 			return _jsx('nav', {
 				className: 'navbar navbar-expand-lg navbar-light'
-			}, void 0, _ref11, _ref12, _jsx('div', {
+			}, void 0, _ref12, _ref13, _jsx('div', {
 				className: 'collapse navbar-collapse',
 				id: 'navbarText'
 			}, void 0, _jsx('ul', {
 				className: 'navbar-nav ml-auto'
 			}, void 0, _jsx('li', {
 				className: this.props.inMarket ? "nav-item" : "nav-item active"
-			}, void 0, _ref13), _jsx('li', {
+			}, void 0, _ref14), _jsx('li', {
 				className: this.props.inMarket ? "nav-item active" : "nav-item"
-			}, void 0, _ref14))));
+			}, void 0, _ref15))));
 		}
 	}]);
 
 	return NavBar;
 }(_react2.default.Component);
 
+var _ref11 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
+	className: 'container'
+}, void 0, _jsx('div', {
+	className: 'row'
+}, void 0, _jsx('h4', {}, void 0, 'You have to be connected to metamask to use this application'), _jsx('p', {}, void 0, 'Please connect to the mainnet on metamask with your account and reload the page'))));
+
 var _ref10 = _jsx(NavBar, {});
 
 var _ref8 = _jsx(NavBar, {});
 
-var _ref15 = _jsx('img', {
+var _ref16 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
 
-var _ref16 = _jsx('p', {}, void 0, 'Fruits not available');
-
-var _ref17 = _jsx('button', {
-	className: 'wide-button'
-}, void 0, 'Pick Fruits');
+var _ref17 = _jsx('p', {}, void 0, 'Fruits not available');
 
 var _ref18 = _jsx('button', {
 	className: 'wide-button'
+}, void 0, 'Pick Fruits');
+
+var _ref19 = _jsx('button', {
+	className: 'wide-button'
 }, void 0, 'Water Tree');
 
-var TreeBox = function (_React$Component5) {
-	_inherits(TreeBox, _React$Component5);
+var TreeBox = function (_React$Component6) {
+	_inherits(TreeBox, _React$Component6);
 
 	function TreeBox() {
 		_classCallCheck(this, TreeBox);
@@ -21515,20 +21570,20 @@ var TreeBox = function (_React$Component5) {
 		value: function render() {
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref15, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref16, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref17, _ref18);
+			}, void 0, _ref16, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _ref17, _jsx('p', {}, void 0, 'On sale ', this.props.onSale), _ref18, _ref19);
 		}
 	}]);
 
 	return TreeBox;
 }(_react2.default.Component);
 
-var _ref19 = _jsx('img', {
+var _ref20 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
 
-var TreeMarketBox = function (_React$Component6) {
-	_inherits(TreeMarketBox, _React$Component6);
+var TreeMarketBox = function (_React$Component7) {
+	_inherits(TreeMarketBox, _React$Component7);
 
 	function TreeMarketBox() {
 		_classCallCheck(this, TreeMarketBox);
@@ -21539,14 +21594,14 @@ var TreeMarketBox = function (_React$Component6) {
 	_createClass(TreeMarketBox, [{
 		key: 'render',
 		value: function render() {
-			var _this9 = this;
+			var _this10 = this;
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref19, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Owner ', this.props.owner), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _jsx('button', {
+			}, void 0, _ref20, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Owner ', this.props.owner), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _jsx('button', {
 				className: 'full-button',
 				onClick: function onClick() {
-					_this9.props.buyTree(_this9.props.id, _this9.props.owner);
+					_this10.props.buyTree(_this10.props.id, _this10.props.owner);
 				}
 			}, void 0, 'Buy Tree'));
 		}
