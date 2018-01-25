@@ -21354,7 +21354,8 @@ var Market = function (_React$Component3) {
 			var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
 				var _this6 = this;
 
-				var treesOnSale, myTrees, treesToShow, allTrees, i, details;
+				var treesOnSale, myTrees, treesToShow, i, a, allTrees, _i, details;
+
 				return regeneratorRuntime.wrap(function _callee8$(_context8) {
 					while (1) {
 						switch (_context8.prev = _context8.next) {
@@ -21376,42 +21377,59 @@ var Market = function (_React$Component3) {
 								myTrees = myTrees.map(function (element) {
 									return parseFloat(element);
 								});
-								treesToShow = treesOnSale.filter(function (element, index) {
-									return element !== myTrees[index];
-								});
-								// If there's at least one tree on sale not yours, get them details and show it
+								treesToShow = treesOnSale.slice(0); // Create a copy
+
+								// Remove your trees
+
+								for (i = 0; i < myTrees.length; i++) {
+									for (a = 0; a < treesOnSale.length; a++) {
+										if (myTrees[i] === treesOnSale[a]) {
+											treesToShow.splice(a, 1);
+										}
+									}
+								}
+
+								// If there's at least one tree on sale not yours, get them details and show em
 
 								if (!(treesToShow.length > 0)) {
-									_context8.next = 23;
+									_context8.next = 26;
 									break;
 								}
 
 								allTrees = [];
-								i = 0;
+								_i = 0;
 
-							case 12:
-								if (!(i < treesToShow.length)) {
-									_context8.next = 21;
+							case 13:
+								if (!(_i < treesToShow.length)) {
+									_context8.next = 24;
 									break;
 								}
 
-								_context8.next = 15;
-								return this.props.getTreeDetails(treesToShow[i]);
+								_context8.next = 16;
+								return this.props.getTreeDetails(treesToShow[_i]);
 
-							case 15:
+							case 16:
 								details = _context8.sent;
 
+								if (!(details[1] === '0x0000000000000000000000000000000000000000')) {
+									_context8.next = 19;
+									break;
+								}
+
+								return _context8.abrupt('continue', 21);
+
+							case 19:
 								details = details.map(function (element) {
 									if ((typeof element === 'undefined' ? 'undefined' : _typeof(element)) === 'object') return parseFloat(element);else return element;
 								});
 								allTrees.push(details);
 
-							case 18:
-								i++;
-								_context8.next = 12;
+							case 21:
+								_i++;
+								_context8.next = 13;
 								break;
 
-							case 21:
+							case 24:
 								// Note the ( bracket instead of curly bracket {
 								allTrees = allTrees.map(function (detail) {
 									return _jsx(TreeMarketBox, {
@@ -21426,7 +21444,7 @@ var Market = function (_React$Component3) {
 								});
 								this.setState({ allTrees: allTrees });
 
-							case 23:
+							case 26:
 							case 'end':
 								return _context8.stop();
 						}
@@ -21604,7 +21622,7 @@ var TreeBox = function (_React$Component6) {
 				}
 			}, void 0, 'Put Tree On Sale')), _jsx('div', {
 				className: this.state.showSellConfirmation2 ? "full-button" : "hidden"
-			}, void 0, _jsx('p', {}, void 0, 'Are you sure you want to put on sale this tree for ', this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : '', ' ETH now (irreversible)?'), _jsx('button', {
+			}, void 0, _jsx('p', {}, void 0, 'Are you sure you want to put on sale this tree for ', this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : '', ' ETH now?'), _jsx('button', {
 				className: 'wide-button',
 				onClick: function onClick() {
 					_this10.setState({ showSellConfirmation2: false });

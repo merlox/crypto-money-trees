@@ -165,14 +165,25 @@ class Market extends React.Component {
 		let myTrees = await this.props.getTreeIds()
 		treesOnSale = treesOnSale.map(element => parseFloat(element))
 		myTrees = myTrees.map(element => parseFloat(element))
-		let treesToShow = treesOnSale.filter((element, index) => {
-			 return element !== myTrees[index]
-		})
-		// If there's at least one tree on sale not yours, get them details and show it
+		let treesToShow = treesOnSale.slice(0) // Create a copy
+
+		// Remove your trees
+		for(let i = 0; i < myTrees.length; i++) {
+			for(let a = 0; a < treesOnSale.length; a++) {
+				if(myTrees[i] === treesOnSale[a]) {
+					treesToShow.splice(a, 1)
+				}
+			}
+		}
+
+		// If there's at least one tree on sale not yours, get them details and show em
 		if(treesToShow.length > 0) {
 			let allTrees = []
 			for(let i = 0; i < treesToShow.length; i++) {
 				let details = await this.props.getTreeDetails(treesToShow[i])
+
+				// Remove the 0x trees
+				if(details[1] === '0x0000000000000000000000000000000000000000') continue
 				details = details.map(element => {
 					if(typeof element === 'object') return parseFloat(element)
 					else return element
@@ -288,7 +299,7 @@ class TreeBox extends React.Component {
 				</div>
 
 				<div className={this.state.showSellConfirmation2 ? "full-button" : "hidden"}>
-					<p>Are you sure you want to put on sale this tree for {this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : ''} ETH now (irreversible)?</p>
+					<p>Are you sure you want to put on sale this tree for {this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : ''} ETH now?</p>
 					<button className="wide-button" onClick={() => {
 						this.setState({showSellConfirmation2: false})
 						this.setState({showSellConfirmation1: false})
