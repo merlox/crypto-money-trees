@@ -39,16 +39,17 @@ class App extends React.Component {
 		return result
 	}
 
-	async putTreeOnSale(id) {
-		const result = await contract.putTreeOnSaleAsync(id, {
+	async putTreeOnSale(id, price) {
+		const result = await contract.putTreeOnSaleAsync(id, price, {
 			from: web3.eth.accounts[0]
 		})
 		return result
 	}
 
-	async buyTree(id, originalOwner) {
+	async buyTree(id, originalOwner, price) {
 		const result = await contract.buyTreeAsync(id, originalOwner, {
-			from: web3.eth.accounts[0]
+			from: web3.eth.accounts[0],
+			value: price
 		})
 		return result
 	}
@@ -81,7 +82,7 @@ class App extends React.Component {
 							redirectTo={(history, location) => this.redirectTo(history, location)}
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={id => this.getTreeDetails(id)}
-							sellTree={id => this.putTreeOnSale(id)}
+							sellTree={(id, price) => this.putTreeOnSale(id, price)}
 							cancelSell={id => this.cancelTreeSell(id)}
 						/>
 					)} />
@@ -92,7 +93,7 @@ class App extends React.Component {
 							getTreesOnSale={() => this.getTreesOnSale()}
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={id => this.getTreeDetails(id)}
-							buyTree={(id, owner) => this.buyTree(id, owner)}
+							buyTree={(id, owner, price) => this.buyTree(id, owner, price)}
 						/>
 					)} />
 					<Route path="/not-connected-metamask" render={(context) => (
@@ -137,7 +138,7 @@ class MyTrees extends React.Component {
 				daysPassed={detail[2]}
 				treePower={detail[3]}
 				onSale={detail[4]}
-				sellTree={id => this.props.sellTree(id)}
+				sellTree={(id, price) => this.props.sellTree(id, price)}
 				key={detail[0]}
 				cancelSell={id => this.props.cancelSell(id)}
 			/>
@@ -208,7 +209,8 @@ class Market extends React.Component {
 					owner={detail[1]}
 					daysPassed={detail[2]}
 					treePower={detail[3]}
-					buyTree={(id, owner) => this.props.buyTree(id, owner)}
+					buyTree={(id, owner, price) => this.props.buyTree(id, owner, web3.fromWei(detail[4], 'ether'))}
+					price={web3.fromWei(detail[4], 'ether')}
 					key={detail[0]}
 				/>
 			))
@@ -319,7 +321,7 @@ class TreeBox extends React.Component {
 					<button className="wide-button" onClick={() => {
 						this.setState({showSellConfirmation2: false})
 						this.setState({showSellConfirmation1: false})
-						this.props.sellTree(this.props.id)
+						this.props.sellTree(this.props.id, web3.toWei(this.refs['amount-to-sell'].value, 'ether'))
 					}}>Yes</button>
 					<button className="wide-button" onClick={() => {
 						this.setState({showSellConfirmation2: false})
