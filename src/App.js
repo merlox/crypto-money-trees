@@ -5,7 +5,9 @@ import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
-
+// TODO fix sale button to sell at the specified price. Right now you're not specifying any price in the contract
+// Also you have to be able to paid that amount when you buy. Right now you don't have to pay anything extra to buy I believe
+// Create water function with a mapping and counting the days passed also do the power calculation here
 const contractAddress = '0x6a8413b3359f9c1002f70f609e9c42de7a81f11a'
 
 class App extends React.Component {
