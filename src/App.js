@@ -6,7 +6,7 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-const contractAddress = '0x7d619db2918b44237df0f16fa87d7b924a8482b2'
+const contractAddress = '0x6a8413b3359f9c1002f70f609e9c42de7a81f11a'
 
 class App extends React.Component {
 	constructor () {
@@ -58,6 +58,13 @@ class App extends React.Component {
 		return result
 	}
 
+	async cancelTreeSell(id) {
+		const result = await contract.cancelTreeSellAsync(id, {
+			from: web3.eth.accounts[0]
+		})
+		return result
+	}
+
 	redirectTo(history, location) {
 		history.push(location)
 	}
@@ -73,6 +80,7 @@ class App extends React.Component {
 							getTreeIds={() => this.getTreeIds()}
 							getTreeDetails={id => this.getTreeDetails(id)}
 							sellTree={id => this.putTreeOnSale(id)}
+							cancelSell={id => this.cancelTreeSell(id)}
 						/>
 					)} />
 					<Route path="/market" render={(context) => (
@@ -129,6 +137,7 @@ class MyTrees extends React.Component {
 				onSale={detail[4]}
 				sellTree={id => this.props.sellTree(id)}
 				key={detail[0]}
+				cancelSell={id => this.props.cancelSell(id)}
 			/>
 		))
 		this.setState({allTrees})
@@ -271,7 +280,8 @@ class TreeBox extends React.Component {
 		super(props)
 		this.state = {
 			showSellConfirmation1: false,
-			showSellConfirmation2: false
+			showSellConfirmation2: false,
+			showCancelSell: false
 		}
 	}
 
@@ -283,12 +293,16 @@ class TreeBox extends React.Component {
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
 				<p>Fruits not available</p>
-				<p>On sale {this.props.onSale}</p>
+				<p>On sale {this.props.onSale.toString()}</p>
 				<button className="wide-button">Pick Fruits</button>
 				<button className="wide-button">Water Tree</button>
-				<button className="full-button" onClick={() => {
+				<button className={this.props.onSale ? 'hidden' : "full-button"} onClick={() => {
 					this.setState({showSellConfirmation1: !this.state.showSellConfirmation1})
 				}}>{this.state.showSellConfirmation1 ? 'Cancel' : 'Sell tree'}</button>
+
+				<button className={this.props.onSale ? "full-button" : 'hidden'} onClick={() => {
+					this.setState({showCancelSell: !this.state.showCancelSell})
+				}}>{this.state.showCancelSell ? 'Are you sure?' : 'Cancel active sell'}</button>
 
 				<div className={this.state.showSellConfirmation1 ? "full-button" : "hidden"}>
 					<p>At what price do you want to sell your tree in ETH?</p>
@@ -309,6 +323,19 @@ class TreeBox extends React.Component {
 						this.setState({showSellConfirmation2: false})
 						this.setState({showSellConfirmation1: false})
 					}}>No</button>
+				</div>
+
+				<div className={this.state.showCancelSell ? 'full-button' : 'hidden'}>
+					<button className="wide-button" onClick={() => {
+						this.props.cancelSell(this.props.id)
+					}}>
+						Yes, cancel sell
+					</button>
+					<button className="wide-button" onClick={() => {
+						this.setState({showCancelSell: false})
+					}}>
+						No, keep tree on the market for sale
+					</button>
 				</div>
 			</div>
 		)

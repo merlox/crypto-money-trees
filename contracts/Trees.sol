@@ -102,6 +102,20 @@ contract Trees is Admin {
     treeDetails[_treeNumber].onSale = false;
   }
 
+  function cancelTreeSell(uint256 _treeId) public {
+    require(msg.sender == treeDetails[_treeId].owner);
+    require(treeDetails[_treeId].onSale);
+
+    // Remove the tree from the array of trees on sale
+    for(uint256 a = 0; a < treesOnSale.length; a++) {
+        if(treesOnSale[a] == _treeId) {
+            delete treesOnSale[a];
+            break;
+        }
+    }
+    treeDetails[_treeId].onSale = false;
+  }
+
   // To get all the tree IDs of one user
   function getTreeIds(address _account) public constant returns(uint256[]) {
     if(_account != address(0)) return ownerTreesIds[_account];
