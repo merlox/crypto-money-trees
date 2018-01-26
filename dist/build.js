@@ -21413,6 +21413,7 @@ var MyTrees = function (_React$Component2) {
 							case 18:
 								allRewards = _context10.sent;
 
+								console.log(allTrees);
 								// Note the ( bracket instead of curly bracket {
 								allTrees = allTrees.map(function (detail, index) {
 									return _jsx(TreeBox, {
@@ -21435,7 +21436,7 @@ var MyTrees = function (_React$Component2) {
 								});
 								this.setState({ allTrees: allTrees, allTreesIds: allTreesIds, allRewards: allRewards });
 
-							case 21:
+							case 22:
 							case 'end':
 								return _context10.stop();
 						}
@@ -21631,7 +21632,7 @@ var Market = function (_React$Component3) {
 										daysPassed: detail[2],
 										treePower: detail[3],
 										buyTree: function buyTree(id, owner, price) {
-											return _this8.props.buyTree(id, owner, web3.fromWei(detail[4], 'ether'));
+											return _this8.props.buyTree(id, owner, detail[4]);
 										},
 										price: web3.fromWei(detail[4], 'ether'),
 										waterTreeDates: detail[6]
@@ -21881,7 +21882,7 @@ var TreeMarketBox = function (_React$Component7) {
 			}, void 0, 'Owner ', this.props.owner), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _jsx('button', {
 				className: 'full-button',
 				onClick: function onClick() {
-					_this14.props.buyTree(_this14.props.id, _this14.props.owner);
+					_this14.props.buyTree(_this14.props.id, _this14.props.owner, _this14.props.price);
 				}
 			}, void 0, 'Buy Tree'));
 		}

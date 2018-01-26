@@ -152,6 +152,7 @@ class MyTrees extends React.Component {
 		}
 		const allTreesIds = allTrees.map(tree => tree[0])
 		const allRewards = await this.props.checkRewardsMyTrees(allTreesIds)
+		console.log(allTrees)
 		// Note the ( bracket instead of curly bracket {
 		allTrees = allTrees.map((detail, index) => (
 			<TreeBox
@@ -258,7 +259,7 @@ class Market extends React.Component {
 					owner={detail[1]}
 					daysPassed={detail[2]}
 					treePower={detail[3]}
-					buyTree={(id, owner, price) => this.props.buyTree(id, owner, web3.fromWei(detail[4], 'ether'))}
+					buyTree={(id, owner, price) => this.props.buyTree(id, owner, detail[4])}
 					price={web3.fromWei(detail[4], 'ether')}
 					waterTreeDates={detail[6]}
 					key={detail[0]}
@@ -407,7 +408,7 @@ class TreeMarketBox extends React.Component {
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
 				<button className="full-button" onClick={() => {
-					this.props.buyTree(this.props.id, this.props.owner)
+					this.props.buyTree(this.props.id, this.props.owner, this.props.price)
 				}}>Buy Tree</button>
 			</div>
 		)
