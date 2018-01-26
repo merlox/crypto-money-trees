@@ -38,6 +38,9 @@ contract Trees is Admin {
   mapping(uint256 => Tree) public treeDetails;
   // A mapping with all the tree IDs of that owner
   mapping(address => uint256[]) public ownerTreesIds;
+  // Tree id and the days the tree has been watered
+  // Tree id => day number => isWatered
+  mapping(uint256 => mapping(uint256 => bool)) public treeWater;
 
   struct Tree {
     uint256 ID;
@@ -54,8 +57,9 @@ contract Trees is Admin {
   uint256[] public treesOnSale;
   uint256 public lastTreeId;
   address public defaultTreesOwner = msg.sender;
-  uint256 public defaultTreesPower = 10; // 10% of the total power
+  uint256 public defaultTreesPower = 1; // 10% of the total power
   uint256 public defaultSalePrice = 1 ether;
+  uint256 public totalTreePower;
 
   // This will be called automatically by the server
   // The contract itself will hold the initial trees
@@ -70,6 +74,7 @@ contract Trees is Admin {
     ownerTreesIds[defaultTreesOwner].push(newTreeId);
     treeDetails[newTreeId] = newTree;
     treesOnSale.push(newTreeId);
+    totalTreePower += defaultTreesPower;
   }
 
   // This is payable, the user will send the payment here
@@ -118,6 +123,7 @@ contract Trees is Admin {
     treeDetails[_treeNumber].timesExchanged += 1;
   }
 
+  // To take a tree out of the market without selling it
   function cancelTreeSell(uint256 _treeId) public {
     require(msg.sender == treeDetails[_treeId].owner);
     require(treeDetails[_treeId].onSale);
@@ -132,10 +138,46 @@ contract Trees is Admin {
     treeDetails[_treeId].onSale = false;
   }
 
+  // Improves the treePower
   function waterTree(uint256 _treeId) public {
     require(_treeId > 0);
-
+    require(msg.sender == treeDetails[_treeId].owner);
+    uint256[] memory waterDates = treeDetails[_treeId].waterTreeDates;
+    uint256 lastWaterDate = now - waterDates[waterDates.length - 1];
+    require(lastWaterDate > 1 days);
+    // We want to store at what day the tree was watered
+    uint256 day = lastWaterDate / 1 days;
+    treeWater[_treeId][day] = true;
     treeDetails[_treeId].waterTreeDates.push(now);
+    treeDetails[_treeId].treePower += 1;
+    totalTreePower += 1;
+    LogWaterTree(_treeId, msg.sender, now);
+  }
+
+  // To get the ether from the rewards
+  function pickReward(uint256 _treeId) public {
+    require(msg.sender == treeDetails[_treeId].owner);
+    uint256[1] memory formatedId;
+    formatedId[0] = _treeId;
+    uint256[1] memory reward = checkRewards(formatedId);
+    msg.sender.transfer(reward);
+  }
+
+  // Returns an array of how much ether all those trees have generated today
+  // All the tree power combiined for instance 10293
+  // The tree power for this tree for instance 298
+  // What percentage do you get: 2%
+  // Total money in the treasury: 102 ETH
+  // A 10% of the total is distributed daily across all the users
+  // For instance 10.2 ETH today
+  // So if you pick your rewards right now, you'll get a 2% of 10.2 ETH which is 0.204 ETH
+  function checkRewards(uint256[] _treeIds) public constant returns(uint256[] results) {
+    uint256 amountInTreasuryToDistribute = this.balance / 10;
+    for(uint256 i = 0; i < _treeIds.length; i++) {
+        uint256 yourPercentage = treeDetails[_treeIds[i]].treePower / totalTreePower;
+        uint256 amountYouGet = yourPercentage * amountInTreasuryToDistribute * 1 ether;
+        results.push(amountYouGet);
+    }
   }
 
   // To get all the tree IDs of one user
@@ -147,5 +189,10 @@ contract Trees is Admin {
   // To get all the trees on sale
   function getTreesOnSale() public constant returns(uint256[]) {
       return treesOnSale;
+  }
+
+  // To extract the ether in an emergency
+  function emergencyExtract() public onlyOwner {
+    owner.transfer(this.balance);
   }
 }

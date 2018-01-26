@@ -5,10 +5,9 @@ import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
-// TODO fix sale button to sell at the specified price. Right now you're not specifying any price in the contract
-// Also you have to be able to paid that amount when you buy. Right now you don't have to pay anything extra to buy I believe
+// TODO
 // Create water function with a mapping and counting the days passed also do the power calculation here
-const contractAddress = '0x6a8413b3359f9c1002f70f609e9c42de7a81f11a'
+const contractAddress = '0x703863167486102bf1439119feb5e4c9b8dcceb6'
 
 class App extends React.Component {
 	constructor () {
@@ -137,9 +136,10 @@ class MyTrees extends React.Component {
 				id={detail[0]}
 				daysPassed={detail[2]}
 				treePower={detail[3]}
-				onSale={detail[4]}
+				onSale={detail[7]}
 				sellTree={(id, price) => this.props.sellTree(id, price)}
 				key={detail[0]}
+				waterTreeDates={detail[6]}
 				cancelSell={id => this.props.cancelSell(id)}
 			/>
 		))
@@ -211,6 +211,7 @@ class Market extends React.Component {
 					treePower={detail[3]}
 					buyTree={(id, owner, price) => this.props.buyTree(id, owner, web3.fromWei(detail[4], 'ether'))}
 					price={web3.fromWei(detail[4], 'ether')}
+					waterTreeDates={detail[6]}
 					key={detail[0]}
 				/>
 			))
