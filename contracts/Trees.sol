@@ -33,6 +33,7 @@ contract Admin {
 // - Update the treeBalances and treeOwner mappings
 contract Trees is Admin {
   event LogWaterTree(uint256 indexed treeId, address indexed owner, uint256 date);
+  event LogRewardPicked(uint256 indexed treeId, address indexed owner, uint256 date, uint256 amount);
 
   // Get the tree information given the id
   mapping(uint256 => Tree) public treeDetails;
@@ -51,6 +52,7 @@ contract Trees is Admin {
     uint256 timesExchanged;
     uint256[] waterTreeDates;
     bool onSale;
+    uint256 lastRewardPickedDate; // When did you take the last reward
   }
 
   uint256[] public trees;
@@ -67,7 +69,7 @@ contract Trees is Admin {
     uint256 newTreeId = lastTreeId + 1;
     lastTreeId += 1;
     uint256[] memory emptyArray;
-    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, defaultSalePrice, 0, emptyArray, true);
+    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, defaultSalePrice, 0, emptyArray, true, now);
 
     // Update the treeBalances and treeOwner mappings
     // We add the tree to the same array position to find it easier
@@ -94,15 +96,12 @@ contract Trees is Admin {
     require(msg.sender != treeDetails[_treeNumber].owner);
     require(treeDetails[_treeNumber].onSale);
     require(msg.value >= treeDetails[_treeNumber].salePrice);
-
     address newOwner = msg.sender;
-
     // Move id from old to new owner
     // Find the tree of that user and delete it
     for(uint256 i = 0; i < ownerTreesIds[_originalOwner].length; i++) {
         if(ownerTreesIds[_originalOwner][i] == _treeNumber) delete ownerTreesIds[_originalOwner][i];
     }
-
     // Remove the tree from the array of trees on sale
     for(uint256 a = 0; a < treesOnSale.length; a++) {
         if(treesOnSale[a] == _treeNumber) {
@@ -110,16 +109,13 @@ contract Trees is Admin {
             break;
         }
     }
-
     ownerTreesIds[newOwner].push(_treeNumber);
     treeDetails[_treeNumber].owner = newOwner;
     treeDetails[_treeNumber].onSale = false;
-
     if(treeDetails[_treeNumber].timesExchanged == 0) {
         // Reward the owner for the initial trees as a way of monetization. Keep half for the treasury
         owner.transfer(msg.value / 2);
     }
-
     treeDetails[_treeNumber].timesExchanged += 1;
   }
 
@@ -127,7 +123,6 @@ contract Trees is Admin {
   function cancelTreeSell(uint256 _treeId) public {
     require(msg.sender == treeDetails[_treeId].owner);
     require(treeDetails[_treeId].onSale);
-
     // Remove the tree from the array of trees on sale
     for(uint256 a = 0; a < treesOnSale.length; a++) {
         if(treesOnSale[a] == _treeId) {
@@ -157,10 +152,13 @@ contract Trees is Admin {
   // To get the ether from the rewards
   function pickReward(uint256 _treeId) public {
     require(msg.sender == treeDetails[_treeId].owner);
-    uint256[1] memory formatedId;
+    require(now - treeDetails[_treeId].lastRewardPickedDate > 1 days);
+    uint256[] memory formatedId;
     formatedId[0] = _treeId;
-    uint256[1] memory reward = checkRewards(formatedId);
-    msg.sender.transfer(reward);
+    uint256[] memory reward = checkRewards(formatedId);
+    treeDetails[_treeId].lastRewardPickedDate = now;
+    msg.sender.transfer(reward[0]);
+    LogRewardPicked(_treeId, msg.sender, now, reward[0]);
   }
 
   // Returns an array of how much ether all those trees have generated today
@@ -171,13 +169,15 @@ contract Trees is Admin {
   // A 10% of the total is distributed daily across all the users
   // For instance 10.2 ETH today
   // So if you pick your rewards right now, you'll get a 2% of 10.2 ETH which is 0.204 ETH
-  function checkRewards(uint256[] _treeIds) public constant returns(uint256[] results) {
+  function checkRewards(uint256[] _treeIds) public constant returns(uint256[]) {
     uint256 amountInTreasuryToDistribute = this.balance / 10;
+    uint256[] memory results = new uint256[](_treeIds.length);
     for(uint256 i = 0; i < _treeIds.length; i++) {
         uint256 yourPercentage = treeDetails[_treeIds[i]].treePower / totalTreePower;
         uint256 amountYouGet = yourPercentage * amountInTreasuryToDistribute * 1 ether;
-        results.push(amountYouGet);
+        results[i] = amountYouGet;
     }
+    return results;
   }
 
   // To get all the tree IDs of one user

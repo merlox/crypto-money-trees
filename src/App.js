@@ -7,7 +7,7 @@ import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 // TODO
 // Create water function with a mapping and counting the days passed also do the power calculation here
-const contractAddress = '0x703863167486102bf1439119feb5e4c9b8dcceb6'
+const contractAddress = '0x58c99fa2d4967947b939994fdd8e836a2f31facf'
 
 class App extends React.Component {
 	constructor () {
@@ -67,6 +67,20 @@ class App extends React.Component {
 		return result
 	}
 
+	async checkRewardsMyTrees(ids) {
+		const result = await contract.checkRewardsAsync(ids, {
+			from: web3.eth.accounts[0]
+		})
+		return result
+	}
+
+	async pickReward(id) {
+		const result = await contract.pickRewardAsync(id, {
+			from: web3.eth.accounts[0]
+		})
+		return result
+	}
+
 	redirectTo(history, location) {
 		history.push(location)
 	}
@@ -83,6 +97,8 @@ class App extends React.Component {
 							getTreeDetails={id => this.getTreeDetails(id)}
 							sellTree={(id, price) => this.putTreeOnSale(id, price)}
 							cancelSell={id => this.cancelTreeSell(id)}
+							checkRewardsMyTrees={ids => this.checkRewardsMyTrees(ids)}
+							pickReward={id => this.props.pickReward(id)}
 						/>
 					)} />
 					<Route path="/market" render={(context) => (
@@ -112,7 +128,9 @@ class MyTrees extends React.Component {
 		super(props)
 		this.init()
 		this.state = {
-			allTrees: []
+			allTrees: [],
+			allTreesIds: [],
+			isCheckingRewards: false
 		}
 
 		if(web3.eth.accounts[0] === undefined) this.props.redirectTo(this.props.history, '/not-connected-metamask')
@@ -141,9 +159,11 @@ class MyTrees extends React.Component {
 				key={detail[0]}
 				waterTreeDates={detail[6]}
 				cancelSell={id => this.props.cancelSell(id)}
+				pickReward={id => this.props.pickReward(id)}
 			/>
 		))
-		this.setState({allTrees})
+		allTreesIds = allTrees.map(tree => tree[0])
+		this.setState({allTrees, allTreesIds})
 	}
 
 	render() {
@@ -152,6 +172,11 @@ class MyTrees extends React.Component {
 				<NavBar />
 				<div className="container">
 					<div className="row">
+						<button onClick={async () => {
+							this.setState({isCheckingRewards: true})
+							await this.props.checkRewardsMyTrees(this.state.allTreesIds)
+							this.setState({isCheckingRewards: false})
+						}}>{this.state.isCheckingRewards ? 'Loading...' : 'Check Rewards'}</button>
 						{this.state.allTrees}
 					</div>
 				</div>
@@ -299,7 +324,9 @@ class TreeBox extends React.Component {
 				<p>{this.props.daysPassed} after planting</p>
 				<p>Fruits not available</p>
 				<p>On sale {this.props.onSale.toString()}</p>
-				<button className="wide-button">Pick Fruits</button>
+				<button className="wide-button" onClick={() => {
+					this.props.pickReward(this.props.id)
+				}}>Pick Rewards</button>
 				<button className="wide-button">Water Tree</button>
 				<button className={this.props.onSale ? 'hidden' : "full-button"} onClick={() => {
 					this.setState({showSellConfirmation1: !this.state.showSellConfirmation1})
