@@ -68,9 +68,10 @@ class App extends React.Component {
 	}
 
 	async checkRewardsMyTrees(ids) {
-		const result = await contract.checkRewardsAsync(ids, {
+		let result = await contract.checkRewardsAsync(ids, {
 			from: web3.eth.accounts[0]
 		})
+		result = result.map(element => parseFloat(element))
 		return result
 	}
 
@@ -130,6 +131,7 @@ class MyTrees extends React.Component {
 		this.state = {
 			allTrees: [],
 			allTreesIds: [],
+			allRewards: [],
 			isCheckingRewards: false
 		}
 
@@ -148,8 +150,10 @@ class MyTrees extends React.Component {
 			})
 			allTrees.push(details)
 		}
+		const allTreesIds = allTrees.map(tree => tree[0])
+		const allRewards = await this.props.checkRewardsMyTrees(allTreesIds)
 		// Note the ( bracket instead of curly bracket {
-		allTrees = allTrees.map(detail => (
+		allTrees = allTrees.map((detail, index) => (
 			<TreeBox
 				id={detail[0]}
 				daysPassed={detail[2]}
@@ -160,10 +164,28 @@ class MyTrees extends React.Component {
 				waterTreeDates={detail[6]}
 				cancelSell={id => this.props.cancelSell(id)}
 				pickReward={id => this.props.pickReward(id)}
+				reward={allRewards[index]}
 			/>
 		))
-		allTreesIds = allTrees.map(tree => tree[0])
-		this.setState({allTrees, allTreesIds})
+		this.setState({allTrees, allTreesIds, allRewards})
+	}
+
+	updateRewards() {
+		allTrees = allTrees.map((detail, index) => (
+			<TreeBox
+				id={detail[0]}
+				daysPassed={detail[2]}
+				treePower={detail[3]}
+				onSale={detail[7]}
+				sellTree={(id, price) => this.props.sellTree(id, price)}
+				key={detail[0]}
+				waterTreeDates={detail[6]}
+				cancelSell={id => this.props.cancelSell(id)}
+				pickReward={id => this.props.pickReward(id)}
+				reward={this.state.allRewards[index]}
+			/>
+		))
+		this.setState({allTrees})
 	}
 
 	render() {
@@ -174,9 +196,11 @@ class MyTrees extends React.Component {
 					<div className="row">
 						<button onClick={async () => {
 							this.setState({isCheckingRewards: true})
-							await this.props.checkRewardsMyTrees(this.state.allTreesIds)
-							this.setState({isCheckingRewards: false})
+							const rewards = await this.props.checkRewardsMyTrees(this.state.allTreesIds)
+							this.setState({isCheckingRewards: false, allRewards: rewards})
 						}}>{this.state.isCheckingRewards ? 'Loading...' : 'Check Rewards'}</button>
+					</div>
+					<div className="row">
 						{this.state.allTrees}
 					</div>
 				</div>
@@ -322,12 +346,11 @@ class TreeBox extends React.Component {
 				<h4>Id {this.props.id}</h4>
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} after planting</p>
-				<p>Fruits not available</p>
 				<p>On sale {this.props.onSale.toString()}</p>
-				<button className="wide-button" onClick={() => {
+				<button className="wide-button" disabled={this.props.reward > 0 ? "false" : "true"} onClick={() => {
 					this.props.pickReward(this.props.id)
-				}}>Pick Rewards</button>
-				<button className="wide-button">Water Tree</button>
+				}}>{this.props.reward > 0 ? `Pick ${this.props.reward} Reward` : 'Reward Not Available'}</button>
+					<button className="wide-button">Water Tree</button>
 				<button className={this.props.onSale ? 'hidden' : "full-button"} onClick={() => {
 					this.setState({showSellConfirmation1: !this.state.showSellConfirmation1})
 				}}>{this.state.showSellConfirmation1 ? 'Cancel' : 'Sell tree'}</button>
