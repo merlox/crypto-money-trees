@@ -65,18 +65,20 @@ contract Trees is Admin {
 
   // This will be called automatically by the server
   // The contract itself will hold the initial trees
-  function generateTree() public onlyAdmin {
-    uint256 newTreeId = lastTreeId + 1;
-    lastTreeId += 1;
-    uint256[] memory emptyArray;
-    Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, defaultSalePrice, 0, emptyArray, true, now);
+  function generateTrees(uint256 _amountToGenerate) public onlyAdmin {
+    for(uint256 i = 0; i < _amountToGenerate; i++) {
+        uint256 newTreeId = lastTreeId + 1;
+        lastTreeId += 1;
+        uint256[] memory emptyArray;
+        Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, defaultSalePrice, 0, emptyArray, true, now);
 
-    // Update the treeBalances and treeOwner mappings
-    // We add the tree to the same array position to find it easier
-    ownerTreesIds[defaultTreesOwner].push(newTreeId);
-    treeDetails[newTreeId] = newTree;
-    treesOnSale.push(newTreeId);
-    totalTreePower += defaultTreesPower;
+        // Update the treeBalances and treeOwner mappings
+        // We add the tree to the same array position to find it easier
+        ownerTreesIds[defaultTreesOwner].push(newTreeId);
+        treeDetails[newTreeId] = newTree;
+        treesOnSale.push(newTreeId);
+        totalTreePower += defaultTreesPower;
+    }
   }
 
   // This is payable, the user will send the payment here
