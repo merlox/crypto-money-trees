@@ -6,7 +6,7 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-const contractAddress = '0x411d95a79e36b83602f67c647afca589eed0453c'
+const contractAddress = '0x23ea22bed68fd8f283fda8d602fed6dde9bdf4b2'
 
 class App extends React.Component {
 	constructor () {
