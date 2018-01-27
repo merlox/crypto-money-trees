@@ -141,14 +141,16 @@ contract Trees is Admin {
     require(msg.sender == treeDetails[_treeId].owner);
     uint256[] memory waterDates = treeDetails[_treeId].waterTreeDates;
     uint256 timeSinceLastWater;
+    // We want to store at what day the tree was watered
+    uint256 day;
     if(waterDates.length > 0) {
         timeSinceLastWater = now - waterDates[waterDates.length - 1];
+        day = waterDates[waterDates.length - 1] / 1 days;
     }else {
         timeSinceLastWater = 1 days;
+        day = 1;
     }
     require(timeSinceLastWater >= 1 days);
-    // We want to store at what day the tree was watered
-    uint256 day = timeSinceLastWater / 1 days;
     treeWater[_treeId][day] = true;
     treeDetails[_treeId].waterTreeDates.push(now);
     treeDetails[_treeId].treePower += 1;
@@ -171,17 +173,18 @@ contract Trees is Admin {
   // To see if a tree is already watered or not
   function checkTreesWatered(uint256[] _treeIds) public constant returns(bool[]) {
     bool[] memory results = new bool[](_treeIds.length);
+    uint256 timeSinceLastWater;
     for(uint256 i = 0; i < _treeIds.length; i++) {
         uint256[] memory waterDates = treeDetails[_treeIds[i]].waterTreeDates;
-        uint256 lastWaterDate = now - waterDates[waterDates.length - 1];
-        results[i] = lastWaterDate > 1 days;
+        if(waterDates.length > 0) {
+            timeSinceLastWater = now - waterDates[waterDates.length - 1];
+            results[i] = timeSinceLastWater < 1 days;
+        } else {
+            results[i] = false;
+        }
     }
     return results;
   }
-
-    function getWaterDates(uint256 treeId) public constant returns(uint256[]) {
-        return treeDetails[treeId].waterTreeDates;
-    }
 
   // Returns an array of how much ether all those trees have generated today
   // All the tree power combiined for instance 10293

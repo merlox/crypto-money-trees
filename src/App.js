@@ -6,7 +6,7 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-const contractAddress = '0x0589605d080b730f192dc861fa6166d7aa2c8a59'
+const contractAddress = '0x1cae024ea856e27796820402de4ce4f1ba96eae5'
 
 class App extends React.Component {
 	constructor () {
@@ -355,7 +355,6 @@ class TreeBox extends React.Component {
 			showSellConfirmation2: false,
 			showCancelSell: false
 		}
-		console.log(this.props)
 	}
 
 	render() {
