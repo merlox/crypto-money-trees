@@ -5,9 +5,8 @@ import Web3 from 'web3'
 import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
-// TODO
-// Create water function with a mapping and counting the days passed also do the power calculation here
-const contractAddress = '0x58c99fa2d4967947b939994fdd8e836a2f31facf'
+
+const contractAddress = '0x411d95a79e36b83602f67c647afca589eed0453c'
 
 class App extends React.Component {
 	constructor () {
@@ -82,6 +81,20 @@ class App extends React.Component {
 		return result
 	}
 
+	async checkTreesWatered(ids) {
+		const result = await contract.checkTreesWateredAsync(ids, {
+			from: web3.eth.accounts[0]
+		})
+		return result
+	}
+
+	async waterTree(id) {
+		const result = await contract.waterTreeAsync(id, {
+			from: web3.eth.accounts[0]
+		})
+		return result
+	}
+
 	redirectTo(history, location) {
 		history.push(location)
 	}
@@ -99,7 +112,9 @@ class App extends React.Component {
 							sellTree={(id, price) => this.putTreeOnSale(id, price)}
 							cancelSell={id => this.cancelTreeSell(id)}
 							checkRewardsMyTrees={ids => this.checkRewardsMyTrees(ids)}
-							pickReward={id => this.props.pickReward(id)}
+							checkTreesWatered={ids => this.checkTreesWatered(ids)}
+							pickReward={id => this.pickReward(id)}
+							waterTree={id => this.waterTree(id)}
 						/>
 					)} />
 					<Route path="/market" render={(context) => (
@@ -132,6 +147,7 @@ class MyTrees extends React.Component {
 			allTrees: [],
 			allTreesIds: [],
 			allRewards: [],
+			areTreesWatered: [],
 			isCheckingRewards: false
 		}
 
@@ -144,6 +160,7 @@ class MyTrees extends React.Component {
 		ids = ids.map(element => parseFloat(element))
 		for(let i = 0; i < ids.length; i++) {
 			let details = await this.props.getTreeDetails(ids[i])
+			if(details[1] === "0x0000000000000000000000000000000000000000") continue
 			details = details.map(element => {
 				if(typeof element === 'object') return parseFloat(element)
 				else return element
@@ -152,23 +169,25 @@ class MyTrees extends React.Component {
 		}
 		const allTreesIds = allTrees.map(tree => tree[0])
 		const allRewards = await this.props.checkRewardsMyTrees(allTreesIds)
-		console.log(allTrees)
+		const areTreesWatered = await this.props.checkTreesWatered(allTreesIds)
+		console.log('areTreesWatered', areTreesWatered)
 		// Note the ( bracket instead of curly bracket {
 		allTrees = allTrees.map((detail, index) => (
 			<TreeBox
 				id={detail[0]}
 				daysPassed={detail[2]}
 				treePower={detail[3]}
-				onSale={detail[7]}
+				onSale={detail[6]}
 				sellTree={(id, price) => this.props.sellTree(id, price)}
 				key={detail[0]}
-				waterTreeDates={detail[6]}
+				waterTree={id => this.props.waterTree(id)}
 				cancelSell={id => this.props.cancelSell(id)}
 				pickReward={id => this.props.pickReward(id)}
 				reward={allRewards[index]}
+				isWatered={areTreesWatered[index]}
 			/>
 		))
-		this.setState({allTrees, allTreesIds, allRewards})
+		this.setState({allTrees, allTreesIds, allRewards, areTreesWatered})
 	}
 
 	updateRewards() {
@@ -177,10 +196,9 @@ class MyTrees extends React.Component {
 				id={detail[0]}
 				daysPassed={detail[2]}
 				treePower={detail[3]}
-				onSale={detail[7]}
+				onSale={detail[6]}
 				sellTree={(id, price) => this.props.sellTree(id, price)}
 				key={detail[0]}
-				waterTreeDates={detail[6]}
 				cancelSell={id => this.props.cancelSell(id)}
 				pickReward={id => this.props.pickReward(id)}
 				reward={this.state.allRewards[index]}
@@ -261,7 +279,6 @@ class Market extends React.Component {
 					treePower={detail[3]}
 					buyTree={(id, owner, price) => this.props.buyTree(id, owner, detail[4])}
 					price={web3.fromWei(detail[4], 'ether')}
-					waterTreeDates={detail[6]}
 					key={detail[0]}
 				/>
 			))
@@ -338,6 +355,7 @@ class TreeBox extends React.Component {
 			showSellConfirmation2: false,
 			showCancelSell: false
 		}
+		console.log(this.props)
 	}
 
 	render() {
@@ -351,7 +369,9 @@ class TreeBox extends React.Component {
 				<button className="wide-button" disabled={this.props.reward > 0 ? "false" : "true"} onClick={() => {
 					this.props.pickReward(this.props.id)
 				}}>{this.props.reward > 0 ? `Pick ${this.props.reward} Reward` : 'Reward Not Available'}</button>
-					<button className="wide-button">Water Tree</button>
+				<button className="wide-button" disabled={this.props.isWatered === true ? 'true' : 'false'} onClick={() => {
+					this.props.waterTree(this.props.id)
+				}}>{this.props.isWatered ? 'Tree Was Watered Today' : 'Water Tree Now'}</button>
 				<button className={this.props.onSale ? 'hidden' : "full-button"} onClick={() => {
 					this.setState({showSellConfirmation1: !this.state.showSellConfirmation1})
 				}}>{this.state.showSellConfirmation1 ? 'Cancel' : 'Sell tree'}</button>
