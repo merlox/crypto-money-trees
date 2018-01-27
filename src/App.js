@@ -170,12 +170,11 @@ class MyTrees extends React.Component {
 		const allTreesIds = allTrees.map(tree => tree[0])
 		const allRewards = await this.props.checkRewardsMyTrees(allTreesIds)
 		const areTreesWatered = await this.props.checkTreesWatered(allTreesIds)
-		console.log('areTreesWatered', areTreesWatered)
 		// Note the ( bracket instead of curly bracket {
 		allTrees = allTrees.map((detail, index) => (
 			<TreeBox
 				id={detail[0]}
-				daysPassed={detail[2]}
+				daysPassed={Math.floor((Math.floor(Date.now() / 1000) - detail[2]) / 86400)} // How many days passed after the creation of this tree
 				treePower={detail[3]}
 				onSale={detail[6]}
 				sellTree={(id, price) => this.props.sellTree(id, price)}
@@ -363,12 +362,12 @@ class TreeBox extends React.Component {
 				<img src="imgs/tree.png" className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
 				<p>Tree power {this.props.treePower}</p>
-				<p>{this.props.daysPassed} after planting</p>
+				<p>{this.props.daysPassed} days passed after creation</p>
 				<p>On sale {this.props.onSale.toString()}</p>
 				<button className="wide-button" disabled={this.props.reward > 0 ? "false" : "true"} onClick={() => {
 					this.props.pickReward(this.props.id)
 				}}>{this.props.reward > 0 ? `Pick ${this.props.reward} Reward` : 'Reward Not Available'}</button>
-				<button className="wide-button" disabled={this.props.isWatered === true ? 'true' : 'false'} onClick={() => {
+				<button className="wide-button" disabled={this.props.isWatered} onClick={() => {
 					this.props.waterTree(this.props.id)
 				}}>{this.props.isWatered ? 'Tree Was Watered Today' : 'Water Tree Now'}</button>
 				<button className={this.props.onSale ? 'hidden' : "full-button"} onClick={() => {

@@ -21495,12 +21495,11 @@ var MyTrees = function (_React$Component2) {
 							case 23:
 								areTreesWatered = _context12.sent;
 
-								console.log('areTreesWatered', areTreesWatered);
 								// Note the ( bracket instead of curly bracket {
 								allTrees = allTrees.map(function (detail, index) {
 									return _jsx(TreeBox, {
 										id: detail[0],
-										daysPassed: detail[2],
+										daysPassed: Math.floor((Math.floor(Date.now() / 1000) - detail[2]) / 86400),
 										treePower: detail[3],
 										onSale: detail[6],
 										sellTree: function sellTree(id, price) {
@@ -21521,7 +21520,7 @@ var MyTrees = function (_React$Component2) {
 								});
 								this.setState({ allTrees: allTrees, allTreesIds: allTreesIds, allRewards: allRewards, areTreesWatered: areTreesWatered });
 
-							case 27:
+							case 26:
 							case 'end':
 								return _context12.stop();
 						}
@@ -21878,7 +21877,7 @@ var TreeBox = function (_React$Component6) {
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref22, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' after planting'), _jsx('p', {}, void 0, 'On sale ', this.props.onSale.toString()), _jsx('button', {
+			}, void 0, _ref22, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' days passed after creation'), _jsx('p', {}, void 0, 'On sale ', this.props.onSale.toString()), _jsx('button', {
 				className: 'wide-button',
 				disabled: this.props.reward > 0 ? "false" : "true",
 				onClick: function onClick() {
@@ -21886,7 +21885,7 @@ var TreeBox = function (_React$Component6) {
 				}
 			}, void 0, this.props.reward > 0 ? 'Pick ' + this.props.reward + ' Reward' : 'Reward Not Available'), _jsx('button', {
 				className: 'wide-button',
-				disabled: this.props.isWatered === true ? 'true' : 'false',
+				disabled: this.props.isWatered,
 				onClick: function onClick() {
 					_this12.props.waterTree(_this12.props.id);
 				}
