@@ -6,7 +6,7 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-const contractAddress = '0x1cae024ea856e27796820402de4ce4f1ba96eae5'
+const contractAddress = '0x03a203119e9743233d4133108e860770bc63fb9f'
 
 class App extends React.Component {
 	constructor () {
@@ -275,7 +275,7 @@ class Market extends React.Component {
 				<TreeMarketBox
 					id={detail[0]}
 					owner={detail[1]}
-					daysPassed={detail[2]}
+					daysPassed={Math.floor((Math.floor(Date.now() / 1000) - detail[2]) / 86400)} // How many days passed after the creation of this tree
 					treePower={detail[3]}
 					buyTree={(id, owner, price) => this.props.buyTree(id, owner, detail[4])}
 					price={web3.fromWei(detail[4], 'ether')}
@@ -428,7 +428,7 @@ class TreeMarketBox extends React.Component {
 				<h4>Id {this.props.id}</h4>
 				<p className="word-wrap">Owner {this.props.owner}</p>
 				<p>Tree power {this.props.treePower}</p>
-				<p>{this.props.daysPassed} after planting</p>
+				<p>{this.props.daysPassed} days passed after creation</p>
 				<button className="full-button" onClick={() => {
 					this.props.buyTree(this.props.id, this.props.owner, this.props.price)
 				}}>Buy Tree</button>
