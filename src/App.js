@@ -234,7 +234,8 @@ class Market extends React.Component {
 		super(props)
 		this.init()
 		this.state = {
-			allTrees: []
+			allTrees: [],
+			treesLoaded: false,
 		}
 
 		if(web3.eth.accounts[0] === undefined) this.props.redirectTo(this.props.history, '/not-connected-metamask')
@@ -283,7 +284,7 @@ class Market extends React.Component {
 					key={detail[0]}
 				/>
 			))
-			this.setState({allTrees})
+			this.setState({allTrees, treesLoaded: true})
 		}
 	}
 
@@ -292,9 +293,11 @@ class Market extends React.Component {
 			<div>
 				<NavBar inMarket="true" />
 				<div className="container">
-					<div className="row">
+					<div className={this.state.treesLoaded ? "row" : "hidden"}>
+						<div className="top-spacer"></div>
 						{this.state.allTrees}
 					</div>
+					<div className={this.state.treesLoaded ? "hidden" : "row"}><Loading /></div>
 				</div>
 				<div className="spacer"></div>
 			</div>
@@ -345,9 +348,9 @@ class TreeBox extends React.Component {
 			<div className="col-6 col-sm-4 tree-container">
 				<img src="imgs/tree.png" className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
-				<p>Tree power {this.props.treePower}</p>
-				<p>{this.props.daysPassed} days passed after creation</p>
-				<p>On sale {this.props.onSale.toString()}</p>
+				<p>Tree power <span className="color-green">{this.props.treePower}</span></p>
+				<p><span className="color-blue">{this.props.daysPassed}</span> days passed after creation</p>
+				<p>On sale <span className="color-red">{this.props.onSale.toString()}</span></p>
 				<button className="wide-button" disabled={(this.props.reward === 0 || this.state.rewardClicked)} onClick={async () => {
 					try {
 						await this.props.pickReward(this.props.id)
@@ -422,9 +425,9 @@ class TreeMarketBox extends React.Component {
 			<div className="col-6 col-sm-4 tree-container">
 				<img src="imgs/tree.png" className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
-				<p className="word-wrap">Owner {this.props.owner}</p>
-				<p>Tree power {this.props.treePower}</p>
-				<p>{this.props.daysPassed} days passed after creation</p>
+				<p className="word-wrap">Owner <span className="color-yellow">{this.props.owner}</span></p>
+				<p>Tree power <span className="color-green">{this.props.treePower}</span></p>
+				<p><span className="color-blue">{this.props.daysPassed}</span> days passed after creation</p>
 				<button className="full-button" disabled={this.state.buyClicked} onClick={async () => {
 					try {
 						await this.props.buyTree(this.props.id, this.props.owner, this.props.price)
