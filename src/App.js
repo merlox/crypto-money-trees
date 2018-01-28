@@ -222,6 +222,7 @@ class MyTrees extends React.Component {
 						{this.state.allTrees}
 					</div>
 				</div>
+				<div className="spacer"></div>
 			</div>
 		)
 	}
@@ -294,6 +295,7 @@ class Market extends React.Component {
 						{this.state.allTrees}
 					</div>
 				</div>
+				<div className="spacer"></div>
 			</div>
 		)
 	}
@@ -315,6 +317,7 @@ class NotConnected extends React.Component {
 						<p>Please connect to the mainnet on metamask with your account and reload the page</p>
 					</div>
 				</div>
+				<div className="spacer"></div>
 			</div>
 		)
 	}
@@ -372,6 +375,7 @@ class TreeBox extends React.Component {
 				}}>{this.props.isWatered ? 'Tree Was Watered Today' : 'Water Tree Now'}</button>
 				<button className={this.props.onSale ? 'hidden' : "full-button"} onClick={() => {
 					this.setState({showSellConfirmation1: !this.state.showSellConfirmation1})
+					this.setState({showSellConfirmation2: false})
 				}}>{this.state.showSellConfirmation1 ? 'Cancel' : 'Sell tree'}</button>
 
 				<button className={this.props.onSale ? "full-button" : 'hidden'} onClick={() => {
@@ -387,8 +391,8 @@ class TreeBox extends React.Component {
 				</div>
 
 				<div className={this.state.showSellConfirmation2 ? "full-button" : "hidden"}>
-					<p>Are you sure you want to put on sale this tree for {this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : ''} ETH now?</p>
-					<button className="wide-button" onClick={() => {
+					<p>Are you sure you want to put on sale this tree for {this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : ''} ETH now? {this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.1).toFixed(2) : ''} ETH will go to the treasury after the sale, you'll get {this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.9).toFixed(2) : ''} ETH.</p>
+						<button className="wide-button" onClick={() => {
 						this.setState({showSellConfirmation2: false})
 						this.setState({showSellConfirmation1: false})
 						this.props.sellTree(this.props.id, web3.toWei(this.refs['amount-to-sell'].value, 'ether'))

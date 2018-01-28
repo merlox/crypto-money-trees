@@ -112,12 +112,14 @@ contract Trees is Admin {
         }
     }
     ownerTreesIds[newOwner].push(_treeNumber);
-    treeDetails[_treeNumber].owner = newOwner;
     treeDetails[_treeNumber].onSale = false;
     if(treeDetails[_treeNumber].timesExchanged == 0) {
         // Reward the owner for the initial trees as a way of monetization. Keep half for the treasury
         owner.transfer(msg.value / 2);
+    } else {
+        treeDetails[_treeNumber].owner.transfer(msg.value * 0.9); // Keep 0.1 in the treasury
     }
+    treeDetails[_treeNumber].owner = newOwner;
     treeDetails[_treeNumber].timesExchanged += 1;
   }
 

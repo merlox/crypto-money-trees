@@ -1,3 +1,35 @@
+strongerGreen = #0b860b
+strongGreen = #0ca90c
+lightGreen = #4bdd4b
+lighterGreen = #74ed74
+
+button
+    background-color: lightGreen
+    border: 1px solid strongGreen
+    color: white
+    border-radius: 10px
+    padding: 10px
+    margin: 1%
+    box-sizing: border-box
+    cursor: pointer
+
+    &:hover
+        background-color: lighterGreen
+        border: 1px solid lightGreen
+
+    &:active
+        background-color: strongerGreen
+        border: 1px solid strongGreen
+
+    &:disabled
+        background-color: lighterGreen
+        border: 1px solid lightGreen
+        cursor: default
+
+.spacer
+    height: 400px
+    width: 100%
+
 .navbar
     box-shadow: 0 0 20px -5px grey
 
@@ -11,10 +43,10 @@
     width: 100%
 
 .wide-button
-    width: 50%
+    width: 48%
 
 .full-button
-    width: 100%
+    width: 98%
 
 .hidden
     display: none
