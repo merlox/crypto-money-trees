@@ -355,7 +355,9 @@ class TreeBox extends React.Component {
 		this.state = {
 			showSellConfirmation1: false,
 			showSellConfirmation2: false,
-			showCancelSell: false
+			showCancelSell: false,
+			rewardClicked: false,
+			waterClicked: false,
 		}
 	}
 
@@ -367,11 +369,17 @@ class TreeBox extends React.Component {
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} days passed after creation</p>
 				<p>On sale {this.props.onSale.toString()}</p>
-				<button className="wide-button" disabled={this.props.reward > 0 ? "false" : "true"} onClick={() => {
-					this.props.pickReward(this.props.id)
+				<button className="wide-button" disabled={(this.props.reward === 0 || this.state.rewardClicked)} onClick={async () => {
+					try {
+						await this.props.pickReward(this.props.id)
+						this.setState({rewardClicked: true})
+					} catch (e) {}
 				}}>{this.props.reward > 0 ? `Pick ${this.props.reward} Reward` : 'Reward Not Available'}</button>
-				<button className="wide-button" disabled={this.props.isWatered} onClick={() => {
-					this.props.waterTree(this.props.id)
+				<button className="wide-button" disabled={(this.props.isWatered || this.state.waterClicked)} onClick={async () => {
+					try {
+						await this.props.waterTree(this.props.id)
+						this.setState({waterClicked: true})
+					} catch (e) {}
 				}}>{this.props.isWatered ? 'Tree Was Watered Today' : 'Water Tree Now'}</button>
 				<button className={this.props.onSale ? 'hidden' : "full-button"} onClick={() => {
 					this.setState({showSellConfirmation1: !this.state.showSellConfirmation1})
@@ -421,6 +429,12 @@ class TreeBox extends React.Component {
 }
 
 class TreeMarketBox extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			buyClicked: false
+		}
+	}
 	render() {
 		return (
 			<div className="col-6 col-sm-4 tree-container">
@@ -429,8 +443,11 @@ class TreeMarketBox extends React.Component {
 				<p className="word-wrap">Owner {this.props.owner}</p>
 				<p>Tree power {this.props.treePower}</p>
 				<p>{this.props.daysPassed} days passed after creation</p>
-				<button className="full-button" onClick={() => {
-					this.props.buyTree(this.props.id, this.props.owner, this.props.price)
+				<button className="full-button" disabled={this.state.buyClicked} onClick={async () => {
+					try {
+						await this.props.buyTree(this.props.id, this.props.owner, this.props.price)
+						this.setState({buyClicked: true})
+					} catch(e) {}
 				}}>Buy Tree</button>
 			</div>
 		)
