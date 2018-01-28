@@ -62,6 +62,7 @@ contract Trees is Admin {
   uint256 public defaultTreesPower = 1; // 10% of the total power
   uint256 public defaultSalePrice = 1 ether;
   uint256 public totalTreePower;
+  uint256 public timeBetweenRewards = 1 days;
 
   // This will be called automatically by the server
   // The contract itself will hold the initial trees
@@ -94,6 +95,7 @@ contract Trees is Admin {
     treeDetails[_treeNumber].onSale = true;
   }
 
+  // To buy a tree paying ether
   function buyTree(uint256 _treeNumber, address _originalOwner) public payable {
     require(msg.sender != treeDetails[_treeNumber].owner);
     require(treeDetails[_treeNumber].onSale);
@@ -149,10 +151,10 @@ contract Trees is Admin {
         timeSinceLastWater = now - waterDates[waterDates.length - 1];
         day = waterDates[waterDates.length - 1] / 1 days;
     }else {
-        timeSinceLastWater = 1 days;
+        timeSinceLastWater = timeBetweenRewards;
         day = 1;
     }
-    require(timeSinceLastWater >= 1 days);
+    require(timeSinceLastWater >= timeBetweenRewards);
     treeWater[_treeId][day] = true;
     treeDetails[_treeId].waterTreeDates.push(now);
     treeDetails[_treeId].treePower += 1;
@@ -163,13 +165,13 @@ contract Trees is Admin {
   // To get the ether from the rewards
   function pickReward(uint256 _treeId) public {
     require(msg.sender == treeDetails[_treeId].owner);
-    require(now - treeDetails[_treeId].lastRewardPickedDate > 1 days);
+    require(now - treeDetails[_treeId].lastRewardPickedDate > timeBetweenRewards);
     uint256[] memory formatedId;
     formatedId[0] = _treeId;
-    uint256[] memory reward = checkRewards(formatedId);
+    uint256[] memory rewards = checkRewards(formatedId);
     treeDetails[_treeId].lastRewardPickedDate = now;
-    msg.sender.transfer(reward[0]);
-    LogRewardPicked(_treeId, msg.sender, now, reward[0]);
+    msg.sender.transfer(rewards[0]);
+    LogRewardPicked(_treeId, msg.sender, now, rewards[0]);
   }
 
   // To see if a tree is already watered or not
@@ -180,7 +182,7 @@ contract Trees is Admin {
         uint256[] memory waterDates = treeDetails[_treeIds[i]].waterTreeDates;
         if(waterDates.length > 0) {
             timeSinceLastWater = now - waterDates[waterDates.length - 1];
-            results[i] = timeSinceLastWater < 1 days;
+            results[i] = timeSinceLastWater < timeBetweenRewards;
         } else {
             results[i] = false;
         }
@@ -200,8 +202,9 @@ contract Trees is Admin {
     uint256 amountInTreasuryToDistribute = this.balance / 10;
     uint256[] memory results = new uint256[](_treeIds.length);
     for(uint256 i = 0; i < _treeIds.length; i++) {
-        uint256 yourPercentage = treeDetails[_treeIds[i]].treePower / totalTreePower;
-        uint256 amountYouGet = yourPercentage * amountInTreasuryToDistribute * 1 ether;
+        // Important to multiply by 100 to
+        uint256 yourPercentage = treeDetails[_treeIds[i]].treePower * 1 ether / totalTreePower;
+        uint256 amountYouGet = yourPercentage * amountInTreasuryToDistribute / 1 ether;
         results[i] = amountYouGet;
     }
     return results;
