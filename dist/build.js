@@ -21406,7 +21406,7 @@ var App = function (_React$Component) {
 	return App;
 }(_react2.default.Component);
 
-var _ref15 = _jsx('div', {
+var _ref16 = _jsx('div', {
 	className: 'spacer'
 });
 
@@ -21424,7 +21424,8 @@ var MyTrees = function (_React$Component2) {
 			allTreesIds: [],
 			allRewards: [],
 			areTreesWatered: [],
-			isCheckingRewards: false
+			isCheckingRewards: false,
+			treesLoaded: false
 		};
 
 		if (web3.eth.accounts[0] === undefined) _this3.props.redirectTo(_this3.props.history, '/not-connected-metamask');
@@ -21522,7 +21523,7 @@ var MyTrees = function (_React$Component2) {
 										isWatered: areTreesWatered[index]
 									}, detail[0]);
 								});
-								this.setState({ allTrees: allTrees, allTreesIds: allTreesIds, allRewards: allRewards, areTreesWatered: areTreesWatered });
+								this.setState({ allTrees: allTrees, allTreesIds: allTreesIds, allRewards: allRewards, areTreesWatered: areTreesWatered, treesLoaded: true });
 
 							case 26:
 							case 'end':
@@ -21571,8 +21572,9 @@ var MyTrees = function (_React$Component2) {
 			return _jsx('div', {}, void 0, _ref13, _jsx('div', {
 				className: 'container'
 			}, void 0, _jsx('div', {
-				className: 'row'
+				className: this.state.treesLoaded ? "row" : "hidden"
 			}, void 0, _jsx('button', {
+				className: 'check-rewards-button',
 				onClick: function () {
 					var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
 						var rewards;
@@ -21605,14 +21607,14 @@ var MyTrees = function (_React$Component2) {
 				}()
 			}, void 0, this.state.isCheckingRewards ? 'Loading...' : 'Check Rewards')), _jsx('div', {
 				className: 'row'
-			}, void 0, this.state.allTrees)), _ref15);
+			}, void 0, this.state.treesLoaded ? this.state.allTrees : _ref15)), _ref16);
 		}
 	}]);
 
 	return MyTrees;
 }(_react2.default.Component);
 
-var _ref18 = _jsx('div', {
+var _ref19 = _jsx('div', {
 	className: 'spacer'
 });
 
@@ -21636,7 +21638,7 @@ var Market = function (_React$Component3) {
 	_createClass(Market, [{
 		key: 'init',
 		value: function () {
-			var _ref16 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
+			var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
 				var _this8 = this;
 
 				var treesOnSale, myTrees, treesToShow, i, a, _allTrees, _i, details;
@@ -21739,7 +21741,7 @@ var Market = function (_React$Component3) {
 			}));
 
 			function init() {
-				return _ref16.apply(this, arguments);
+				return _ref17.apply(this, arguments);
 			}
 
 			return init;
@@ -21747,37 +21749,15 @@ var Market = function (_React$Component3) {
 	}, {
 		key: 'render',
 		value: function render() {
-			return _jsx('div', {}, void 0, _ref17, _jsx('div', {
+			return _jsx('div', {}, void 0, _ref18, _jsx('div', {
 				className: 'container'
 			}, void 0, _jsx('div', {
 				className: 'row'
-			}, void 0, this.state.allTrees)), _ref18);
+			}, void 0, this.state.allTrees)), _ref19);
 		}
 	}]);
 
 	return Market;
-}(_react2.default.Component);
-
-var NotConnected = function (_React$Component4) {
-	_inherits(NotConnected, _React$Component4);
-
-	function NotConnected(props) {
-		_classCallCheck(this, NotConnected);
-
-		var _this9 = _possibleConstructorReturn(this, (NotConnected.__proto__ || Object.getPrototypeOf(NotConnected)).call(this, props));
-
-		if (web3.eth.accounts[0] !== undefined) _this9.props.redirectTo(_this9.props.history, '/');
-		return _this9;
-	}
-
-	_createClass(NotConnected, [{
-		key: 'render',
-		value: function render() {
-			return _ref19;
-		}
-	}]);
-
-	return NotConnected;
 }(_react2.default.Component);
 
 var _ref20 = _jsx('a', {
@@ -21813,8 +21793,8 @@ var _ref23 = _jsx(_reactRouterDom.Link, {
 	className: 'nav-link'
 }, void 0, 'Market');
 
-var NavBar = function (_React$Component5) {
-	_inherits(NavBar, _React$Component5);
+var NavBar = function (_React$Component4) {
+	_inherits(NavBar, _React$Component4);
 
 	function NavBar() {
 		_classCallCheck(this, NavBar);
@@ -21843,15 +21823,7 @@ var NavBar = function (_React$Component5) {
 	return NavBar;
 }(_react2.default.Component);
 
-var _ref19 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
-	className: 'container'
-}, void 0, _jsx('div', {
-	className: 'row'
-}, void 0, _jsx('h4', {}, void 0, 'You have to be connected to metamask to use this application'), _jsx('p', {}, void 0, 'Please connect to the mainnet on metamask with your account and reload the page'))), _jsx('div', {
-	className: 'spacer'
-}));
-
-var _ref17 = _jsx(NavBar, {
+var _ref18 = _jsx(NavBar, {
 	inMarket: 'true'
 });
 
@@ -21864,28 +21836,28 @@ var _ref24 = _jsx('img', {
 
 var _ref27 = _jsx('p', {}, void 0, 'At what price do you want to sell your tree in ETH?');
 
-var TreeBox = function (_React$Component6) {
-	_inherits(TreeBox, _React$Component6);
+var TreeBox = function (_React$Component5) {
+	_inherits(TreeBox, _React$Component5);
 
 	function TreeBox(props) {
 		_classCallCheck(this, TreeBox);
 
-		var _this11 = _possibleConstructorReturn(this, (TreeBox.__proto__ || Object.getPrototypeOf(TreeBox)).call(this, props));
+		var _this10 = _possibleConstructorReturn(this, (TreeBox.__proto__ || Object.getPrototypeOf(TreeBox)).call(this, props));
 
-		_this11.state = {
+		_this10.state = {
 			showSellConfirmation1: false,
 			showSellConfirmation2: false,
 			showCancelSell: false,
 			rewardClicked: false,
 			waterClicked: false
 		};
-		return _this11;
+		return _this10;
 	}
 
 	_createClass(TreeBox, [{
 		key: 'render',
 		value: function render() {
-			var _this12 = this;
+			var _this11 = this;
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
@@ -21900,10 +21872,10 @@ var TreeBox = function (_React$Component6) {
 									case 0:
 										_context15.prev = 0;
 										_context15.next = 3;
-										return _this12.props.pickReward(_this12.props.id);
+										return _this11.props.pickReward(_this11.props.id);
 
 									case 3:
-										_this12.setState({ rewardClicked: true });
+										_this11.setState({ rewardClicked: true });
 										_context15.next = 8;
 										break;
 
@@ -21916,7 +21888,7 @@ var TreeBox = function (_React$Component6) {
 										return _context15.stop();
 								}
 							}
-						}, _callee15, _this12, [[0, 6]]);
+						}, _callee15, _this11, [[0, 6]]);
 					}));
 
 					function onClick() {
@@ -21936,10 +21908,10 @@ var TreeBox = function (_React$Component6) {
 									case 0:
 										_context16.prev = 0;
 										_context16.next = 3;
-										return _this12.props.waterTree(_this12.props.id);
+										return _this11.props.waterTree(_this11.props.id);
 
 									case 3:
-										_this12.setState({ waterClicked: true });
+										_this11.setState({ waterClicked: true });
 										_context16.next = 8;
 										break;
 
@@ -21952,7 +21924,7 @@ var TreeBox = function (_React$Component6) {
 										return _context16.stop();
 								}
 							}
-						}, _callee16, _this12, [[0, 6]]);
+						}, _callee16, _this11, [[0, 6]]);
 					}));
 
 					function onClick() {
@@ -21964,98 +21936,52 @@ var TreeBox = function (_React$Component6) {
 			}, void 0, this.props.isWatered ? 'Tree Was Watered Today' : 'Water Tree Now'), _jsx('button', {
 				className: this.props.onSale ? 'hidden' : "full-button",
 				onClick: function onClick() {
-					_this12.setState({ showSellConfirmation1: !_this12.state.showSellConfirmation1 });
-					_this12.setState({ showSellConfirmation2: false });
+					_this11.setState({ showSellConfirmation1: !_this11.state.showSellConfirmation1 });
+					_this11.setState({ showSellConfirmation2: false });
 				}
-			}, void 0, this.state.showSellConfirmation1 ? 'Cancel' : 'Sell tree'), _jsx('button', {
+			}, void 0, this.state.showSellConfirmation1 ? 'Cancel' : 'Put Tree On Sale'), _jsx('button', {
 				className: this.props.onSale ? "full-button" : 'hidden',
 				onClick: function onClick() {
-					_this12.setState({ showCancelSell: !_this12.state.showCancelSell });
+					_this11.setState({ showCancelSell: !_this11.state.showCancelSell });
 				}
 			}, void 0, this.state.showCancelSell ? 'Are you sure?' : 'Cancel active sell'), _jsx('div', {
 				className: this.state.showSellConfirmation1 ? "full-button" : "hidden"
 			}, void 0, _ref27, _react2.default.createElement('input', { key: this.props.id, ref: 'amount-to-sell', className: 'wide-button', type: 'number', defaultValue: '0.5' }), _jsx('button', {
 				className: 'wide-button',
 				onClick: function onClick() {
-					_this12.setState({ showSellConfirmation2: true });
+					_this11.setState({ showSellConfirmation2: true });
 				}
 			}, void 0, 'Put Tree On Sale')), _jsx('div', {
 				className: this.state.showSellConfirmation2 ? "full-button" : "hidden"
 			}, void 0, _jsx('p', {}, void 0, 'Are you sure you want to put on sale this tree for ', this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : '', ' ETH now? ', this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.1).toFixed(2) : '', ' ETH will go to the treasury after the sale, you\'ll get ', this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.9).toFixed(2) : '', ' ETH.'), _jsx('button', {
 				className: 'wide-button',
 				onClick: function onClick() {
-					_this12.setState({ showSellConfirmation2: false });
-					_this12.setState({ showSellConfirmation1: false });
-					_this12.props.sellTree(_this12.props.id, web3.toWei(_this12.refs['amount-to-sell'].value, 'ether'));
+					_this11.setState({ showSellConfirmation2: false });
+					_this11.setState({ showSellConfirmation1: false });
+					_this11.props.sellTree(_this11.props.id, web3.toWei(_this11.refs['amount-to-sell'].value, 'ether'));
 				}
 			}, void 0, 'Yes'), _jsx('button', {
 				className: 'wide-button',
 				onClick: function onClick() {
-					_this12.setState({ showSellConfirmation2: false });
-					_this12.setState({ showSellConfirmation1: false });
+					_this11.setState({ showSellConfirmation2: false });
+					_this11.setState({ showSellConfirmation1: false });
 				}
 			}, void 0, 'No')), _jsx('div', {
 				className: this.state.showCancelSell ? 'full-button' : 'hidden'
 			}, void 0, _jsx('button', {
 				className: 'wide-button',
-				onClick: function onClick() {
-					_this12.props.cancelSell(_this12.props.id);
-				}
-			}, void 0, 'Yes, cancel sell'), _jsx('button', {
-				className: 'wide-button',
-				onClick: function onClick() {
-					_this12.setState({ showCancelSell: false });
-				}
-			}, void 0, 'No, keep tree on the market for sale')));
-		}
-	}]);
-
-	return TreeBox;
-}(_react2.default.Component);
-
-var _ref28 = _jsx('img', {
-	src: 'imgs/tree.png',
-	className: 'tree-image'
-});
-
-var TreeMarketBox = function (_React$Component7) {
-	_inherits(TreeMarketBox, _React$Component7);
-
-	function TreeMarketBox(props) {
-		_classCallCheck(this, TreeMarketBox);
-
-		var _this13 = _possibleConstructorReturn(this, (TreeMarketBox.__proto__ || Object.getPrototypeOf(TreeMarketBox)).call(this, props));
-
-		_this13.state = {
-			buyClicked: false
-		};
-		return _this13;
-	}
-
-	_createClass(TreeMarketBox, [{
-		key: 'render',
-		value: function render() {
-			var _this14 = this;
-
-			return _jsx('div', {
-				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref28, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {
-				className: 'word-wrap'
-			}, void 0, 'Owner ', this.props.owner), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' days passed after creation'), _jsx('button', {
-				className: 'full-button',
-				disabled: this.state.buyClicked,
 				onClick: function () {
-					var _ref29 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
+					var _ref28 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
 						return regeneratorRuntime.wrap(function _callee17$(_context17) {
 							while (1) {
 								switch (_context17.prev = _context17.next) {
 									case 0:
 										_context17.prev = 0;
 										_context17.next = 3;
-										return _this14.props.buyTree(_this14.props.id, _this14.props.owner, _this14.props.price);
+										return _this11.props.cancelSell(_this11.props.id);
 
 									case 3:
-										_this14.setState({ buyClicked: true });
+										_this11.setState({ showCancelSell: false });
 										_context17.next = 8;
 										break;
 
@@ -22068,11 +21994,87 @@ var TreeMarketBox = function (_React$Component7) {
 										return _context17.stop();
 								}
 							}
-						}, _callee17, _this14, [[0, 6]]);
+						}, _callee17, _this11, [[0, 6]]);
 					}));
 
 					function onClick() {
-						return _ref29.apply(this, arguments);
+						return _ref28.apply(this, arguments);
+					}
+
+					return onClick;
+				}()
+			}, void 0, 'Yes, cancel sell'), _jsx('button', {
+				className: 'wide-button',
+				onClick: function onClick() {
+					_this11.setState({ showCancelSell: false });
+				}
+			}, void 0, 'No, keep tree on the market for sale')));
+		}
+	}]);
+
+	return TreeBox;
+}(_react2.default.Component);
+
+var _ref29 = _jsx('img', {
+	src: 'imgs/tree.png',
+	className: 'tree-image'
+});
+
+var TreeMarketBox = function (_React$Component6) {
+	_inherits(TreeMarketBox, _React$Component6);
+
+	function TreeMarketBox(props) {
+		_classCallCheck(this, TreeMarketBox);
+
+		var _this12 = _possibleConstructorReturn(this, (TreeMarketBox.__proto__ || Object.getPrototypeOf(TreeMarketBox)).call(this, props));
+
+		_this12.state = {
+			buyClicked: false
+		};
+		return _this12;
+	}
+
+	_createClass(TreeMarketBox, [{
+		key: 'render',
+		value: function render() {
+			var _this13 = this;
+
+			return _jsx('div', {
+				className: 'col-6 col-sm-4 tree-container'
+			}, void 0, _ref29, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {
+				className: 'word-wrap'
+			}, void 0, 'Owner ', this.props.owner), _jsx('p', {}, void 0, 'Tree power ', this.props.treePower), _jsx('p', {}, void 0, this.props.daysPassed, ' days passed after creation'), _jsx('button', {
+				className: 'full-button',
+				disabled: this.state.buyClicked,
+				onClick: function () {
+					var _ref30 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18() {
+						return regeneratorRuntime.wrap(function _callee18$(_context18) {
+							while (1) {
+								switch (_context18.prev = _context18.next) {
+									case 0:
+										_context18.prev = 0;
+										_context18.next = 3;
+										return _this13.props.buyTree(_this13.props.id, _this13.props.owner, _this13.props.price);
+
+									case 3:
+										_this13.setState({ buyClicked: true });
+										_context18.next = 8;
+										break;
+
+									case 6:
+										_context18.prev = 6;
+										_context18.t0 = _context18['catch'](0);
+
+									case 8:
+									case 'end':
+										return _context18.stop();
+								}
+							}
+						}, _callee18, _this13, [[0, 6]]);
+					}));
+
+					function onClick() {
+						return _ref30.apply(this, arguments);
 					}
 
 					return onClick;
@@ -22082,6 +22084,65 @@ var TreeMarketBox = function (_React$Component7) {
 	}]);
 
 	return TreeMarketBox;
+}(_react2.default.Component);
+
+var _ref31 = _jsx('div', {
+	className: 'container'
+}, void 0, _jsx('div', {
+	className: 'row'
+}, void 0, _jsx('h5', {
+	className: 'margin-auto'
+}, void 0, 'Loading data from the blockchain...')));
+
+var Loading = function (_React$Component7) {
+	_inherits(Loading, _React$Component7);
+
+	function Loading() {
+		_classCallCheck(this, Loading);
+
+		return _possibleConstructorReturn(this, (Loading.__proto__ || Object.getPrototypeOf(Loading)).apply(this, arguments));
+	}
+
+	_createClass(Loading, [{
+		key: 'render',
+		value: function render() {
+			return _ref31;
+		}
+	}]);
+
+	return Loading;
+}(_react2.default.Component);
+
+var _ref15 = _jsx(Loading, {});
+
+var _ref32 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
+	className: 'container'
+}, void 0, _jsx('div', {
+	className: 'row'
+}, void 0, _jsx('h4', {}, void 0, 'You have to be connected to metamask to use this application'), _jsx('p', {}, void 0, 'Please connect to the mainnet on metamask with your account and reload the page'))), _jsx('div', {
+	className: 'spacer'
+}));
+
+var NotConnected = function (_React$Component8) {
+	_inherits(NotConnected, _React$Component8);
+
+	function NotConnected(props) {
+		_classCallCheck(this, NotConnected);
+
+		var _this15 = _possibleConstructorReturn(this, (NotConnected.__proto__ || Object.getPrototypeOf(NotConnected)).call(this, props));
+
+		if (web3.eth.accounts[0] !== undefined) _this15.props.redirectTo(_this15.props.history, '/');
+		return _this15;
+	}
+
+	_createClass(NotConnected, [{
+		key: 'render',
+		value: function render() {
+			return _ref32;
+		}
+	}]);
+
+	return NotConnected;
 }(_react2.default.Component);
 
 (0, _reactDom.render)(_jsx(App, {}), document.querySelector('#root'));
@@ -57554,7 +57615,7 @@ exports = module.exports = __webpack_require__(501)(false);
 
 
 // module
-exports.push([module.i, "button {\n  background-color: #4bdd4b;\n  border: 1px solid #0ca90c;\n  color: #fff;\n  border-radius: 10px;\n  padding: 10px;\n  margin: 1%;\n  box-sizing: border-box;\n  cursor: pointer;\n}\nbutton:hover {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n}\nbutton:active {\n  background-color: #0b860b;\n  border: 1px solid #0ca90c;\n}\nbutton:disabled {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  cursor: default;\n}\n.spacer {\n  height: 400px;\n  width: 100%;\n}\n.navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 20px;\n  box-shadow: 0 0 5px 0 #808080;\n  margin-left: 0.5%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 48%;\n}\n.full-button {\n  width: 98%;\n}\n.hidden {\n  display: none;\n}\n.word-wrap {\n  word-wrap: break-word;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
+exports.push([module.i, "button {\n  background-color: #4bdd4b;\n  border: 1px solid #0ca90c;\n  color: #fff;\n  border-radius: 10px;\n  padding: 10px;\n  margin: 1%;\n  box-sizing: border-box;\n  cursor: pointer;\n}\nbutton:hover {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n}\nbutton:active {\n  background-color: #0b860b;\n  border: 1px solid #0ca90c;\n}\nbutton:disabled {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  cursor: default;\n}\n.spacer {\n  height: 400px;\n  width: 100%;\n}\n.navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 0.5%;\n  box-shadow: 0 0 10px -2px #808080;\n  margin-left: 0.5%;\n  border-radius: 15px;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 48%;\n}\n.full-button {\n  width: 98%;\n}\n.hidden {\n  display: none;\n}\n.margin-auto {\n  margin: 40px auto;\n}\n.check-rewards-button {\n  margin-top: 1.5%;\n}\n.word-wrap {\n  word-wrap: break-word;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
 
 // exports
 
