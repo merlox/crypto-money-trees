@@ -21501,7 +21501,6 @@ var MyTrees = function (_React$Component2) {
 							case 23:
 								areTreesWatered = _context12.sent;
 
-								console.log(allTrees);
 								// Note the ( bracket instead of curly bracket {
 								allTrees = allTrees.map(function (detail, index) {
 									return _jsx(TreeBox, {
@@ -21528,7 +21527,7 @@ var MyTrees = function (_React$Component2) {
 								});
 								this.setState({ allTrees: allTrees, allTreesIds: allTreesIds, allRewards: allRewards, areTreesWatered: areTreesWatered, treesLoaded: true });
 
-							case 27:
+							case 26:
 							case 'end':
 								return _context12.stop();
 						}
@@ -21762,21 +21761,23 @@ var Market = function (_React$Component3) {
 		key: 'render',
 		value: function render() {
 			var loading = _ref20;
-
-			return _jsx('div', {}, void 0, _ref21, _jsx('div', {
+			var noTrees = _ref21;
+			var main = _jsx('div', {}, void 0, _jsx('div', {
 				className: 'container'
 			}, void 0, _jsx('div', {
 				className: this.state.treesLoaded ? "row" : "hidden"
 			}, void 0, _ref22, this.state.allTrees), _jsx('div', {
 				className: this.state.treesLoaded ? "hidden" : "row"
 			}, void 0, loading)), _ref23);
+
+			return _jsx('div', {}, void 0, _ref24, this.state.treesLoaded && this.state.allTrees.length === 0 ? noTrees : main);
 		}
 	}]);
 
 	return Market;
 }(_react2.default.Component);
 
-var _ref24 = _jsx('a', {
+var _ref25 = _jsx('a', {
 	className: 'navbar-brand',
 	href: '#'
 }, void 0, _jsx('img', {
@@ -21787,7 +21788,7 @@ var _ref24 = _jsx('a', {
 	alt: ''
 }), '\xA0 Crypto Trees');
 
-var _ref25 = _jsx('button', {
+var _ref26 = _jsx('button', {
 	className: 'navbar-toggler',
 	type: 'button',
 	'data-toggle': 'collapse',
@@ -21799,12 +21800,12 @@ var _ref25 = _jsx('button', {
 	className: 'navbar-toggler-icon'
 }));
 
-var _ref26 = _jsx(_reactRouterDom.Link, {
+var _ref27 = _jsx(_reactRouterDom.Link, {
 	to: '/',
 	className: 'nav-link'
 }, void 0, 'My Trees');
 
-var _ref27 = _jsx(_reactRouterDom.Link, {
+var _ref28 = _jsx(_reactRouterDom.Link, {
 	to: '/market',
 	className: 'nav-link'
 }, void 0, 'Market');
@@ -21823,34 +21824,34 @@ var NavBar = function (_React$Component4) {
 		value: function render() {
 			return _jsx('nav', {
 				className: 'navbar navbar-expand-lg navbar-light'
-			}, void 0, _ref24, _ref25, _jsx('div', {
+			}, void 0, _ref25, _ref26, _jsx('div', {
 				className: 'collapse navbar-collapse',
 				id: 'navbarText'
 			}, void 0, _jsx('ul', {
 				className: 'navbar-nav ml-auto'
 			}, void 0, _jsx('li', {
 				className: this.props.inMarket ? "nav-item" : "nav-item active"
-			}, void 0, _ref26), _jsx('li', {
+			}, void 0, _ref27), _jsx('li', {
 				className: this.props.inMarket ? "nav-item active" : "nav-item"
-			}, void 0, _ref27))));
+			}, void 0, _ref28))));
 		}
 	}]);
 
 	return NavBar;
 }(_react2.default.Component);
 
-var _ref21 = _jsx(NavBar, {
+var _ref24 = _jsx(NavBar, {
 	inMarket: 'true'
 });
 
 var _ref16 = _jsx(NavBar, {});
 
-var _ref28 = _jsx('img', {
+var _ref29 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
 
-var _ref31 = _jsx('p', {}, void 0, 'At what price do you want to sell your tree in ETH?');
+var _ref32 = _jsx('p', {}, void 0, 'At what price do you want to sell your tree in ETH?');
 
 var TreeBox = function (_React$Component5) {
 	_inherits(TreeBox, _React$Component5);
@@ -21879,7 +21880,7 @@ var TreeBox = function (_React$Component5) {
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref28, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', _jsx('span', {
+			}, void 0, _ref29, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', _jsx('span', {
 				className: 'color-green'
 			}, void 0, this.props.treePower)), _jsx('p', {}, void 0, _jsx('span', {
 				className: 'color-blue'
@@ -21889,7 +21890,7 @@ var TreeBox = function (_React$Component5) {
 				className: 'wide-button',
 				disabled: this.props.reward === 0 || this.state.rewardClicked || !this.state.rewardAvailableToday,
 				onClick: function () {
-					var _ref29 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
+					var _ref30 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
 						return regeneratorRuntime.wrap(function _callee15$(_context15) {
 							while (1) {
 								switch (_context15.prev = _context15.next) {
@@ -21916,7 +21917,7 @@ var TreeBox = function (_React$Component5) {
 					}));
 
 					function onClick() {
-						return _ref29.apply(this, arguments);
+						return _ref30.apply(this, arguments);
 					}
 
 					return onClick;
@@ -21925,7 +21926,7 @@ var TreeBox = function (_React$Component5) {
 				className: 'wide-button',
 				disabled: this.props.isWatered || this.state.waterClicked,
 				onClick: function () {
-					var _ref30 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16() {
+					var _ref31 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16() {
 						return regeneratorRuntime.wrap(function _callee16$(_context16) {
 							while (1) {
 								switch (_context16.prev = _context16.next) {
@@ -21952,7 +21953,7 @@ var TreeBox = function (_React$Component5) {
 					}));
 
 					function onClick() {
-						return _ref30.apply(this, arguments);
+						return _ref31.apply(this, arguments);
 					}
 
 					return onClick;
@@ -21970,7 +21971,7 @@ var TreeBox = function (_React$Component5) {
 				}
 			}, void 0, this.state.showCancelSell ? 'Are you sure?' : 'Cancel active sell'), _jsx('div', {
 				className: this.state.showSellConfirmation1 ? "full-button" : "hidden"
-			}, void 0, _ref31, _jsx('input', {
+			}, void 0, _ref32, _jsx('input', {
 				className: 'wide-button',
 				type: 'number',
 				defaultValue: this.state.amountToSell,
@@ -22002,7 +22003,7 @@ var TreeBox = function (_React$Component5) {
 			}, void 0, _jsx('button', {
 				className: 'wide-button',
 				onClick: function () {
-					var _ref32 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
+					var _ref33 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
 						return regeneratorRuntime.wrap(function _callee17$(_context17) {
 							while (1) {
 								switch (_context17.prev = _context17.next) {
@@ -22029,7 +22030,7 @@ var TreeBox = function (_React$Component5) {
 					}));
 
 					function onClick() {
-						return _ref32.apply(this, arguments);
+						return _ref33.apply(this, arguments);
 					}
 
 					return onClick;
@@ -22046,7 +22047,7 @@ var TreeBox = function (_React$Component5) {
 	return TreeBox;
 }(_react2.default.Component);
 
-var _ref33 = _jsx('img', {
+var _ref34 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
@@ -22072,7 +22073,7 @@ var TreeMarketBox = function (_React$Component6) {
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref33, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {
+			}, void 0, _ref34, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {
 				className: 'word-wrap'
 			}, void 0, 'Owner ', _jsx('span', {
 				className: 'color-yellow'
@@ -22084,7 +22085,7 @@ var TreeMarketBox = function (_React$Component6) {
 				className: 'full-button',
 				disabled: this.state.buyClicked,
 				onClick: function () {
-					var _ref34 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18() {
+					var _ref35 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18() {
 						return regeneratorRuntime.wrap(function _callee18$(_context18) {
 							while (1) {
 								switch (_context18.prev = _context18.next) {
@@ -22111,7 +22112,7 @@ var TreeMarketBox = function (_React$Component6) {
 					}));
 
 					function onClick() {
-						return _ref34.apply(this, arguments);
+						return _ref35.apply(this, arguments);
 					}
 
 					return onClick;
@@ -22149,6 +22150,10 @@ var Information = function (_React$Component7) {
 
 	return Information;
 }(_react2.default.Component);
+
+var _ref21 = _jsx(Information, {
+	message: 'There aren\'t trees on the market. Wait until new ones are generated or someone puts his trees on sale'
+});
 
 var _ref20 = _jsx(Information, {
 	message: 'Loading data from the blockchain...'

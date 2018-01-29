@@ -180,7 +180,6 @@ class MyTrees extends React.Component {
 		const allTreesIds = allTrees.map(tree => tree[0])
 		const allRewards = await this.props.checkRewardsMyTrees(allTreesIds)
 		const areTreesWatered = await this.props.checkTreesWatered(allTreesIds)
-		console.log(allTrees)
 		// Note the ( bracket instead of curly bracket {
 		allTrees = allTrees.map((detail, index) => (
 			<TreeBox
@@ -310,18 +309,22 @@ class Market extends React.Component {
 
 	render() {
 		const loading = <Information message="Loading data from the blockchain..." />
+		const noTrees = <Information message="There aren't trees on the market. Wait until new ones are generated or someone puts his trees on sale" />
+		const main = <div>
+			<div className="container">
+				<div className={this.state.treesLoaded ? "row" : "hidden"}>
+					<div className="top-spacer"></div>
+					{this.state.allTrees}
+				</div>
+				<div className={this.state.treesLoaded ? "hidden" : "row"}>{loading}</div>
+			</div>
+			<div className="spacer"></div>
+		</div>
 
 		return (
 			<div>
 				<NavBar inMarket="true" />
-				<div className="container">
-					<div className={this.state.treesLoaded ? "row" : "hidden"}>
-						<div className="top-spacer"></div>
-						{this.state.allTrees}
-					</div>
-					<div className={this.state.treesLoaded ? "hidden" : "row"}>{loading}</div>
-				</div>
-				<div className="spacer"></div>
+				{(this.state.treesLoaded && this.state.allTrees.length === 0) ? noTrees : main}
 			</div>
 		)
 	}
