@@ -13,7 +13,11 @@ const contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e'
 class App extends React.Component {
 	constructor () {
 		super()
-		window.web3 = new Web3(web3.currentProvider || new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
+		if(window.web3 === undefined) {
+			window.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
+		} else {
+			window.web3 = new Web3(window.web3.currentProvider)
+		}
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
 	}
@@ -130,10 +134,13 @@ class App extends React.Component {
 						/>
 					)} />
 					<Route path="/not-connected-metamask" render={(context) => (
-						<NotConnected
-							history={context.history}
-							redirectTo={(history, location) => this.redirectTo(history, location)}
-						/>
+						<div>
+							<NavBar />
+							<Information
+								message="You have to be connected to metamask to use this application"
+								subTitle="Please connect to the mainnet on metamask with your account and reload the page"
+							/>
+						</div>
 					)} />
 				</Switch>
 			</BrowserRouter>
@@ -173,6 +180,7 @@ class MyTrees extends React.Component {
 		const allTreesIds = allTrees.map(tree => tree[0])
 		const allRewards = await this.props.checkRewardsMyTrees(allTreesIds)
 		const areTreesWatered = await this.props.checkTreesWatered(allTreesIds)
+		console.log(allTrees)
 		// Note the ( bracket instead of curly bracket {
 		allTrees = allTrees.map((detail, index) => (
 			<TreeBox
@@ -211,8 +219,12 @@ class MyTrees extends React.Component {
 	}
 
 	render() {
-		return (
-			<div>
+		const information = <div>
+				<NavBar />
+				<Information message="You don't have any trees. Start by buying some on the Market" />
+			</div>
+		const loading = <Information message="Loading data from the blockchain..." />
+		const main = <div>
 				<NavBar />
 				<div className="container">
 					<div className={this.state.treesLoaded ? "row" : "hidden"}>
@@ -223,10 +235,15 @@ class MyTrees extends React.Component {
 						}}>{this.state.isCheckingRewards ? 'Loading...' : 'Check Rewards'}</button>
 					</div>
 					<div className="row">
-						{this.state.treesLoaded ? this.state.allTrees : <Loading />}
+						{this.state.treesLoaded ? this.state.allTrees : loading}
 					</div>
 				</div>
 				<div className="spacer"></div>
+			</div>
+
+		return (
+			<div>
+				{this.state.allTrees.length === 0 && this.state.treesLoaded ? information : main}
 			</div>
 		)
 	}
@@ -292,6 +309,8 @@ class Market extends React.Component {
 	}
 
 	render() {
+		const loading = <Information message="Loading data from the blockchain..." />
+
 		return (
 			<div>
 				<NavBar inMarket="true" />
@@ -300,7 +319,7 @@ class Market extends React.Component {
 						<div className="top-spacer"></div>
 						{this.state.allTrees}
 					</div>
-					<div className={this.state.treesLoaded ? "hidden" : "row"}><Loading /></div>
+					<div className={this.state.treesLoaded ? "hidden" : "row"}>{loading}</div>
 				</div>
 				<div className="spacer"></div>
 			</div>
@@ -344,6 +363,7 @@ class TreeBox extends React.Component {
 			rewardClicked: false,
 			waterClicked: false,
 			rewardAvailableToday: Math.floor(Date.now() / 1000) - 1517245959 > 60 * 60 * 24, // If a day has passed since the last reward picked or not
+			amountToSell: 0.5,
 		}
 	}
 
@@ -378,41 +398,43 @@ class TreeBox extends React.Component {
 
 				<div className={this.state.showSellConfirmation1 ? "full-button" : "hidden"}>
 					<p>At what price do you want to sell your tree in ETH?</p>
-					<input key={this.props.id} ref="amount-to-sell" className="wide-button" type="number" defaultValue="0.5"/>
+					<input key={this.props.id} className="wide-button" type="number" defaultValue={this.state.amountToSell} onChange={event => {
+						this.setState({amountToSell: event.target.value})
+					}}/>
 					<button className="wide-button" onClick={() => {
 						this.setState({showSellConfirmation2: true})
 					}}>Put Tree On Sale</button>
 				</div>
 
 				<div className={this.state.showSellConfirmation2 ? "full-button" : "hidden"}>
-					<p>Are you sure you want to put on sale this tree for {this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : ''} ETH now? {this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.1).toFixed(2) : ''} ETH will go to the treasury after the sale, you'll get {this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.9).toFixed(2) : ''} ETH.</p>
-						<button className="wide-button" onClick={() => {
-							this.setState({showSellConfirmation2: false})
-							this.setState({showSellConfirmation1: false})
-							this.props.sellTree(this.props.id, web3.toWei(this.refs['amount-to-sell'].value, 'ether'))
-						}}>Yes</button>
-						<button className="wide-button" onClick={() => {
-							this.setState({showSellConfirmation2: false})
-							this.setState({showSellConfirmation1: false})
-						}}>No</button>
-					</div>
+					<p>Are you sure you want to put on sale this tree for {this.state.amountToSell} ETH now? {(this.state.amountToSell * 0.1).toFixed(2)} ETH will go to the treasury after the sale, you'll get {(this.state.amountToSell * 0.9).toFixed(2)} ETH.</p>
+					<button className="wide-button" onClick={() => {
+						this.setState({showSellConfirmation2: false})
+						this.setState({showSellConfirmation1: false})
+						this.props.sellTree(this.props.id, web3.toWei(this.state.amountToSell, 'ether'))
+					}}>Yes</button>
+					<button className="wide-button" onClick={() => {
+						this.setState({showSellConfirmation2: false})
+						this.setState({showSellConfirmation1: false})
+					}}>No</button>
+				</div>
 
-						<div className={this.state.showCancelSell ? 'full-button' : 'hidden'}>
-							<button className="wide-button" onClick={async () => {
-								try {
-									await this.props.cancelSell(this.props.id)
-									this.setState({showCancelSell: false})
-								} catch(e) {}
-							}}>
-								Yes, cancel sell
-							</button>
-							<button className="wide-button" onClick={() => {
-								this.setState({showCancelSell: false})
-							}}>
-								No, keep tree on the market for sale
-							</button>
-						</div>
-					</div>
+				<div className={this.state.showCancelSell ? 'full-button' : 'hidden'}>
+					<button className="wide-button" onClick={async () => {
+						try {
+							await this.props.cancelSell(this.props.id)
+							this.setState({showCancelSell: false})
+						} catch(e) {}
+					}}>
+						Yes, cancel sell
+					</button>
+					<button className="wide-button" onClick={() => {
+						this.setState({showCancelSell: false})
+					}}>
+						No, keep tree on the market for sale
+					</button>
+				</div>
+			</div>
 		)
 	}
 }
@@ -443,36 +465,18 @@ class TreeMarketBox extends React.Component {
 	}
 }
 
-class Loading extends React.Component {
-	render () {
-		return (
-			<div className="container">
-				<div className="row">
-					<h5 className="margin-auto-and-top">Loading data from the blockchain...</h5>
-				</div>
-			</div>
-		)
-	}
-}
-
-class NotConnected extends React.Component {
+class Information extends React.Component {
 	constructor(props) {
 		super(props)
-		if(web3.eth.accounts[0] !== undefined) this.props.redirectTo(this.props.history, '/')
 	}
 
 	render() {
 		return (
-			<div>
-				<NavBar />
-				<div className="container">
-					<div className="top-spacer"></div>
-					<div className="row">
-						<h4 className="margin-auto-and-top">You have to be connected to metamask to use this application</h4>
-						<p className="margin-auto">Please connect to the mainnet on metamask with your account and reload the page</p>
-					</div>
+			<div className="container">
+				<div className="row">
+					<h5 className="margin-auto-and-top">{this.props.message}</h5>
+					<p className={this.props.subTitle === undefined ? "hidden" : "margin-auto"}>{this.props.subTitle}</p>
 				</div>
-				<div className="spacer"></div>
 			</div>
 		)
 	}

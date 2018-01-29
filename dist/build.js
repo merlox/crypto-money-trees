@@ -20961,7 +20961,11 @@ var App = function (_React$Component) {
 
 		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
-		window.web3 = new _web2.default(web3.currentProvider || new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
+		if (window.web3 === undefined) {
+			window.web3 = new _web2.default(new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
+		} else {
+			window.web3 = new _web2.default(window.web3.currentProvider);
+		}
 		window.contract = web3.eth.contract(_Trees.abi).at(contractAddress);
 		(0, _bluebird.promisifyAll)(contract);
 		return _this;
@@ -21394,12 +21398,7 @@ var App = function (_React$Component) {
 			}), _jsx(_reactRouterDom.Route, {
 				path: '/not-connected-metamask',
 				render: function render(context) {
-					return _jsx(NotConnected, {
-						history: context.history,
-						redirectTo: function redirectTo(history, location) {
-							return _this2.redirectTo(history, location);
-						}
-					});
+					return _ref12;
 				}
 			})));
 		}
@@ -21408,7 +21407,7 @@ var App = function (_React$Component) {
 	return App;
 }(_react2.default.Component);
 
-var _ref16 = _jsx('div', {
+var _ref18 = _jsx('div', {
 	className: 'spacer'
 });
 
@@ -21437,7 +21436,7 @@ var MyTrees = function (_React$Component2) {
 	_createClass(MyTrees, [{
 		key: 'init',
 		value: function () {
-			var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
+			var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
 				var _this4 = this;
 
 				var allTrees, ids, i, details, allTreesIds, allRewards, areTreesWatered;
@@ -21502,6 +21501,7 @@ var MyTrees = function (_React$Component2) {
 							case 23:
 								areTreesWatered = _context12.sent;
 
+								console.log(allTrees);
 								// Note the ( bracket instead of curly bracket {
 								allTrees = allTrees.map(function (detail, index) {
 									return _jsx(TreeBox, {
@@ -21528,7 +21528,7 @@ var MyTrees = function (_React$Component2) {
 								});
 								this.setState({ allTrees: allTrees, allTreesIds: allTreesIds, allRewards: allRewards, areTreesWatered: areTreesWatered, treesLoaded: true });
 
-							case 26:
+							case 27:
 							case 'end':
 								return _context12.stop();
 						}
@@ -21537,7 +21537,7 @@ var MyTrees = function (_React$Component2) {
 			}));
 
 			function init() {
-				return _ref12.apply(this, arguments);
+				return _ref13.apply(this, arguments);
 			}
 
 			return init;
@@ -21572,14 +21572,16 @@ var MyTrees = function (_React$Component2) {
 		value: function render() {
 			var _this6 = this;
 
-			return _jsx('div', {}, void 0, _ref13, _jsx('div', {
+			var information = _ref14;
+			var loading = _ref15;
+			var main = _jsx('div', {}, void 0, _ref16, _jsx('div', {
 				className: 'container'
 			}, void 0, _jsx('div', {
 				className: this.state.treesLoaded ? "row" : "hidden"
 			}, void 0, _jsx('button', {
 				className: 'check-rewards-button',
 				onClick: function () {
-					var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
+					var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
 						var rewards;
 						return regeneratorRuntime.wrap(function _callee13$(_context13) {
 							while (1) {
@@ -21603,25 +21605,27 @@ var MyTrees = function (_React$Component2) {
 					}));
 
 					function onClick() {
-						return _ref14.apply(this, arguments);
+						return _ref17.apply(this, arguments);
 					}
 
 					return onClick;
 				}()
 			}, void 0, this.state.isCheckingRewards ? 'Loading...' : 'Check Rewards')), _jsx('div', {
 				className: 'row'
-			}, void 0, this.state.treesLoaded ? this.state.allTrees : _ref15)), _ref16);
+			}, void 0, this.state.treesLoaded ? this.state.allTrees : loading)), _ref18);
+
+			return _jsx('div', {}, void 0, this.state.allTrees.length === 0 && this.state.treesLoaded ? information : main);
 		}
 	}]);
 
 	return MyTrees;
 }(_react2.default.Component);
 
-var _ref19 = _jsx('div', {
+var _ref22 = _jsx('div', {
 	className: 'top-spacer'
 });
 
-var _ref21 = _jsx('div', {
+var _ref23 = _jsx('div', {
 	className: 'spacer'
 });
 
@@ -21646,7 +21650,7 @@ var Market = function (_React$Component3) {
 	_createClass(Market, [{
 		key: 'init',
 		value: function () {
-			var _ref17 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
+			var _ref19 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee14() {
 				var _this8 = this;
 
 				var treesOnSale, myTrees, treesToShow, i, a, _allTrees, _i, details;
@@ -21749,7 +21753,7 @@ var Market = function (_React$Component3) {
 			}));
 
 			function init() {
-				return _ref17.apply(this, arguments);
+				return _ref19.apply(this, arguments);
 			}
 
 			return init;
@@ -21757,20 +21761,22 @@ var Market = function (_React$Component3) {
 	}, {
 		key: 'render',
 		value: function render() {
-			return _jsx('div', {}, void 0, _ref18, _jsx('div', {
+			var loading = _ref20;
+
+			return _jsx('div', {}, void 0, _ref21, _jsx('div', {
 				className: 'container'
 			}, void 0, _jsx('div', {
 				className: this.state.treesLoaded ? "row" : "hidden"
-			}, void 0, _ref19, this.state.allTrees), _jsx('div', {
+			}, void 0, _ref22, this.state.allTrees), _jsx('div', {
 				className: this.state.treesLoaded ? "hidden" : "row"
-			}, void 0, _ref20)), _ref21);
+			}, void 0, loading)), _ref23);
 		}
 	}]);
 
 	return Market;
 }(_react2.default.Component);
 
-var _ref22 = _jsx('a', {
+var _ref24 = _jsx('a', {
 	className: 'navbar-brand',
 	href: '#'
 }, void 0, _jsx('img', {
@@ -21781,7 +21787,7 @@ var _ref22 = _jsx('a', {
 	alt: ''
 }), '\xA0 Crypto Trees');
 
-var _ref23 = _jsx('button', {
+var _ref25 = _jsx('button', {
 	className: 'navbar-toggler',
 	type: 'button',
 	'data-toggle': 'collapse',
@@ -21793,12 +21799,12 @@ var _ref23 = _jsx('button', {
 	className: 'navbar-toggler-icon'
 }));
 
-var _ref24 = _jsx(_reactRouterDom.Link, {
+var _ref26 = _jsx(_reactRouterDom.Link, {
 	to: '/',
 	className: 'nav-link'
 }, void 0, 'My Trees');
 
-var _ref25 = _jsx(_reactRouterDom.Link, {
+var _ref27 = _jsx(_reactRouterDom.Link, {
 	to: '/market',
 	className: 'nav-link'
 }, void 0, 'Market');
@@ -21817,34 +21823,34 @@ var NavBar = function (_React$Component4) {
 		value: function render() {
 			return _jsx('nav', {
 				className: 'navbar navbar-expand-lg navbar-light'
-			}, void 0, _ref22, _ref23, _jsx('div', {
+			}, void 0, _ref24, _ref25, _jsx('div', {
 				className: 'collapse navbar-collapse',
 				id: 'navbarText'
 			}, void 0, _jsx('ul', {
 				className: 'navbar-nav ml-auto'
 			}, void 0, _jsx('li', {
 				className: this.props.inMarket ? "nav-item" : "nav-item active"
-			}, void 0, _ref24), _jsx('li', {
+			}, void 0, _ref26), _jsx('li', {
 				className: this.props.inMarket ? "nav-item active" : "nav-item"
-			}, void 0, _ref25))));
+			}, void 0, _ref27))));
 		}
 	}]);
 
 	return NavBar;
 }(_react2.default.Component);
 
-var _ref18 = _jsx(NavBar, {
+var _ref21 = _jsx(NavBar, {
 	inMarket: 'true'
 });
 
-var _ref13 = _jsx(NavBar, {});
+var _ref16 = _jsx(NavBar, {});
 
-var _ref26 = _jsx('img', {
+var _ref28 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
 
-var _ref29 = _jsx('p', {}, void 0, 'At what price do you want to sell your tree in ETH?');
+var _ref31 = _jsx('p', {}, void 0, 'At what price do you want to sell your tree in ETH?');
 
 var TreeBox = function (_React$Component5) {
 	_inherits(TreeBox, _React$Component5);
@@ -21860,7 +21866,8 @@ var TreeBox = function (_React$Component5) {
 			showCancelSell: false,
 			rewardClicked: false,
 			waterClicked: false,
-			rewardAvailableToday: Math.floor(Date.now() / 1000) - 1517245959 > 60 * 60 * 24 // If a day has passed since the last reward picked or not
+			rewardAvailableToday: Math.floor(Date.now() / 1000) - 1517245959 > 60 * 60 * 24, // If a day has passed since the last reward picked or not
+			amountToSell: 0.5
 		};
 		return _this10;
 	}
@@ -21872,7 +21879,7 @@ var TreeBox = function (_React$Component5) {
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref26, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', _jsx('span', {
+			}, void 0, _ref28, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {}, void 0, 'Tree power ', _jsx('span', {
 				className: 'color-green'
 			}, void 0, this.props.treePower)), _jsx('p', {}, void 0, _jsx('span', {
 				className: 'color-blue'
@@ -21882,7 +21889,7 @@ var TreeBox = function (_React$Component5) {
 				className: 'wide-button',
 				disabled: this.props.reward === 0 || this.state.rewardClicked || !this.state.rewardAvailableToday,
 				onClick: function () {
-					var _ref27 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
+					var _ref29 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee15() {
 						return regeneratorRuntime.wrap(function _callee15$(_context15) {
 							while (1) {
 								switch (_context15.prev = _context15.next) {
@@ -21909,7 +21916,7 @@ var TreeBox = function (_React$Component5) {
 					}));
 
 					function onClick() {
-						return _ref27.apply(this, arguments);
+						return _ref29.apply(this, arguments);
 					}
 
 					return onClick;
@@ -21918,7 +21925,7 @@ var TreeBox = function (_React$Component5) {
 				className: 'wide-button',
 				disabled: this.props.isWatered || this.state.waterClicked,
 				onClick: function () {
-					var _ref28 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16() {
+					var _ref30 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee16() {
 						return regeneratorRuntime.wrap(function _callee16$(_context16) {
 							while (1) {
 								switch (_context16.prev = _context16.next) {
@@ -21945,7 +21952,7 @@ var TreeBox = function (_React$Component5) {
 					}));
 
 					function onClick() {
-						return _ref28.apply(this, arguments);
+						return _ref30.apply(this, arguments);
 					}
 
 					return onClick;
@@ -21963,19 +21970,26 @@ var TreeBox = function (_React$Component5) {
 				}
 			}, void 0, this.state.showCancelSell ? 'Are you sure?' : 'Cancel active sell'), _jsx('div', {
 				className: this.state.showSellConfirmation1 ? "full-button" : "hidden"
-			}, void 0, _ref29, _react2.default.createElement('input', { key: this.props.id, ref: 'amount-to-sell', className: 'wide-button', type: 'number', defaultValue: '0.5' }), _jsx('button', {
+			}, void 0, _ref31, _jsx('input', {
+				className: 'wide-button',
+				type: 'number',
+				defaultValue: this.state.amountToSell,
+				onChange: function onChange(event) {
+					_this11.setState({ amountToSell: event.target.value });
+				}
+			}, this.props.id), _jsx('button', {
 				className: 'wide-button',
 				onClick: function onClick() {
 					_this11.setState({ showSellConfirmation2: true });
 				}
 			}, void 0, 'Put Tree On Sale')), _jsx('div', {
 				className: this.state.showSellConfirmation2 ? "full-button" : "hidden"
-			}, void 0, _jsx('p', {}, void 0, 'Are you sure you want to put on sale this tree for ', this.refs['amount-to-sell'] ? this.refs['amount-to-sell'].value : '', ' ETH now? ', this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.1).toFixed(2) : '', ' ETH will go to the treasury after the sale, you\'ll get ', this.refs['amount-to-sell'] ? (this.refs['amount-to-sell'].value * 0.9).toFixed(2) : '', ' ETH.'), _jsx('button', {
+			}, void 0, _jsx('p', {}, void 0, 'Are you sure you want to put on sale this tree for ', this.state.amountToSell, ' ETH now? ', (this.state.amountToSell * 0.1).toFixed(2), ' ETH will go to the treasury after the sale, you\'ll get ', (this.state.amountToSell * 0.9).toFixed(2), ' ETH.'), _jsx('button', {
 				className: 'wide-button',
 				onClick: function onClick() {
 					_this11.setState({ showSellConfirmation2: false });
 					_this11.setState({ showSellConfirmation1: false });
-					_this11.props.sellTree(_this11.props.id, web3.toWei(_this11.refs['amount-to-sell'].value, 'ether'));
+					_this11.props.sellTree(_this11.props.id, web3.toWei(_this11.state.amountToSell, 'ether'));
 				}
 			}, void 0, 'Yes'), _jsx('button', {
 				className: 'wide-button',
@@ -21988,7 +22002,7 @@ var TreeBox = function (_React$Component5) {
 			}, void 0, _jsx('button', {
 				className: 'wide-button',
 				onClick: function () {
-					var _ref30 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
+					var _ref32 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee17() {
 						return regeneratorRuntime.wrap(function _callee17$(_context17) {
 							while (1) {
 								switch (_context17.prev = _context17.next) {
@@ -22015,7 +22029,7 @@ var TreeBox = function (_React$Component5) {
 					}));
 
 					function onClick() {
-						return _ref30.apply(this, arguments);
+						return _ref32.apply(this, arguments);
 					}
 
 					return onClick;
@@ -22032,7 +22046,7 @@ var TreeBox = function (_React$Component5) {
 	return TreeBox;
 }(_react2.default.Component);
 
-var _ref31 = _jsx('img', {
+var _ref33 = _jsx('img', {
 	src: 'imgs/tree.png',
 	className: 'tree-image'
 });
@@ -22058,7 +22072,7 @@ var TreeMarketBox = function (_React$Component6) {
 
 			return _jsx('div', {
 				className: 'col-6 col-sm-4 tree-container'
-			}, void 0, _ref31, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {
+			}, void 0, _ref33, _jsx('h4', {}, void 0, 'Id ', this.props.id), _jsx('p', {
 				className: 'word-wrap'
 			}, void 0, 'Owner ', _jsx('span', {
 				className: 'color-yellow'
@@ -22070,7 +22084,7 @@ var TreeMarketBox = function (_React$Component6) {
 				className: 'full-button',
 				disabled: this.state.buyClicked,
 				onClick: function () {
-					var _ref32 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18() {
+					var _ref34 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee18() {
 						return regeneratorRuntime.wrap(function _callee18$(_context18) {
 							while (1) {
 								switch (_context18.prev = _context18.next) {
@@ -22097,7 +22111,7 @@ var TreeMarketBox = function (_React$Component6) {
 					}));
 
 					function onClick() {
-						return _ref32.apply(this, arguments);
+						return _ref34.apply(this, arguments);
 					}
 
 					return onClick;
@@ -22109,72 +22123,49 @@ var TreeMarketBox = function (_React$Component6) {
 	return TreeMarketBox;
 }(_react2.default.Component);
 
-var _ref33 = _jsx('div', {
-	className: 'container'
-}, void 0, _jsx('div', {
-	className: 'row'
-}, void 0, _jsx('h5', {
-	className: 'margin-auto-and-top'
-}, void 0, 'Loading data from the blockchain...')));
+var Information = function (_React$Component7) {
+	_inherits(Information, _React$Component7);
 
-var Loading = function (_React$Component7) {
-	_inherits(Loading, _React$Component7);
+	function Information(props) {
+		_classCallCheck(this, Information);
 
-	function Loading() {
-		_classCallCheck(this, Loading);
-
-		return _possibleConstructorReturn(this, (Loading.__proto__ || Object.getPrototypeOf(Loading)).apply(this, arguments));
+		return _possibleConstructorReturn(this, (Information.__proto__ || Object.getPrototypeOf(Information)).call(this, props));
 	}
 
-	_createClass(Loading, [{
+	_createClass(Information, [{
 		key: 'render',
 		value: function render() {
-			return _ref33;
+			return _jsx('div', {
+				className: 'container'
+			}, void 0, _jsx('div', {
+				className: 'row'
+			}, void 0, _jsx('h5', {
+				className: 'margin-auto-and-top'
+			}, void 0, this.props.message), _jsx('p', {
+				className: this.props.subTitle === undefined ? "hidden" : "margin-auto"
+			}, void 0, this.props.subTitle)));
 		}
 	}]);
 
-	return Loading;
+	return Information;
 }(_react2.default.Component);
 
-var _ref20 = _jsx(Loading, {});
+var _ref20 = _jsx(Information, {
+	message: 'Loading data from the blockchain...'
+});
 
-var _ref15 = _jsx(Loading, {});
+var _ref15 = _jsx(Information, {
+	message: 'Loading data from the blockchain...'
+});
 
-var _ref34 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
-	className: 'container'
-}, void 0, _jsx('div', {
-	className: 'top-spacer'
-}), _jsx('div', {
-	className: 'row'
-}, void 0, _jsx('h4', {
-	className: 'margin-auto-and-top'
-}, void 0, 'You have to be connected to metamask to use this application'), _jsx('p', {
-	className: 'margin-auto'
-}, void 0, 'Please connect to the mainnet on metamask with your account and reload the page'))), _jsx('div', {
-	className: 'spacer'
+var _ref14 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx(Information, {
+	message: 'You don\'t have any trees. Start by buying some on the Market'
 }));
 
-var NotConnected = function (_React$Component8) {
-	_inherits(NotConnected, _React$Component8);
-
-	function NotConnected(props) {
-		_classCallCheck(this, NotConnected);
-
-		var _this15 = _possibleConstructorReturn(this, (NotConnected.__proto__ || Object.getPrototypeOf(NotConnected)).call(this, props));
-
-		if (web3.eth.accounts[0] !== undefined) _this15.props.redirectTo(_this15.props.history, '/');
-		return _this15;
-	}
-
-	_createClass(NotConnected, [{
-		key: 'render',
-		value: function render() {
-			return _ref34;
-		}
-	}]);
-
-	return NotConnected;
-}(_react2.default.Component);
+var _ref12 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx(Information, {
+	message: 'You have to be connected to metamask to use this application',
+	subTitle: 'Please connect to the mainnet on metamask with your account and reload the page'
+}));
 
 (0, _reactDom.render)(_jsx(App, {}), document.querySelector('#root'));
 
@@ -57646,7 +57637,7 @@ exports = module.exports = __webpack_require__(501)(false);
 
 
 // module
-exports.push([module.i, "* {\n  word-wrap: break-word;\n  box-sizing: border-box;\n}\nbutton {\n  background-color: #4bdd4b;\n  border: 1px solid #0ca90c;\n  color: #fff;\n  border-radius: 10px;\n  padding: 10px;\n  margin: 1%;\n  box-sizing: border-box;\n  cursor: pointer;\n}\nbutton:hover {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n}\nbutton:active {\n  background-color: #0b860b;\n  border: 1px solid #0ca90c;\n}\nbutton:disabled {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  cursor: default;\n}\n.spacer {\n  height: 200px;\n  width: 100%;\n}\n.top-spacer {\n  height: 20px;\n  width: 100%;\n}\n.navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 0.5%;\n  box-shadow: 0 0 10px -2px #808080;\n  margin-left: 0.5%;\n  border-radius: 15px;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 48%;\n}\n.full-button {\n  width: 98%;\n}\n.hidden {\n  display: none;\n}\n.margin-auto-and-top {\n  margin: 40px auto;\n}\n.margin-auto {\n  margin: auto;\n}\n.check-rewards-button {\n  margin-top: 1.5%;\n}\n.word-wrap {\n  word-wrap: break-word;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n.color-green {\n  color: #04c80d;\n}\n.color-blue {\n  color: #00f;\n}\n.color-red {\n  color: #e9310e;\n}\n.color-yellow {\n  color: #ff9d00;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
+exports.push([module.i, "* {\n  word-wrap: break-word;\n  box-sizing: border-box;\n}\nbutton {\n  background-color: #4bdd4b;\n  border: 1px solid #0ca90c;\n  color: #fff;\n  border-radius: 10px;\n  padding: 10px;\n  margin: 1%;\n  box-sizing: border-box;\n  cursor: pointer;\n}\nbutton:hover {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n}\nbutton:active {\n  background-color: #0b860b;\n  border: 1px solid #0ca90c;\n}\nbutton:disabled {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  cursor: default;\n}\n.spacer {\n  height: 200px;\n  width: 100%;\n}\n.top-spacer {\n  height: 20px;\n  width: 100%;\n}\n.navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 0.5%;\n  box-shadow: 0 0 10px -2px #808080;\n  margin-left: 0.5%;\n  border-radius: 15px;\n  height: 100%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 48%;\n}\n.full-button {\n  width: 98%;\n}\n.hidden {\n  display: none;\n}\n.margin-auto-and-top {\n  margin: 40px auto 5px auto;\n}\n.margin-auto {\n  margin: auto;\n}\n.check-rewards-button {\n  margin-top: 1.5%;\n}\n.word-wrap {\n  word-wrap: break-word;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n.color-green {\n  color: #04c80d;\n}\n.color-blue {\n  color: #00f;\n}\n.color-red {\n  color: #e9310e;\n}\n.color-yellow {\n  color: #ff9d00;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
 
 // exports
 
