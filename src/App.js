@@ -6,7 +6,9 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-const contractAddress = '0x03a203119e9743233d4133108e860770bc63fb9f'
+// 1 day -> 0xa5840d0cbb209ecdaf0fef7ad1a28e94554917dc ropsten
+// 1 second -> 0xfd2c5fe510b63872ea2d62908cd9cb913250198e ropsten
+const contractAddress = '0xa5840d0cbb209ecdaf0fef7ad1a28e94554917dc'
 
 class App extends React.Component {
 	constructor () {
@@ -356,7 +358,7 @@ class TreeBox extends React.Component {
 						await this.props.pickReward(this.props.id)
 						this.setState({rewardClicked: true})
 					} catch (e) {}
-				}}>{this.props.reward > 0 ? `Pick ${this.props.reward} Reward` : 'Reward Not Available'}</button>
+				}}>{this.props.reward > 0 ? `Pick ${web3.fromWei(this.props.reward, 'ether')} Reward` : 'Reward Not Available'}</button>
 				<button className="wide-button" disabled={(this.props.isWatered || this.state.waterClicked)} onClick={async () => {
 					try {
 						await this.props.waterTree(this.props.id)
@@ -444,7 +446,7 @@ class Loading extends React.Component {
 		return (
 			<div className="container">
 				<div className="row">
-					<h5 className="margin-auto">Loading data from the blockchain...</h5>
+					<h5 className="margin-auto-and-top">Loading data from the blockchain...</h5>
 				</div>
 			</div>
 		)
@@ -462,9 +464,10 @@ class NotConnected extends React.Component {
 			<div>
 				<NavBar />
 				<div className="container">
+					<div className="top-spacer"></div>
 					<div className="row">
-						<h4>You have to be connected to metamask to use this application</h4>
-						<p>Please connect to the mainnet on metamask with your account and reload the page</p>
+						<h4 className="margin-auto-and-top">You have to be connected to metamask to use this application</h4>
+						<p className="margin-auto">Please connect to the mainnet on metamask with your account and reload the page</p>
 					</div>
 				</div>
 				<div className="spacer"></div>

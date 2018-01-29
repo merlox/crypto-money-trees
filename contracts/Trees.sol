@@ -166,7 +166,8 @@ contract Trees is Admin {
   function pickReward(uint256 _treeId) public {
     require(msg.sender == treeDetails[_treeId].owner);
     require(now - treeDetails[_treeId].lastRewardPickedDate > timeBetweenRewards);
-    uint256[] memory formatedId;
+
+    uint256[] memory formatedId = new uint256[](1);
     formatedId[0] = _treeId;
     uint256[] memory rewards = checkRewards(formatedId);
     treeDetails[_treeId].lastRewardPickedDate = now;
