@@ -71,7 +71,7 @@ contract Trees is Admin {
         uint256 newTreeId = lastTreeId + 1;
         lastTreeId += 1;
         uint256[] memory emptyArray;
-        Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, defaultSalePrice, 0, emptyArray, true, now);
+        Tree memory newTree = Tree(newTreeId, defaultTreesOwner, now, defaultTreesPower, defaultSalePrice, 0, emptyArray, true, 0);
 
         // Update the treeBalances and treeOwner mappings
         // We add the tree to the same array position to find it easier

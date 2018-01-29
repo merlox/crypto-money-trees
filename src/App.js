@@ -6,9 +6,9 @@ import { promisifyAll } from 'bluebird'
 import { abi as contractAbi } from './../build/contracts/Trees.json'
 import './index.styl'
 
-// 1 day -> 0xa5840d0cbb209ecdaf0fef7ad1a28e94554917dc ropsten
-// 1 second -> 0xfd2c5fe510b63872ea2d62908cd9cb913250198e ropsten
-const contractAddress = '0xa5840d0cbb209ecdaf0fef7ad1a28e94554917dc'
+// 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
+// 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
+const contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e'
 
 class App extends React.Component {
 	constructor () {
@@ -185,6 +185,7 @@ class MyTrees extends React.Component {
 				waterTree={id => this.props.waterTree(id)}
 				cancelSell={id => this.props.cancelSell(id)}
 				pickReward={id => this.props.pickReward(id)}
+				lastRewardPickedDate={detail[7]}
 				reward={allRewards[index]}
 				isWatered={areTreesWatered[index]}
 			/>
@@ -342,6 +343,7 @@ class TreeBox extends React.Component {
 			showCancelSell: false,
 			rewardClicked: false,
 			waterClicked: false,
+			rewardAvailableToday: Math.floor(Date.now() / 1000) - 1517245959 > 60 * 60 * 24, // If a day has passed since the last reward picked or not
 		}
 	}
 
@@ -353,12 +355,12 @@ class TreeBox extends React.Component {
 				<p>Tree power <span className="color-green">{this.props.treePower}</span></p>
 				<p><span className="color-blue">{this.props.daysPassed}</span> days passed after creation</p>
 				<p>On sale <span className="color-red">{this.props.onSale.toString()}</span></p>
-				<button className="wide-button" disabled={(this.props.reward === 0 || this.state.rewardClicked)} onClick={async () => {
+				<button className="wide-button" disabled={(this.props.reward === 0 || this.state.rewardClicked || !this.state.rewardAvailableToday)} onClick={async () => {
 					try {
 						await this.props.pickReward(this.props.id)
 						this.setState({rewardClicked: true})
 					} catch (e) {}
-				}}>{this.props.reward > 0 ? `Pick ${web3.fromWei(this.props.reward, 'ether')} Reward` : 'Reward Not Available'}</button>
+				}}>{(this.props.reward > 0 && this.state.rewardAvailableToday) ? `Pick ${web3.fromWei(this.props.reward, 'ether')} Reward` : 'Reward Available Tomorrow'}</button>
 				<button className="wide-button" disabled={(this.props.isWatered || this.state.waterClicked)} onClick={async () => {
 					try {
 						await this.props.waterTree(this.props.id)
