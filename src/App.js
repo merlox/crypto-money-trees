@@ -8,7 +8,7 @@ import './index.styl'
 
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
-const contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e'
+const contractAddress = '0xa783ce9bcf718f8c6c22f7585c54c30c406588f7'
 
 class App extends React.Component {
 	constructor () {
@@ -220,7 +220,17 @@ class MyTrees extends React.Component {
 	render() {
 		const information = <div>
 				<NavBar />
-				<Information message="You don't have any trees. Start by buying some on the Market" />
+				<div className="container">
+					<div className="row">
+						<Information message="You don't have any trees. Start by buying some on the Market and wait for the transaction to be processed by the miners" />
+					</div>
+					<div className="row">
+						<button className="margin-auto-and-top" onClick={() => {
+							window.location = '/'
+						}}>Reload</button>
+						<Link to="/market" className="button-like margin-auto-and-top">Go To Market</Link>
+					</div>
+				</div>
 			</div>
 		const loading = <Information message="Loading data from the blockchain..." />
 		const main = <div>
@@ -232,6 +242,9 @@ class MyTrees extends React.Component {
 							const rewards = await this.props.checkRewardsMyTrees(this.state.allTreesIds)
 							this.setState({isCheckingRewards: false, allRewards: rewards})
 						}}>{this.state.isCheckingRewards ? 'Loading...' : 'Check Rewards'}</button>
+						<button className="check-rewards-button" onClick={() => {
+							window.location = '/'
+						}}>Reload</button>
 					</div>
 					<div className="row">
 						{this.state.treesLoaded ? this.state.allTrees : loading}
@@ -367,13 +380,28 @@ class TreeBox extends React.Component {
 			waterClicked: false,
 			rewardAvailableToday: Math.floor(Date.now() / 1000) - 1517245959 > 60 * 60 * 24, // If a day has passed since the last reward picked or not
 			amountToSell: 0.5,
+			image: this.getImageTreePower(this.props.treePower),
+		}
+	}
+
+	getImageTreePower(treePower) {
+		if(treePower < 10) {
+			return 'imgs/1.jpg'
+		} else if(treePower < 25) {
+			return 'imgs/2.jpg'
+		} else if(treePower < 50) {
+			return 'imgs/3.jpg'
+		} else if(treePower < 100) {
+			return 'imgs/4.jpg'
+		} else {
+			return 'imgs/5.jpg'
 		}
 	}
 
 	render() {
 		return (
 			<div className="col-6 col-sm-4 tree-container">
-				<img src="imgs/tree.png" className="tree-image"/>
+				<img src={this.state.image} className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
 				<p>Tree power <span className="color-green">{this.props.treePower}</span></p>
 				<p><span className="color-blue">{this.props.daysPassed}</span> days passed after creation</p>
@@ -446,13 +474,30 @@ class TreeMarketBox extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			buyClicked: false
+			buyClicked: false,
+			image: this.getImageTreePower(this.props.treePower),
 		}
 	}
+
+	getImageTreePower(treePower) {
+		console.log(treePower < 10)
+		if(treePower < 10) {
+			return 'imgs/1.jpg'
+		} else if(treePower < 25) {
+			return 'imgs/2.jpg'
+		} else if(treePower < 50) {
+			return 'imgs/3.jpg'
+		} else if(treePower < 100) {
+			return 'imgs/4.jpg'
+		} else {
+			return 'imgs/5.jpg'
+		}
+	}
+
 	render() {
 		return (
 			<div className="col-6 col-sm-4 tree-container">
-				<img src="imgs/tree.png" className="tree-image"/>
+				<img src={this.state.image} className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
 				<p className="word-wrap">Owner <span className="color-yellow">{this.props.owner}</span></p>
 				<p>Tree power <span className="color-green">{this.props.treePower}</span></p>
