@@ -109,7 +109,10 @@ class App extends React.Component {
 		return (
 			<BrowserRouter>
 				<Switch>
-					<Route path="/" exact render={(context) => (
+					<Route path="/" exact render={() => (
+						<InitialPage />
+					)} />
+					<Route path="/my-trees" render={(context) => (
 						<MyTrees
 							history={context.history}
 							redirectTo={(history, location) => this.redirectTo(history, location)}
@@ -140,10 +143,47 @@ class App extends React.Component {
 								message="You have to be connected to metamask to use this application"
 								subTitle="Please connect to the mainnet on metamask with your account and reload the page"
 							/>
+							<button className="margin-auto-and-top" onClick={() => {
+								window.location = '/my-trees'
+							}}>Reload</button>
 						</div>
 					)} />
 				</Switch>
 			</BrowserRouter>
+		)
+	}
+}
+
+class InitialPage extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+	render() {
+		return (
+			<div>
+				<NavBar />
+				<div className="container">
+					<div className="row">
+						<h1>Who said money doesn't grow on trees?</h1>
+						<h2>Crypto Trees</h2>
+						<p><i>Where trees actually generate crypto money</i></p>
+						<button>Start Planting</button>
+					</div>
+					<div className="row">
+						<h2>Wait, how does this work?</h2>
+						<ul>
+							<li>1. Buy a tree in the market</li>
+							<li>2. Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards</li>
+							<li>3. Keep growing your tree and sell it whenever you want</li>
+						</ul>
+					</div>
+					<div className="row">
+						<h2>How is this possible?</h2>
+						<p>Each time someone buys a tree, a portion of the payment goes to the treasury where the a percentage is distributed daily accross all the tree owners. The more tree power your tree has, the bigger portion of rewards you get.</p>
+					</div>
+				</div>
+			</div>
 		)
 	}
 }
@@ -226,7 +266,7 @@ class MyTrees extends React.Component {
 					</div>
 					<div className="row">
 						<button className="margin-auto-and-top" onClick={() => {
-							window.location = '/'
+							window.location = '/my-trees'
 						}}>Reload</button>
 						<Link to="/market" className="button-like margin-auto-and-top">Go To Market</Link>
 					</div>
@@ -243,7 +283,7 @@ class MyTrees extends React.Component {
 							this.setState({isCheckingRewards: false, allRewards: rewards})
 						}}>{this.state.isCheckingRewards ? 'Loading...' : 'Check Rewards'}</button>
 						<button className="check-rewards-button" onClick={() => {
-							window.location = '/'
+							window.location = '/my-trees'
 						}}>Reload</button>
 					</div>
 					<div className="row">
@@ -357,7 +397,7 @@ class NavBar extends React.Component {
 				<div className="collapse navbar-collapse" id="navbarText">
 					<ul className="navbar-nav ml-auto">
 						<li className={this.props.inMarket ? "nav-item" : "nav-item active"}>
-							<Link to="/" className="nav-link">My Trees</Link>
+							<Link to="/my-trees" className="nav-link">My Trees</Link>
 						</li>
 						<li className={this.props.inMarket ? "nav-item active" : "nav-item"}>
 							<Link to="/market" className="nav-link">Market</Link>
