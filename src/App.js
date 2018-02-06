@@ -9,7 +9,7 @@ import './index.styl'
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
 // 1 day mainnet -> 0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793
-const contractAddress = '0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793'
+const contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e'
 
 class App extends React.Component {
 	constructor () {
@@ -144,9 +144,13 @@ class App extends React.Component {
 								message="You have to be connected to metamask to use this application"
 								subTitle="Please connect to the mainnet on metamask with your account and reload the page"
 							/>
-							<button className="margin-auto-and-top" onClick={() => {
-								window.location = '/my-trees'
-							}}>Reload</button>
+							<div className="container">
+								<div className="row">
+									<button className="margin-auto-and-top" onClick={() => {
+										window.location = '/my-trees'
+									}}>Reload</button>
+								</div>
+							</div>
 						</div>
 					)} />
 				</Switch>

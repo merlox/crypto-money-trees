@@ -20952,7 +20952,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
 // 1 day mainnet -> 0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793
-var contractAddress = '0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793';
+var contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e';
 
 var App = function (_React$Component) {
 	_inherits(App, _React$Component);
@@ -21404,12 +21404,16 @@ var App = function (_React$Component) {
 			}), _jsx(_reactRouterDom.Route, {
 				path: '/not-connected-metamask',
 				render: function render(context) {
-					return _jsx('div', {}, void 0, _ref13, _ref14, _jsx('button', {
+					return _jsx('div', {}, void 0, _ref13, _ref14, _jsx('div', {
+						className: 'container'
+					}, void 0, _jsx('div', {
+						className: 'row'
+					}, void 0, _jsx('button', {
 						className: 'margin-auto-and-top',
 						onClick: function onClick() {
 							window.location = '/my-trees';
 						}
-					}, void 0, 'Reload'));
+					}, void 0, 'Reload'))));
 				}
 			})));
 		}
