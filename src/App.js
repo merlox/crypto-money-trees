@@ -176,7 +176,7 @@ class InitialPage extends React.Component {
 								<h3>Crypto Trees</h3>
 							</div>
 							<div className="col-12">
-								<p><i>Where trees actually generate crypto money</i></p>
+								<p><i>Where trees actually generate crypto money ETH daily</i></p>
 							</div>
 							<div className="top-spacer"></div>
 							<div className="col-12">
@@ -195,7 +195,7 @@ class InitialPage extends React.Component {
 							<ol className="row">
 								<li className="col-4">Buy a tree in the market</li>
 								<li className="col-4">Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards</li>
-								<li className="col-4">Keep growing your tree and sell it whenever you want</li>
+								<li className="col-4">Keep making real ETH by just having trees and sell them for a profit whenever you want</li>
 							</ol>
 						</div>
 					</div>
@@ -372,7 +372,7 @@ class Market extends React.Component {
 			allTrees = allTrees.map(detail => (
 				<TreeMarketBox
 					id={detail[0]}
-					owner={detail[1]}
+					owner={detail[1] === '0x7461ccf1fd55c069ce13e07d163c65c78c8b48d1' ? 'The creator' : detail[1]}
 					daysPassed={Math.floor((Math.floor(Date.now() / 1000) - detail[2]) / 86400)} // How many days passed after the creation of this tree
 					treePower={detail[3]}
 					buyTree={(id, owner, price) => this.props.buyTree(id, owner, detail[4])}

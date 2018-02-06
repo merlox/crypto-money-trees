@@ -21783,7 +21783,7 @@ var Market = function (_React$Component4) {
 								_allTrees = _allTrees.map(function (detail) {
 									return _jsx(TreeMarketBox, {
 										id: detail[0],
-										owner: detail[1],
+										owner: detail[1] === '0x7461ccf1fd55c069ce13e07d163c65c78c8b48d1' ? 'The creator' : detail[1],
 										daysPassed: Math.floor((Math.floor(Date.now() / 1000) - detail[2]) / 86400),
 										treePower: detail[3],
 										buyTree: function buyTree(id, owner, price) {
@@ -21919,7 +21919,7 @@ var _ref15 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
 	className: 'col-12'
 }, void 0, _jsx('h3', {}, void 0, 'Crypto Trees')), _jsx('div', {
 	className: 'col-12'
-}, void 0, _jsx('p', {}, void 0, _jsx('i', {}, void 0, 'Where trees actually generate crypto money'))), _jsx('div', {
+}, void 0, _jsx('p', {}, void 0, _jsx('i', {}, void 0, 'Where trees actually generate crypto money ETH daily'))), _jsx('div', {
 	className: 'top-spacer'
 }), _jsx('div', {
 	className: 'col-12'
@@ -21944,7 +21944,7 @@ var _ref15 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
 	className: 'col-4'
 }, void 0, 'Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards'), _jsx('li', {
 	className: 'col-4'
-}, void 0, 'Keep growing your tree and sell it whenever you want'))))), _jsx('div', {
+}, void 0, 'Keep making real ETH by just having trees and sell them for a profit whenever you want'))))), _jsx('div', {
 	className: 'container initial-half-container'
 }, void 0, _jsx('div', {
 	className: 'spacer-20'
