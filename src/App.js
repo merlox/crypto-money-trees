@@ -163,21 +163,44 @@ class InitialPage extends React.Component {
 		return (
 			<div>
 				<NavBar />
-				<div className="container">
-					<div className="row">
-						<h1>Who said money doesn't grow on trees?</h1>
-						<h2>Crypto Trees</h2>
-						<p><i>Where trees actually generate crypto money</i></p>
-						<button>Start Planting</button>
+				<div className="background-trees">
+					<div className="container initial-top-container">
+						<div className="row">
+							<div className="spacer-30"></div>
+							<div className="col-12">
+								<h1>Who said money doesn't grow on trees?</h1>
+							</div>
+							<div className="top-spacer"></div>
+							<div className="col-12">
+								<h3>Crypto Trees</h3>
+							</div>
+							<div className="col-12">
+								<p><i>Where trees actually generate crypto money</i></p>
+							</div>
+							<div className="top-spacer"></div>
+							<div className="col-12">
+								<Link className="button-like no-margin" to="/market">Start Planting</Link>
+							</div>
+						</div>
 					</div>
-					<div className="row">
-						<h2>Wait, how does this work?</h2>
-						<ul>
-							<li>1. Buy a tree in the market</li>
-							<li>2. Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards</li>
-							<li>3. Keep growing your tree and sell it whenever you want</li>
-						</ul>
+				</div>
+				<div className="background-grey">
+					<div className="container initial-half-container">
+						<div className="spacer-20"></div>
+						<div className="row">
+							<h2>Wait, how does this work?</h2>
+						</div>
+						<div className="row">
+							<ol className="row">
+								<li className="col-4">Buy a tree in the market</li>
+								<li className="col-4">Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards</li>
+								<li className="col-4">Keep growing your tree and sell it whenever you want</li>
+							</ol>
+						</div>
 					</div>
+				</div>
+				<div className="container initial-half-container">
+					<div className="spacer-20"></div>
 					<div className="row">
 						<h2>How is this possible?</h2>
 						<p>Each time someone buys a tree, a portion of the payment goes to the treasury where the a percentage is distributed daily accross all the tree owners. The more tree power your tree has, the bigger portion of rewards you get.</p>
@@ -259,7 +282,7 @@ class MyTrees extends React.Component {
 
 	render() {
 		const information = <div>
-				<NavBar />
+				<NavBar inMyTrees="true" />
 				<div className="container">
 					<div className="row">
 						<Information message="You don't have any trees. Start by buying some on the Market and wait for the transaction to be processed by the miners" />
@@ -274,7 +297,7 @@ class MyTrees extends React.Component {
 			</div>
 		const loading = <Information message="Loading data from the blockchain..." />
 		const main = <div>
-				<NavBar />
+				<NavBar inMyTrees="true" />
 				<div className="container">
 					<div className={this.state.treesLoaded ? "row" : "hidden"}>
 						<button className="check-rewards-button" onClick={async () => {
@@ -387,16 +410,16 @@ class NavBar extends React.Component {
 	render() {
 		return (
 			<nav className="navbar navbar-expand-lg navbar-light">
-				<a className="navbar-brand" href="#">
+				<Link className="navbar-brand" to="/">
 					<img src="forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
 					Crypto Trees
-				</a>
+				</Link>
 				<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
 					<span className="navbar-toggler-icon"></span>
 				</button>
 				<div className="collapse navbar-collapse" id="navbarText">
 					<ul className="navbar-nav ml-auto">
-						<li className={this.props.inMarket ? "nav-item" : "nav-item active"}>
+						<li className={this.props.inMyTrees ? "nav-item active" : "nav-item"}>
 							<Link to="/my-trees" className="nav-link">My Trees</Link>
 						</li>
 						<li className={this.props.inMarket ? "nav-item active" : "nav-item"}>

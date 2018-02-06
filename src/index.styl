@@ -2,10 +2,12 @@ strongerGreen = #0b860b
 strongGreen = #0ca90c
 lightGreen = #4bdd4b
 lighterGreen = #74ed74
+baseUrl = '/imgs/'
 
 *
     word-wrap: break-word
     box-sizing: border-box
+    color: #444444
 
 button, .button-like
     background-color: lightGreen
@@ -32,12 +34,23 @@ button, .button-like
         border: 1px solid lightGreen
         cursor: default
 
+.no-margin
+    margin: 0
+
 .spacer
     height: 200px
     width: 100%
 
 .top-spacer
     height:20px
+    width: 100%
+
+.spacer-30
+    height: 30vh
+    width: 100%
+
+.spacer-20
+    height: 20vh
     width: 100%
 
 .navbar
@@ -92,6 +105,20 @@ button, .button-like
 
 .color-yellow
     color: #ff9d00
+
+.initial-top-container
+    height: calc(100vh - 56px)
+
+.background-trees
+    background-image: url(baseUrl + 'background-trees.png')
+    background-position: center
+    background-size: cover
+
+.initial-half-container
+    height: 50vh
+
+.background-grey
+    background-color: whitesmoke
 
 @media (min-width: 576px)
     .col-sm-4

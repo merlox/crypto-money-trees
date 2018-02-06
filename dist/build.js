@@ -21827,9 +21827,9 @@ var Market = function (_React$Component4) {
 	return Market;
 }(_react2.default.Component);
 
-var _ref30 = _jsx('a', {
+var _ref30 = _jsx(_reactRouterDom.Link, {
 	className: 'navbar-brand',
-	href: '#'
+	to: '/'
 }, void 0, _jsx('img', {
 	src: 'forest.svg',
 	width: '30',
@@ -21880,7 +21880,7 @@ var NavBar = function (_React$Component5) {
 			}, void 0, _jsx('ul', {
 				className: 'navbar-nav ml-auto'
 			}, void 0, _jsx('li', {
-				className: this.props.inMarket ? "nav-item" : "nav-item active"
+				className: this.props.inMyTrees ? "nav-item active" : "nav-item"
 			}, void 0, _ref32), _jsx('li', {
 				className: this.props.inMarket ? "nav-item active" : "nav-item"
 			}, void 0, _ref33))));
@@ -21894,17 +21894,60 @@ var _ref29 = _jsx(NavBar, {
 	inMarket: 'true'
 });
 
-var _ref21 = _jsx(NavBar, {});
+var _ref21 = _jsx(NavBar, {
+	inMyTrees: 'true'
+});
 
-var _ref17 = _jsx(NavBar, {});
+var _ref17 = _jsx(NavBar, {
+	inMyTrees: 'true'
+});
 
 var _ref15 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
-	className: 'container'
+	className: 'background-trees'
+}, void 0, _jsx('div', {
+	className: 'container initial-top-container'
 }, void 0, _jsx('div', {
 	className: 'row'
-}, void 0, _jsx('h1', {}, void 0, 'Who said money doesn\'t grow on trees?'), _jsx('h2', {}, void 0, 'Crypto Trees'), _jsx('p', {}, void 0, _jsx('i', {}, void 0, 'Where trees actually generate crypto money')), _jsx('button', {}, void 0, 'Start Planting')), _jsx('div', {
+}, void 0, _jsx('div', {
+	className: 'spacer-30'
+}), _jsx('div', {
+	className: 'col-12'
+}, void 0, _jsx('h1', {}, void 0, 'Who said money doesn\'t grow on trees?')), _jsx('div', {
+	className: 'top-spacer'
+}), _jsx('div', {
+	className: 'col-12'
+}, void 0, _jsx('h3', {}, void 0, 'Crypto Trees')), _jsx('div', {
+	className: 'col-12'
+}, void 0, _jsx('p', {}, void 0, _jsx('i', {}, void 0, 'Where trees actually generate crypto money'))), _jsx('div', {
+	className: 'top-spacer'
+}), _jsx('div', {
+	className: 'col-12'
+}, void 0, _jsx(_reactRouterDom.Link, {
+	className: 'button-like no-margin',
+	to: '/market'
+}, void 0, 'Start Planting'))))), _jsx('div', {
+	className: 'background-grey'
+}, void 0, _jsx('div', {
+	className: 'container initial-half-container'
+}, void 0, _jsx('div', {
+	className: 'spacer-20'
+}), _jsx('div', {
 	className: 'row'
-}, void 0, _jsx('h2', {}, void 0, 'Wait, how does this work?'), _jsx('ul', {}, void 0, _jsx('li', {}, void 0, '1. Buy a tree in the market'), _jsx('li', {}, void 0, '2. Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards'), _jsx('li', {}, void 0, '3. Keep growing your tree and sell it whenever you want'))), _jsx('div', {
+}, void 0, _jsx('h2', {}, void 0, 'Wait, how does this work?')), _jsx('div', {
+	className: 'row'
+}, void 0, _jsx('ol', {
+	className: 'row'
+}, void 0, _jsx('li', {
+	className: 'col-4'
+}, void 0, 'Buy a tree in the market'), _jsx('li', {
+	className: 'col-4'
+}, void 0, 'Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards'), _jsx('li', {
+	className: 'col-4'
+}, void 0, 'Keep growing your tree and sell it whenever you want'))))), _jsx('div', {
+	className: 'container initial-half-container'
+}, void 0, _jsx('div', {
+	className: 'spacer-20'
+}), _jsx('div', {
 	className: 'row'
 }, void 0, _jsx('h2', {}, void 0, 'How is this possible?'), _jsx('p', {}, void 0, 'Each time someone buys a tree, a portion of the payment goes to the treasury where the a percentage is distributed daily accross all the tree owners. The more tree power your tree has, the bigger portion of rewards you get.'))));
 
@@ -57737,7 +57780,7 @@ exports = module.exports = __webpack_require__(501)(false);
 
 
 // module
-exports.push([module.i, "* {\n  word-wrap: break-word;\n  box-sizing: border-box;\n}\nbutton,\n.button-like {\n  background-color: #4bdd4b;\n  border: 1px solid #0ca90c;\n  color: #fff;\n  border-radius: 10px;\n  padding: 10px;\n  margin: 1%;\n  box-sizing: border-box;\n  cursor: pointer;\n}\nbutton:hover,\n.button-like:hover {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  text-decoration: none;\n  color: #fff;\n}\nbutton:active,\n.button-like:active {\n  background-color: #0b860b;\n  border: 1px solid #0ca90c;\n}\nbutton:disabled,\n.button-like:disabled {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  cursor: default;\n}\n.spacer {\n  height: 200px;\n  width: 100%;\n}\n.top-spacer {\n  height: 20px;\n  width: 100%;\n}\n.navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 0.5%;\n  box-shadow: 0 0 10px -2px #808080;\n  margin-left: 0.5%;\n  border-radius: 15px;\n  height: 100%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 48%;\n}\n.full-button {\n  width: 98%;\n}\n.hidden {\n  display: none;\n}\n.margin-auto-and-top {\n  margin: 40px auto 5px auto;\n}\n.margin-auto {\n  margin: auto;\n}\n.check-rewards-button {\n  margin-top: 1.5%;\n}\n.word-wrap {\n  word-wrap: break-word;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n.color-green {\n  color: #04c80d;\n}\n.color-blue {\n  color: #00f;\n}\n.color-red {\n  color: #e9310e;\n}\n.color-yellow {\n  color: #ff9d00;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
+exports.push([module.i, "* {\n  word-wrap: break-word;\n  box-sizing: border-box;\n  color: #444;\n}\nbutton,\n.button-like {\n  background-color: #4bdd4b;\n  border: 1px solid #0ca90c;\n  color: #fff;\n  border-radius: 10px;\n  padding: 10px;\n  margin: 1%;\n  box-sizing: border-box;\n  cursor: pointer;\n}\nbutton:hover,\n.button-like:hover {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  text-decoration: none;\n  color: #fff;\n}\nbutton:active,\n.button-like:active {\n  background-color: #0b860b;\n  border: 1px solid #0ca90c;\n}\nbutton:disabled,\n.button-like:disabled {\n  background-color: #74ed74;\n  border: 1px solid #4bdd4b;\n  cursor: default;\n}\n.no-margin {\n  margin: 0;\n}\n.spacer {\n  height: 200px;\n  width: 100%;\n}\n.top-spacer {\n  height: 20px;\n  width: 100%;\n}\n.spacer-30 {\n  height: 30vh;\n  width: 100%;\n}\n.spacer-20 {\n  height: 20vh;\n  width: 100%;\n}\n.navbar {\n  box-shadow: 0 0 20px -5px #808080;\n}\n.tree-container {\n  padding: 30px;\n  margin-top: 0.5%;\n  box-shadow: 0 0 10px -2px #808080;\n  margin-left: 0.5%;\n  border-radius: 15px;\n  height: 100%;\n}\n.tree-image {\n  width: 100%;\n}\n.wide-button {\n  width: 48%;\n}\n.full-button {\n  width: 98%;\n}\n.hidden {\n  display: none;\n}\n.margin-auto-and-top {\n  margin: 40px auto 5px auto;\n}\n.margin-auto {\n  margin: auto;\n}\n.check-rewards-button {\n  margin-top: 1.5%;\n}\n.word-wrap {\n  word-wrap: break-word;\n}\n.col-6 {\n  -webkit-box-flex: 0;\n  -ms-flex: 0 0 49%;\n  flex: 0 0 49%;\n  max-width: 49%;\n}\n.color-green {\n  color: #04c80d;\n}\n.color-blue {\n  color: #00f;\n}\n.color-red {\n  color: #e9310e;\n}\n.color-yellow {\n  color: #ff9d00;\n}\n.initial-top-container {\n  height: calc(100vh - 56px);\n}\n.background-trees {\n  background-image: url(\"/imgs/background-trees.png\");\n  background-position: center;\n  background-size: cover;\n}\n.initial-half-container {\n  height: 50vh;\n}\n.background-grey {\n  background-color: #f5f5f5;\n}\n@media (min-width: 576px) {\n  .col-sm-4 {\n    -ms-flex: 0 0 32.8333333%;\n    flex: 0 0 32.8333333%;\n    max-width: 32.8333333%;\n  }\n}\n", ""]);
 
 // exports
 
