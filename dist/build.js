@@ -20963,7 +20963,7 @@ var App = function (_React$Component) {
 		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
 		if (window.web3 === undefined) {
-			window.web3 = new _web2.default(new _web2.default.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'));
+			window.web3 = new _web2.default(new _web2.default.providers.HttpProvider('https://mainnet.infura.io/6GO3REaLghR6wPhNJQcc'));
 		} else {
 			window.web3 = new _web2.default(window.web3.currentProvider);
 		}

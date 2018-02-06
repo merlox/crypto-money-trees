@@ -15,7 +15,7 @@ class App extends React.Component {
 	constructor () {
 		super()
 		if(window.web3 === undefined) {
-			window.web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/6GO3REaLghR6wPhNJQcc'))
+			window.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/6GO3REaLghR6wPhNJQcc'))
 		} else {
 			window.web3 = new Web3(window.web3.currentProvider)
 		}
