@@ -191,15 +191,18 @@ class InitialPage extends React.Component {
 				</div>
 				<div className="background-grey">
 					<div className="container initial-half-container">
-						<div className="spacer-20"></div>
+						<div className="spacer-7"></div>
 						<div className="row">
 							<h2>Wait, how does this work?</h2>
 						</div>
 						<div className="row">
 							<ol className="row">
-								<li className="col-4">Buy a tree in the market</li>
-								<li className="col-4">Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards</li>
-								<li className="col-4">Keep making real ETH by just having trees and sell them for a profit whenever you want</li>
+								<li className="col-sm-4">Buy a tree in the market to start generating Ether</li>
+								<li className="col-sm-4">Pick your daily ETH rewards, water the tree to increase its power and generate bigger rewards</li>
+								<li className="col-sm-4">Keep making real ETH by just having trees and sell them for a profit whenever you want</li>
+								<img src="imgs/buy-tree.gif" className="col-sm-4 height-200"/>
+								<img src="imgs/water-reward.gif" className="col-sm-4 height-200"/>
+								<img src="imgs/sell-tree.gif" className="col-sm-4 height-200"/>
 							</ol>
 						</div>
 					</div>
@@ -376,7 +379,7 @@ class Market extends React.Component {
 			allTrees = allTrees.map(detail => (
 				<TreeMarketBox
 					id={detail[0]}
-					owner={detail[1] === '0x7461ccf1fd55c069ce13e07d163c65c78c8b48d1' ? 'The creator' : detail[1]}
+					owner={detail[1]}
 					daysPassed={Math.floor((Math.floor(Date.now() / 1000) - detail[2]) / 86400)} // How many days passed after the creation of this tree
 					treePower={detail[3]}
 					buyTree={(id, owner, price) => this.props.buyTree(id, owner, detail[4])}
@@ -447,7 +450,7 @@ class TreeBox extends React.Component {
 			rewardClicked: false,
 			waterClicked: false,
 			rewardAvailableToday: Math.floor(Date.now() / 1000) - 1517245959 > 60 * 60 * 24, // If a day has passed since the last reward picked or not
-			amountToSell: 0.5,
+			amountToSell: 1.5,
 			image: this.getImageTreePower(this.props.treePower),
 		}
 	}
@@ -548,7 +551,6 @@ class TreeMarketBox extends React.Component {
 	}
 
 	getImageTreePower(treePower) {
-		console.log(treePower < 10)
 		if(treePower < 10) {
 			return 'imgs/1.jpg'
 		} else if(treePower < 25) {
@@ -567,12 +569,13 @@ class TreeMarketBox extends React.Component {
 			<div className="col-6 col-sm-4 tree-container">
 				<img src={this.state.image} className="tree-image"/>
 				<h4>Id {this.props.id}</h4>
-				<p className="word-wrap">Owner <span className="color-yellow">{this.props.owner}</span></p>
+				<p className="word-wrap">Owner <span className="color-yellow">{this.props.owner === '0x7461ccf1fd55c069ce13e07d163c65c78c8b48d1' ? 'The creator' : this.props.owner}</span></p>
 				<p>Tree power <span className="color-green">{this.props.treePower}</span></p>
 				<p><span className="color-blue">{this.props.daysPassed}</span> days passed after creation</p>
 				<button className="full-button" disabled={this.state.buyClicked} onClick={async () => {
 					try {
-						await this.props.buyTree(this.props.id, this.props.owner, this.props.price)
+						const result = await this.props.buyTree(this.props.id, this.props.owner, this.props.price)
+						console.log(result)
 						this.setState({buyClicked: true})
 					} catch(e) {}
 				}}>Buy Tree</button>

@@ -53,6 +53,10 @@ button, .button-like
     height: 20vh
     width: 100%
 
+.spacer-7
+    height: 7vh
+    width: 100%
+
 .navbar
     box-shadow: 0 0 20px -5px grey
 
@@ -120,8 +124,16 @@ button, .button-like
 .background-grey
     background-color: whitesmoke
 
+.height-200
+    height: 200px
+
 @media (min-width: 576px)
     .col-sm-4
         -ms-flex: 0 0 32.8333333%
         flex: 0 0 32.8333333%
         max-width: 32.8333333%
+
+@media (max-width: 576px)
+    .initial-half-container
+        height: auto
+        width: 90%
