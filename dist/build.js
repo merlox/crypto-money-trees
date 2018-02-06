@@ -20951,7 +20951,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
-var contractAddress = '0xa783ce9bcf718f8c6c22f7585c54c30c406588f7';
+// 1 day mainnet -> 0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793
+var contractAddress = '0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793';
 
 var App = function (_React$Component) {
 	_inherits(App, _React$Component);
@@ -21949,7 +21950,7 @@ var _ref15 = _jsx('div', {}, void 0, _jsx(NavBar, {}), _jsx('div', {
 	className: 'spacer-20'
 }), _jsx('div', {
 	className: 'row'
-}, void 0, _jsx('h2', {}, void 0, 'How is this possible?'), _jsx('p', {}, void 0, 'Each time someone buys a tree, a portion of the payment goes to the treasury where the a percentage is distributed daily accross all the tree owners. The more tree power your tree has, the bigger portion of rewards you get.'))));
+}, void 0, _jsx('h2', {}, void 0, 'How is this possible?'), _jsx('p', {}, void 0, 'Each time someone buys a tree, a portion of the payment goes to the treasury where a percentage is distributed daily accross all the tree owners. The more tree power your tree has, the bigger portion of rewards you get.'))));
 
 var _ref13 = _jsx(NavBar, {});
 

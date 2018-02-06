@@ -8,7 +8,8 @@ import './index.styl'
 
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
-const contractAddress = '0xa783ce9bcf718f8c6c22f7585c54c30c406588f7'
+// 1 day mainnet -> 0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793
+const contractAddress = '0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793'
 
 class App extends React.Component {
 	constructor () {
@@ -203,7 +204,7 @@ class InitialPage extends React.Component {
 					<div className="spacer-20"></div>
 					<div className="row">
 						<h2>How is this possible?</h2>
-						<p>Each time someone buys a tree, a portion of the payment goes to the treasury where the a percentage is distributed daily accross all the tree owners. The more tree power your tree has, the bigger portion of rewards you get.</p>
+						<p>Each time someone buys a tree, a portion of the payment goes to the treasury where a percentage is distributed daily accross all the tree owners. The more tree power your tree has, the bigger portion of rewards you get.</p>
 					</div>
 				</div>
 			</div>
