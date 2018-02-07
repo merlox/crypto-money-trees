@@ -20952,7 +20952,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
 // 1 day mainnet -> 0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793
-var contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e';
+var contractAddress = '0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793';
 
 var App = function (_React$Component) {
 	_inherits(App, _React$Component);

@@ -9,7 +9,7 @@ import './index.styl'
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
 // 1 day mainnet -> 0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793
-const contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e'
+const contractAddress = '0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793'
 
 class App extends React.Component {
 	constructor () {
