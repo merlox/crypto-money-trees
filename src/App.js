@@ -419,7 +419,7 @@ class NavBar extends React.Component {
 		return (
 			<nav className="navbar navbar-expand-lg navbar-light">
 				<Link className="navbar-brand" to="/">
-					<img src="forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
+					<img src="imgs/forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
 					Crypto Trees
 				</Link>
 				<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">

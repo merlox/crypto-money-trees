@@ -21836,7 +21836,7 @@ var _ref30 = _jsx(_reactRouterDom.Link, {
 	className: 'navbar-brand',
 	to: '/'
 }, void 0, _jsx('img', {
-	src: 'forest.svg',
+	src: 'imgs/forest.svg',
 	width: '30',
 	height: '30',
 	className: 'd-inline-block align-top',

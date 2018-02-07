@@ -32,7 +32,7 @@ module.exports = {
       }]
    },
    plugins: [new htmlPlugin({
-      title: "Project",
+      title: "Crypto Trees",
       template: './src/index.ejs',
       hash: true
    })]
