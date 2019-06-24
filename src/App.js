@@ -15,10 +15,15 @@ const contractAddress = '0x0f1a345626d7d969799c75278712c140f7bbf925' // Ropsten
 class App extends React.Component {
 	constructor () {
 		super()
-		if(window.web3 === undefined) {
-			window.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/6GO3REaLghR6wPhNJQcc'))
-		} else {
-			window.web3 = new Web3(window.web3.currentProvider)
+		this.setup()
+	}
+
+	async setup() {
+		window.myWeb3 = new Web3(ethereum)
+		try {
+			await ethereum.enable();
+		} catch (error) {
+			console.error('You must approve this dApp to interact with it')
 		}
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
