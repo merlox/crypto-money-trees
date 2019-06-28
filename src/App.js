@@ -9,15 +9,21 @@ import './index.styl'
 // 1 day -> 0x59b42857df02690ea5796483444976dbc5512d9e ropsten
 // 1 second -> 0xa783ce9bcf718f8c6c22f7585c54c30c406588f7 ropsten
 // 1 day mainnet -> 0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793
-const contractAddress = '0x59b42857df02690ea5796483444976dbc5512d9e'
+// const contractAddress = '0xFfFce2Dc587BadBD10B4Fe17F0F5F293458f6793' // Mainnet
+const contractAddress = '0x0f1a345626d7d969799c75278712c140f7bbf925' // Ropsten
 
 class App extends React.Component {
 	constructor () {
 		super()
-		if(window.web3 === undefined) {
-			window.web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/6GO3REaLghR6wPhNJQcc'))
-		} else {
-			window.web3 = new Web3(window.web3.currentProvider)
+		this.setup()
+	}
+
+	async setup() {
+		window.myWeb3 = new Web3(ethereum)
+		try {
+			await ethereum.enable();
+		} catch (error) {
+			console.error('You must approve this dApp to interact with it')
 		}
 		window.contract = web3.eth.contract(contractAbi).at(contractAddress)
 		promisifyAll(contract)
@@ -419,7 +425,7 @@ class NavBar extends React.Component {
 		return (
 			<nav className="navbar navbar-expand-lg navbar-light">
 				<Link className="navbar-brand" to="/">
-					<img src="forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
+					<img src="imgs/forest.svg" width="30" height="30" className="d-inline-block align-top" alt="" />&nbsp;
 					Crypto Trees
 				</Link>
 				<button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
