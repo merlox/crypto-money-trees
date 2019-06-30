@@ -462,17 +462,18 @@ class TreeBox extends React.Component {
 	}
 
 	getImageTreePower(treePower) {
-		if(treePower < 10) {
-			return 'imgs/1.jpg'
-		} else if(treePower < 25) {
-			return 'imgs/2.jpg'
-		} else if(treePower < 50) {
-			return 'imgs/3.jpg'
-		} else if(treePower < 100) {
-			return 'imgs/4.jpg'
-		} else {
-			return 'imgs/5.jpg'
-		}
+		// if(treePower < 10) {
+		// 	return 'imgs/1.jpg'
+		// } else if(treePower < 25) {
+		// 	return 'imgs/2.jpg'
+		// } else if(treePower < 50) {
+		// 	return 'imgs/3.jpg'
+		// } else if(treePower < 100) {
+		// 	return 'imgs/4.jpg'
+		// } else {
+		// 	return 'imgs/5.jpg'
+		// }
+		return 'imgs/tree-big.png' // TODO Change this to the evolving images
 	}
 
 	render() {
@@ -557,17 +558,18 @@ class TreeMarketBox extends React.Component {
 	}
 
 	getImageTreePower(treePower) {
-		if(treePower < 10) {
-			return 'imgs/1.jpg'
-		} else if(treePower < 25) {
-			return 'imgs/2.jpg'
-		} else if(treePower < 50) {
-			return 'imgs/3.jpg'
-		} else if(treePower < 100) {
-			return 'imgs/4.jpg'
-		} else {
-			return 'imgs/5.jpg'
-		}
+		// if(treePower < 10) {
+		// 	return 'imgs/1.jpg'
+		// } else if(treePower < 25) {
+		// 	return 'imgs/2.jpg'
+		// } else if(treePower < 50) {
+		// 	return 'imgs/3.jpg'
+		// } else if(treePower < 100) {
+		// 	return 'imgs/4.jpg'
+		// } else {
+		// 	return 'imgs/5.jpg'
+		// }
+		return 'imgs/tree-big.png' // TODO Change this to the evolving images
 	}
 
 	render() {
